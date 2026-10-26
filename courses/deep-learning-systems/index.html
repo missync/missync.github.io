@@ -1,0 +1,1793 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/index.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="missing">
+  <meta name="keywords" content="missing,博客,北航,BUAA">
+  
+    <meta name="description" content="汇总现有三讲、课程大纲及昇腾补充课件，串起神经网络、CNN、Transformer、MiniMind、分布式训练、高效推理、达芬奇架构与系统性能分析。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习系统：从模型到昇腾软硬件的课件复习">
+<meta property="og:url" content="https://missync.github.io/courses/deep-learning-systems/index.html">
+<meta property="og:site_name" content="missing&#39;s blog">
+<meta property="og:description" content="汇总现有三讲、课程大纲及昇腾补充课件，串起神经网络、CNN、Transformer、MiniMind、分布式训练、高效推理、达芬奇架构与系统性能分析。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/system-stack.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/im2col.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/attention.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/prefill-decode.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/paged-attention.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/ai-core.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/roofline.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/serving-saturation.png">
+<meta property="article:published_time" content="2026-10-26T13:05:00.000Z">
+<meta property="article:modified_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:author" content="missing">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="AI系统">
+<meta property="article:tag" content="昇腾">
+<meta property="article:tag" content="课程复习">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://missync.github.io/images/courses/deep-learning-systems/system-stack.png">
+  
+  
+  
+  <title>深度学习系统：从模型到昇腾软硬件的课件复习 - missing&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>missing&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="深度学习系统：从模型到昇腾软硬件的课件复习"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-10-26 21:05" pubdate>
+          2026年10月26日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          13k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          108 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">深度学习系统：从模型到昇腾软硬件的课件复习</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年10月26日 凌晨
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>本文整理杨建磊老师《深度学习系统》目录下的<strong>三讲课件、2026 课程大纲，以及“昇腾体系化课程”中的 V00 和 V01，共 6 份、616 页</strong>。按知识主题合并重复页，用概念、速查表、少量公式与原图帮助复习。硬件数字和模型配置按课件示例解释，不把某个型号或版本推广到所有平台。</p>
+<p><strong>模型：</strong> <a href="#s-overview">系统全景</a> · <a href="#s-neural">神经网络与训练</a> · <a href="#s-cnn">CNN</a> · <a href="#s-language">语言模型与生成模型</a> · <a href="#s-transformer">Transformer</a> · <a href="#s-minimind">MiniMind</a></p>
+<p><strong>训练与服务：</strong> <a href="#s-finetune">预训练、微调与对齐</a> · <a href="#s-parallel">并行训练与显存</a> · <a href="#s-inference">推理流程</a> · <a href="#s-optimization">推理优化</a> · <a href="#s-serving">服务架构与 vLLM</a></p>
+<p><strong>硬件与系统：</strong> <a href="#s-hardware">CPU、GPU 与 DSA</a> · <a href="#s-ascend">昇腾 AI Core 与数据流</a> · <a href="#s-performance">开销估算与性能模型</a> · <a href="#s-metrics">线上性能指标</a> · <a href="#s-platform">平台、实验与后续主题</a> · <a href="#s-sources">勘误与课件索引</a></p>
+<p>基础概念可配合<a href="/courses/deep-learning-foundations/">《深度学习基础与应用》复习篇</a>阅读。建议先看各节的加粗结论与表格，需要回忆计算过程时再看公式和例子。</p>
+<span id="more"></span>
+
+<style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
+
+<p><span id="s-overview"></span></p>
+<h2 id="1-系统全景：模型背后有什么"><a href="#1-系统全景：模型背后有什么" class="headerlink" title="1. 系统全景：模型背后有什么"></a>1. 系统全景：模型背后有什么</h2><p><em>来源：第一讲第 7–14、20–51 页；V00 第 7–24 页；V01 第 6–18 页。</em></p>
+<p><strong>深度学习系统连接算法应用与计算硬件，承载训练、推理和部署的完整生命周期。</strong> 研究对象包括计算框架、编译器、运行时、算子库、内存、通信、调度与加速器，评价也从准确率扩展到耗时、吞吐、内存、能耗与成本。</p>
+<p><img src="/images/courses/deep-learning-systems/system-stack.png" srcset="/img/loading.gif" lazyload alt="算法、框架、编译、运行时、硬件和部署六层之间的关系"><br><em>图：V01 第 6 页。课件以六层组织模型从代码走向部署的路径。</em></p>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>主要职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>算法与应用</td>
+<td>定义任务、模型、损失和优化目标</td>
+</tr>
+<tr>
+<td>框架</td>
+<td>提供模型组件、张量操作、计算图和自动微分</td>
+</tr>
+<tr>
+<td>编译</td>
+<td>捕获图、图优化、算子融合、选择实现并生成代码</td>
+</tr>
+<tr>
+<td>运行时</td>
+<td>内存管理、依赖调度、任务队列、同步与通信</td>
+</tr>
+<tr>
+<td>硬件</td>
+<td>计算单元、存储层次、片内与片间互联</td>
+</tr>
+<tr>
+<td>部署</td>
+<td>导出、压缩、服务封装、版本管理与运行监控</td>
+</tr>
+</tbody></table>
+<p>一层 <code>Conv2D</code> 会进一步下沉为<strong>算子 → Kernel → 矩阵计算 &#x2F; 多层循环 → 指令</strong>。模型层表示计算语义，Kernel 是落到具体设备的实现，两者不必一一对应，融合后多个算子可能共用一个 Kernel。</p>
+<h3 id="1-1-为什么需要系统视角"><a href="#1-1-为什么需要系统视角" class="headerlink" title="1.1 为什么需要系统视角"></a>1.1 为什么需要系统视角</h3><p>模型、数据和请求规模增长，逐渐暴露<strong>内存墙、通信墙、调优墙、开发墙</strong>。提高精度的算法如果导致无法装入显存、难以并行或部署成本过高，需要重新权衡。课件因此强调应用驱动、全栈贯通和软硬件协同。</p>
+<p>系统形态从数据中心、超级计算机延伸到 PC、手机、嵌入式和 AIoT；端、边、云对资源与时延的要求不同。TinyML 关注受限设备上的高效智能；PIM（存内处理）、CIM（存内计算）等方向尝试缓解存储与计算分离带来的搬运开销。</p>
+<h3 id="1-2-三代智能计算系统的课件划分"><a href="#1-2-三代智能计算系统的课件划分" class="headerlink" title="1.2 三代智能计算系统的课件划分"></a>1.2 三代智能计算系统的课件划分</h3><p>第一代面向符号主义，如 LISP &#x2F; Prolog 专用机；第二代面向连接主义和深度学习，是本课程主要对象。前者受应用需求、成本和通用处理器快速进步限制，后者已有大量工业应用，并受益于数据、算法和算力的发展。</p>
+<p>课件关于“第三代系统作为通用智能发育的沙盒”、海量智能体和多学科交叉的讨论，属于<strong>一种参考分类与研究展望</strong>，不应当作已经成立的 AGI 实现方案。</p>
+<p><span id="s-neural"></span></p>
+<h2 id="2-神经网络、反向传播与训练流水线"><a href="#2-神经网络、反向传播与训练流水线" class="headerlink" title="2. 神经网络、反向传播与训练流水线"></a>2. 神经网络、反向传播与训练流水线</h2><p><em>来源：第二讲第 3–39 页；V01 第 19–89 页。</em></p>
+<h3 id="2-1-从函数到神经网络"><a href="#2-1-从函数到神经网络" class="headerlink" title="2.1 从函数到神经网络"></a>2.1 从函数到神经网络</h3><p>神经元将输入加权求和，再经过非线性函数；多层嵌套形成复杂映射。M-P 模型提供了早期抽象，MLP 由输入、隐藏和输出层构成，层间通常全连接。适当条件下、足够宽的非线性网络具有通用逼近能力，这不保证有限数据下容易训练或一定泛化。</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>主要组织方式或擅长的结构</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MLP</td>
+<td>全连接特征变换，主要计算是 GEMM</td>
+</tr>
+<tr>
+<td>CNN</td>
+<td>局部连接与参数共享，处理空间局部结构</td>
+</tr>
+<tr>
+<td>RNN &#x2F; LSTM</td>
+<td>隐藏状态随时间传递，处理序列；LSTM 通过门控保留或遗忘信息</td>
+</tr>
+<tr>
+<td>GNN</td>
+<td>沿图结构组织节点信息的计算</td>
+</tr>
+</tbody></table>
+<h3 id="2-2-反向传播求梯度，优化器更新参数"><a href="#2-2-反向传播求梯度，优化器更新参数" class="headerlink" title="2.2 反向传播求梯度，优化器更新参数"></a>2.2 反向传播求梯度，优化器更新参数</h3><p><strong>前向传播</strong>逐层计算预测及损失；<strong>反向传播</strong>从损失出发，沿反向依赖使用链式法则求各参数的梯度；<strong>优化器</strong>再根据梯度更新参数。</p>
+<p>设输出 o 由中间量 a 决定、a 依赖权重 w，Sigmoid 的值为 σ(z)：</p>
+
+<div class="course-math">
+\[
+\frac{\partial L}{\partial w}
+=\frac{\partial L}{\partial o}
+ \frac{\partial o}{\partial a}
+ \frac{\partial a}{\partial w},\qquad
+\sigma'(z)=\sigma(z)(1-\sigma(z)),\qquad
+w\leftarrow w-\eta\frac{\partial L}{\partial w}.
+\]
+</div>
+
+
+<p>隐藏层同时影响多个下游输出时，需要把各条路径的梯度贡献相加。第二讲用两个输入、两个隐藏神经元、两个输出的例子手算；取学习率 0.5 更新后，总误差从约 <strong>0.2984 降到 0.2910</strong>。</p>
+<p>课件的两段 NumPy 代码使用了不同误差信号符号：<code>y−prediction</code> 配合加法更新，与 <code>prediction−y</code> 配合减法更新可以表示同一负梯度方向。不能只看 <code>+=</code> 就断言在做梯度上升；代码中的 <code>xrange</code>、个别变量拼写是旧语法或笔误，复习重点是矩阵形状和更新方向。</p>
+<h3 id="2-3-深层网络的困难与对应技术"><a href="#2-3-深层网络的困难与对应技术" class="headerlink" title="2.3 深层网络的困难与对应技术"></a>2.3 深层网络的困难与对应技术</h3><table>
+<thead>
+<tr>
+<th>困难 &#x2F; 技术</th>
+<th>核心知识点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>梯度消失 &#x2F; 爆炸</td>
+<td>多层导数连乘可能过小或过大，前层难更新或训练不稳定</td>
+</tr>
+<tr>
+<td>Sigmoid &#x2F; Tanh</td>
+<td>有饱和区，反向梯度可能很小</td>
+</tr>
+<tr>
+<td>ReLU 及变体</td>
+<td><code>max(0,x)</code> 在正区间保持梯度，计算简单；课件另列 Leaky ReLU、PReLU</td>
+</tr>
+<tr>
+<td>BatchNorm &#x2F; LayerNorm</td>
+<td>前者按批次统计相应特征，后者按单个样本 &#x2F; token 的特征维度归一化，帮助稳定训练</td>
+</tr>
+<tr>
+<td>Dropout</td>
+<td>训练时随机关闭部分神经元，减少过度依赖</td>
+</tr>
+<tr>
+<td>L1 &#x2F; L2 正则</td>
+<td>在损失中加入权重绝对值 &#x2F; 平方惩罚，限制复杂度</td>
+</tr>
+<tr>
+<td>Early Stopping</td>
+<td>用验证误差决定何时停止，避免只追求训练误差</td>
+</tr>
+<tr>
+<td>Xavier &#x2F; He 初始化</td>
+<td>控制前后层信号尺度；He 的常见方差为 <code>2/fan_in</code></td>
+</tr>
+<tr>
+<td>Adam</td>
+<td>利用梯度的一阶、二阶矩自适应调整更新尺度；仍需要合适的学习率</td>
+</tr>
+</tbody></table>
+<p>学习率过小会慢，过大可能震荡或不收敛。累积 BP 按一组样本汇总误差 &#x2F; 梯度；评价过拟合需同时看训练与验证表现。</p>
+<h3 id="2-4-张量、算子与计算图"><a href="#2-4-张量、算子与计算图" class="headerlink" title="2.4 张量、算子与计算图"></a>2.4 张量、算子与计算图</h3><p>训练范式还要区分：监督学习使用带标签映射；无监督学习从数据中发现结构，课件举 K-means、PCA；自监督学习从数据构造目标，课件举 BERT、MAE 的遮挡预测。</p>
+<p><strong>张量要同时看 shape、维度语义、dtype 和内存布局。</strong> 图像常用 NCHW，自然语言表示常用批次×序列×特征；点云、图等还涉及稀疏张量。相同元素数，不代表相同语义或相同物理访问效率。</p>
+<p>计算图用节点表示算子、边表示张量依赖；自动微分构造反向计算。动态图边运行边建立依赖，便于调试；静态图先构建 &#x2F; 编译再执行，有更大的全局优化空间。现代框架通常兼具即时执行与图捕获：课件列出 <code>torch.compile</code>、<code>tf.function</code>、MindSpore Graph &#x2F; PyNative、<code>jax.jit</code>、Paddle 动转静。</p>
+<p>分支和循环可由宿主语言、控制流原语或源码解析表达。展开后的单次执行可按依赖调度；包含循环的完整程序表达不能简单等同于一张固定 DAG。运行时根据就绪依赖组织执行，图捕获失败处可能出现 graph break。</p>
+<h3 id="2-5-MNIST-案例串起训练、评估与恢复"><a href="#2-5-MNIST-案例串起训练、评估与恢复" class="headerlink" title="2.5 MNIST 案例串起训练、评估与恢复"></a>2.5 MNIST 案例串起训练、评估与恢复</h3><p>V01 的例子：60,000 张训练图、10,000 张测试图，28×28 灰度、10 分类。处理包括 <code>1/255</code> 缩放、按课件均值与标准差归一化、HWC→CHW、标签转 Int32、分批。</p>
+<table>
+<thead>
+<tr>
+<th>对象</th>
+<th>课件形状 &#x2F; 流程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>batch 图像 &#x2F; 标签</td>
+<td><code>[64,1,28,28]</code> Float32 &#x2F; <code>[64]</code> Int32</td>
+</tr>
+<tr>
+<td>网络</td>
+<td>Flatten → 784→512→512→10，隐藏层 ReLU</td>
+</tr>
+<tr>
+<td>参数量</td>
+<td>401,920 + 262,656 + 5,130 &#x3D; <strong>669,706</strong></td>
+</tr>
+<tr>
+<td>logits</td>
+<td><code>[64,10]</code>，接交叉熵得到标量损失</td>
+</tr>
+<tr>
+<td>一次 step</td>
+<td>前向与 loss → 自动求梯度 → SGD 更新，课件学习率 0.01</td>
+</tr>
+<tr>
+<td>一个 epoch</td>
+<td>遍历各批次，各执行一次训练 step</td>
+</tr>
+<tr>
+<td>评估</td>
+<td>切换评估模式，累计损失与正确数，不更新参数</td>
+</tr>
+<tr>
+<td>保存 &#x2F; 恢复</td>
+<td>保存 Checkpoint；恢复同结构网络，检查未匹配参数，再核对预测</td>
+</tr>
+</tbody></table>
+<p>单张图推理仍需保留 batch 维 <code>[1,1,28,28]</code>。Batch Size 改变会改变批张量和 logits 的第一维，<strong>不会改变这套网络的参数数量</strong>。</p>
+<p><span id="s-cnn"></span></p>
+<h2 id="3-CNN：局部连接、形状推导与矩阵加速"><a href="#3-CNN：局部连接、形状推导与矩阵加速" class="headerlink" title="3. CNN：局部连接、形状推导与矩阵加速"></a>3. CNN：局部连接、形状推导与矩阵加速</h2><p><em>来源：第二讲第 41–63 页。</em></p>
+<h3 id="3-1-卷积、激活、池化与全连接"><a href="#3-1-卷积、激活、池化与全连接" class="headerlink" title="3.1 卷积、激活、池化与全连接"></a>3.1 卷积、激活、池化与全连接</h3><p>卷积核只看局部区域，并在不同空间位置共享权重；逐层形成从边缘、纹理到高层语义的表示。一次输出是局部输入与核权重逐元素乘后求和，再加偏置。</p>
+<table>
+<thead>
+<tr>
+<th>参数 &#x2F; 层</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Kernel 高宽</td>
+<td>一次处理的空间范围</td>
+</tr>
+<tr>
+<td>输入通道 &#x2F; filter 深度</td>
+<td>标准卷积的每个 filter 覆盖所有输入通道</td>
+</tr>
+<tr>
+<td>filter 数目</td>
+<td>输出通道数</td>
+</tr>
+<tr>
+<td>Padding</td>
+<td>边界补值，课件主要讨论补零</td>
+</tr>
+<tr>
+<td>Stride</td>
+<td>卷积核每次移动的距离</td>
+</tr>
+<tr>
+<td>Activation</td>
+<td>逐元素加入非线性</td>
+</tr>
+<tr>
+<td>Pooling</td>
+<td>局部最大值 &#x2F; 平均值聚合，实现下采样、减少后续开销并扩大后续感受范围</td>
+</tr>
+<tr>
+<td>FC</td>
+<td>将提取到的特征映射为最终类别分数</td>
+</tr>
+</tbody></table>
+<p>不考虑 dilation，核为 Kₕ×K𝑤、输入高宽 H×W、填充 P、步长 S 时：</p>
+
+<div class="course-math">
+\[
+H_{out}=\left\lfloor\frac{H+2P-K_h}{S}\right\rfloor+1,
+\quad W_{out}=\left\lfloor\frac{W+2P-K_w}{S}\right\rfloor+1,
+\quad P_{conv}=C_{out}(C_{in}K_hK_w+1).
+\]
+</div>
+
+
+<p>最后一式含每输出通道一个偏置。课件练习：输入 <code>[64,3,32,32]</code>、16 个 3×3 核、无填充、步长 1，输出为 **<code>[64,16,30,30]</code>**，参数量 <strong>448</strong>（不含偏置为 432）。</p>
+<h3 id="3-2-LeNet-风格计算流程"><a href="#3-2-LeNet-风格计算流程" class="headerlink" title="3.2 LeNet 风格计算流程"></a>3.2 LeNet 风格计算流程</h3><p>课件使用含 ReLU、MaxPool 的教学配置，不应与历史原版 LeNet-5 的每个细节完全等同。</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>输出形状</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入</td>
+<td>32×32×1</td>
+</tr>
+<tr>
+<td>5×5 Conv，6 个核，s&#x3D;1，p&#x3D;0；ReLU</td>
+<td>28×28×6</td>
+</tr>
+<tr>
+<td>2×2 MaxPool，s&#x3D;2</td>
+<td>14×14×6</td>
+</tr>
+<tr>
+<td>5×5 Conv，16 个核；ReLU</td>
+<td>10×10×16</td>
+</tr>
+<tr>
+<td>2×2 MaxPool</td>
+<td>5×5×16</td>
+</tr>
+<tr>
+<td>Flatten、FC</td>
+<td>400 → 120 → 84 → 10</td>
+</tr>
+</tbody></table>
+<p>若输入改成 28×28，按同样顺序得到 24→12→8→4，展平维度是 <strong>4×4×16&#x3D;256</strong>。</p>
+<h3 id="3-3-卷积为什么能转换成-GEMM"><a href="#3-3-卷积为什么能转换成-GEMM" class="headerlink" title="3.3 卷积为什么能转换成 GEMM"></a>3.3 卷积为什么能转换成 GEMM</h3><p>直接卷积可用 batch、输出通道、输出高宽、核高宽、输入通道等七重循环表达。课件指出卷积在典型 CNN 中计算占比很高，但具体占比依网络而变。</p>
+<p><code>im2col</code> 将各滑动窗口展开为列，将卷积核展平为行，再执行高效矩阵乘：若输入通道为 C、核为 R×S、输出空间为 E×F、输出通道为 M，则矩阵形状为 **<code>(M×CRS) · (CRS×EF) = M×EF</code>**，之后 reshape 为特征图。</p>
+<p><img src="/images/courses/deep-learning-systems/im2col.png" srcset="/img/loading.gif" lazyload alt="滑动窗口展开为列，卷积核展开为行，再计算矩阵乘法"><br><em>图：第二讲第 62 页。显式展开会重复存储窗口重叠部分，课件进一步提出 Implicit GEMM 的调研问题。</em></p>
+<p>关键系统取舍是：利用成熟 GEMM 的吞吐与数据复用，同时控制显式展开带来的内存和搬运成本。</p>
+<p><span id="s-language"></span></p>
+<h2 id="4-语言模型、规模化与其他生成模型"><a href="#4-语言模型、规模化与其他生成模型" class="headerlink" title="4. 语言模型、规模化与其他生成模型"></a>4. 语言模型、规模化与其他生成模型</h2><p><em>来源：第二讲第 65–78 页；第三讲第 3–18 页。</em></p>
+<table>
+<thead>
+<tr>
+<th>阶段 &#x2F; 模型</th>
+<th>核心思路与局限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>N-gram</td>
+<td>根据最近 n−1 个词估计下一个词，简单可解释；固定窗口、组合爆炸与数据稀疏限制能力</td>
+</tr>
+<tr>
+<td>Word2Vec &#x2F; Embedding</td>
+<td>将离散词映射为连续向量，用上下文学习语义关系</td>
+</tr>
+<tr>
+<td>RNN &#x2F; LSTM</td>
+<td>通过隐藏状态或门控传递历史信息；长距离依赖和逐步计算限制并行</td>
+</tr>
+<tr>
+<td>Transformer</td>
+<td>用 Attention 直接建立 token 间依赖，训练中的序列位置可并行处理</td>
+</tr>
+<tr>
+<td>预训练语言模型</td>
+<td>大规模预训练学习通用表示，再适配下游任务</td>
+</tr>
+<tr>
+<td>大语言模型</td>
+<td>扩展参数、数据和训练计算，支持更通用的理解、生成与任务求解</td>
+</tr>
+</tbody></table>
+<p><strong>Scaling Law 是性能与规模之间的经验规律。</strong> 课件把某些任务在规模区间的明显非线性提升称为“涌现”；它描述评测现象，不能理解为“参数越大，每种能力都必然出现”。</p>
+<table>
+<thead>
+<tr>
+<th>Transformer 路线</th>
+<th>典型模型与用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Encoder-only</td>
+<td>BERT、RoBERTa；双向上下文表示、分类与实体识别等</td>
+</tr>
+<tr>
+<td>Encoder-Decoder</td>
+<td>原始 Transformer、T5、BART；翻译、摘要等序列变换</td>
+</tr>
+<tr>
+<td>Decoder-only</td>
+<td>GPT、LLaMA 等；因果自回归生成</td>
+</tr>
+</tbody></table>
+<p>课程还介绍两个扩展：<strong>扩散模型</strong>训练时逐步加噪、学习反向去噪，生成时从噪声出发恢复图像等内容；<strong>CLIP</strong>分别编码图像与文本，通过对比学习拉近匹配样本、对齐不同模态的表示。</p>
+<p>相关应用包括问答、翻译、对话、文本与代码生成、bug 检测，以及图像、音频、视频的理解与生成。基础模型、开发工具和应用服务共同组成大模型技术生态。</p>
+<p><span id="s-transformer"></span></p>
+<h2 id="5-Transformer：从文本到下一个-token"><a href="#5-Transformer：从文本到下一个-token" class="headerlink" title="5. Transformer：从文本到下一个 token"></a>5. Transformer：从文本到下一个 token</h2><p><em>来源：第二讲第 80–94 页；第三讲第 19–33 页。</em></p>
+<h3 id="5-1-Tokenizer、Embedding-与位置"><a href="#5-1-Tokenizer、Embedding-与位置" class="headerlink" title="5.1 Tokenizer、Embedding 与位置"></a>5.1 Tokenizer、Embedding 与位置</h3><p>文本先经过匹配模型的预处理与分词，得到 token IDs；Embedding 层再查表得到向量。课件对比按词、按字符和子词分词：<strong>BPE</strong>逐步合并常见相邻单元，<strong>WordPiece</strong>按其词表学习 &#x2F; 匹配规则形成子词，<strong>Unigram</strong>从候选词表中筛选子词。词表定义 token 与整数 ID 的对应关系，批次还可能需要 padding 和特殊标记。</p>
+<blockquote>
+<p>第三讲第 19 页将 Tokenizer 与 Embedding 合并描述，本文拆开两步。Tokenizer 输出 ID，向量由模型的 Embedding 层产生；预处理也应遵循对应 tokenizer 的规则，不能把去停用词、词干化当成所有通用 LLM 的固定步骤。参见 <a target="_blank" rel="noopener" href="https://huggingface.co/docs/tokenizers/main/pipeline">Hugging Face Tokenization Pipeline</a>。</p>
+</blockquote>
+<p>Attention 本身不提供位置顺序，需要绝对位置、相对位置或 RoPE 等位置信息。原始正弦位置编码对位置 pos、偶数 &#x2F; 奇数维度分别使用：</p>
+
+<div class="course-math">
+\[
+PE_{pos,2i}=\sin\!\left(\frac{pos}{10000^{2i/d}}\right),\qquad
+PE_{pos,2i+1}=\cos\!\left(\frac{pos}{10000^{2i/d}}\right).
+\]
+</div>
+
+
+<p>d 为表示维度；同一频率的一对正余弦可以用旋转关系表达位置偏移。RoPE 则把 Q、K 的成对维度按位置旋转，使点积体现相对位置。</p>
+<h3 id="5-2-Q、K、V-与缩放点积注意力"><a href="#5-2-Q、K、V-与缩放点积注意力" class="headerlink" title="5.2 Q、K、V 与缩放点积注意力"></a>5.2 Q、K、V 与缩放点积注意力</h3><p>Q 表示“当前在找什么”，K 表示“可被匹配的信息特征”，V 表示“匹配后要汇总的内容”。自注意力中三者来自同一输入的不同线性投影。</p>
+
+<div class="course-math">
+\[
+Q=XW_Q,\quad K=XW_K,\quad V=XW_V,
+\qquad O=\operatorname{softmax}\!\left(\frac{QK^{\mathsf T}}{\sqrt{d_k}}+M\right)V.
+\]
+</div>
+
+
+<p>单头忽略 batch 时，Q、K 的形状为 <code>L×d_k</code>，V 为 <code>L×d_v</code>，注意力分数与权重为 <code>L×L</code>，输出为 <code>L×d_v</code>。L 是序列长度，M 是可选掩码；除以 √dₖ 控制点积尺度，Softmax 按可关注位置归一化。</p>
+<p><img src="/images/courses/deep-learning-systems/attention.png" srcset="/img/loading.gif" lazyload alt="输入分别投影为Q、K、V，计算注意力分数、归一化权重，再加权汇总V"><br><em>图：第二讲第 85 页。投影、QKᵀ 与 AV 都涉及矩阵乘法。</em></p>
+<p><strong>多头注意力</strong>在不同子空间学习关系，再拼接并投影输出。头可以关注不同信息，但“每个头恰好负责一种固定语义”只是帮助理解的示意。</p>
+<h3 id="5-3-Block-的其他部分"><a href="#5-3-Block-的其他部分" class="headerlink" title="5.3 Block 的其他部分"></a>5.3 Block 的其他部分</h3><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>FFN</td>
+<td>对每个 token 独立进行特征变换，常由升维、非线性、降维组成</td>
+</tr>
+<tr>
+<td>残差</td>
+<td><code>x+F(x)</code>，保留原始信息、改善梯度传播</td>
+</tr>
+<tr>
+<td>LayerNorm &#x2F; RMSNorm</td>
+<td>调整特征尺度，帮助训练稳定</td>
+</tr>
+<tr>
+<td>因果掩码</td>
+<td>训练预测当前位置后续 token 时，禁止看到未来信息</td>
+</tr>
+<tr>
+<td>输出线性层</td>
+<td>将隐藏向量映射到词表大小的 logits</td>
+</tr>
+<tr>
+<td>Softmax 与选择策略</td>
+<td>得到候选 token 概率，并选出下一项</td>
+</tr>
+</tbody></table>
+<p>原始 Encoder-Decoder 的 Decoder 包含掩码自注意力及对 Encoder 输出的交叉注意力；<strong>不能把这种“双注意力”结构直接套到所有 Decoder-only 模型</strong>。</p>
+<p>关键超参数是层数、隐藏维度、头数、FFN 中间维度和词表大小。Attention、FFN、参数存储和长序列中间张量是主要系统开销来源。课件还点到 MoE、FlashAttention、SSM &#x2F; Mamba 等演进方向：MoE 用 Router 为每个 token 选择少量 Expert，增加总容量而控制每 token 激活计算，但也带来调度与通信问题。</p>
+<p><span id="s-minimind"></span></p>
+<h2 id="6-MiniMind：把-Transformer-放到具体模型里"><a href="#6-MiniMind：把-Transformer-放到具体模型里" class="headerlink" title="6. MiniMind：把 Transformer 放到具体模型里"></a>6. MiniMind：把 Transformer 放到具体模型里</h2><p><em>来源：第二讲第 96–104 页。以下配置均指课件中的 MiniMind-3 Dense 示例。</em></p>
+<table>
+<thead>
+<tr>
+<th>部分</th>
+<th>课件给出的设计</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>整体</td>
+<td>Decoder-only，小模型覆盖预训练、微调与强化学习链路</td>
+</tr>
+<tr>
+<td>示例规模</td>
+<td>64M 参数、8 层、隐藏维度 768</td>
+</tr>
+<tr>
+<td>注意力</td>
+<td>GQA，多个 Query 头共享较少的 KV 头</td>
+</tr>
+<tr>
+<td>归一化</td>
+<td>Pre-Norm + RMSNorm，课件还展示 Q&#x2F;K 归一化</td>
+</tr>
+<tr>
+<td>位置信息</td>
+<td>RoPE；提及 YaRN 位置外推</td>
+</tr>
+<tr>
+<td>FFN</td>
+<td>SwiGLU，课件示例默认不使用 Dropout</td>
+</tr>
+</tbody></table>
+<p><strong>RMSNorm</strong>按均方根调整尺度，省去 LayerNorm 的减均值步骤，仍带有可学习缩放。<strong>GQA</strong>保留较多 Query 头，同时减少 KV 头数，从而减少 KV 存储；课件中把 KV repeat 到 8 个头是计算表示，不能据此认为缓存本身也必须存 8 份。</p>
+<p>课件使用 <code>[1,29,768]</code> 的输入示例：29 个 token，每个 768 维；8 个 Query 头、每头 96 维，拼回输出仍为 <code>[1,29,768]</code>。RoPE 作用于 Q、K 来调整匹配关系，V 保留要汇总的内容。</p>
+<p>SwiGLU 将输入分为 Gate 和 Up 两条投影，Gate 经过 SiLU，与 Up 逐元素相乘，再通过 Down 投影并接残差。SiLU 为 <code>z·sigmoid(z)</code>。</p>
+<p>课件比较“深而窄”与“浅而宽”的小模型，在固定参数预算的相关实验中更看重深度，但也强调表示维度不能过窄；它给出的 512、1536 等经验阈值应放在具体示例中理解。</p>
+<p>训练数据路线为 <code>pretrain_t2t → sft_t2t → rlaif/agent_rl</code>，受限资源下用 mini 数据组合或已有权重做实验。课件同时介绍 MiniMind-V、MiniMind-O、扩散语言与线性模型分支，以及 Hugging Face、ModelScope 这两个模型、数据和工具资源入口。项目结构与配置以课件所对应版本为准。</p>
+<p><span id="s-finetune"></span></p>
+<h2 id="7-预训练、微调与人类对齐"><a href="#7-预训练、微调与人类对齐" class="headerlink" title="7. 预训练、微调与人类对齐"></a>7. 预训练、微调与人类对齐</h2><p><em>来源：第三讲第 35–38、46–49 页；V00 第 42 页。</em></p>
+<h3 id="7-1-各阶段在学什么"><a href="#7-1-各阶段在学什么" class="headerlink" title="7.1 各阶段在学什么"></a>7.1 各阶段在学什么</h3><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>数据与目标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>预训练</td>
+<td>网页、书籍、对话等通用数据，以及代码、科学、多语等专用数据；学习通用语言与知识表示</td>
+</tr>
+<tr>
+<td>SFT &#x2F; 指令微调</td>
+<td>人工或半自动构造的“指令—回答”示例，学习按要求完成任务</td>
+</tr>
+<tr>
+<td>人类对齐 &#x2F; RLHF</td>
+<td>利用偏好反馈进一步调整回答行为；课件概括为初始训练、收集反馈、强化学习并迭代</td>
+</tr>
+<tr>
+<td>提示与任务定制</td>
+<td>用模板、示例和领域信息组织任务输入，不一定更新模型权重</td>
+</tr>
+</tbody></table>
+<p>课件将无人工标签的语言预训练归入广义无监督学习；更具体地说，预测下一个 token、预测遮挡内容等属于<strong>从数据自身构造监督信号的自监督学习</strong>。</p>
+<p>预处理要考虑清洗、去重、格式统一与敏感信息处理。课件列出的预训练目标包括：<strong>自回归语言建模、只对后缀计损失的前缀语言建模、中间填充 FIM</strong>；模型学习什么，与损失计算覆盖哪些位置有关。</p>
+<h3 id="7-2-参数高效微调"><a href="#7-2-参数高效微调" class="headerlink" title="7.2 参数高效微调"></a>7.2 参数高效微调</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>核心思路</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LoRA</td>
+<td>冻结原权重，用两个小矩阵表示低秩增量；推理时在适用情况下合并回权重</td>
+</tr>
+<tr>
+<td>AdaLoRA</td>
+<td>动态分配不同权重更新的秩预算</td>
+</tr>
+<tr>
+<td>Prefix Tuning</td>
+<td>在注意力的 K&#x2F;V 前加入可训练连续前缀</td>
+</tr>
+<tr>
+<td>Prompt Tuning</td>
+<td>在输入表示前加入可学习的连续提示向量</td>
+</tr>
+</tbody></table>
+<p>设原权重 W₀ 为 <code>d_out×d_in</code>，低秩维度 r 远小于这两个维度，取 B 为 <code>d_out×r</code>、A 为 <code>r×d_in</code>：</p>
+
+<div class="course-math">
+\[
+W=W_0+BA,\qquad P_{trainable}=r(d_{in}+d_{out}).
+\]
+</div>
+
+
+<p>不同课件用 <code>ABᵀ</code> 或 <code>BA</code> 表达，本质由矩阵形状决定，不能只记字母次序。LoRA 主要减少可训练参数、梯度和优化器状态，<strong>基础模型权重与前向激活仍有开销</strong>。</p>
+<p><span id="s-parallel"></span></p>
+<h2 id="8-分布式训练：并行、显存与通信"><a href="#8-分布式训练：并行、显存与通信" class="headerlink" title="8. 分布式训练：并行、显存与通信"></a>8. 分布式训练：并行、显存与通信</h2><p><em>来源：第三讲第 39–45 页；V00 第 33、41 页；V01 第 167–183、238–251 页。</em></p>
+<h3 id="8-1-三类并行与基本术语"><a href="#8-1-三类并行与基本术语" class="headerlink" title="8.1 三类并行与基本术语"></a>8.1 三类并行与基本术语</h3><table>
+<thead>
+<tr>
+<th>并行方式</th>
+<th>切分对象</th>
+<th>主要代价</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DP 数据并行</td>
+<td>每卡相同模型，不同样本批次</td>
+<td>同步梯度；普通 DP 不减少每卡模型副本</td>
+</tr>
+<tr>
+<td>TP 张量并行</td>
+<td>将同一层的矩阵 &#x2F; 张量分到多卡</td>
+<td>层内需要频繁通信</td>
+</tr>
+<tr>
+<td>PP 流水线并行</td>
+<td>按层或阶段切模型</td>
+<td>传激活与反向梯度；负载不均和流水气泡</td>
+</tr>
+<tr>
+<td>3D 混合并行</td>
+<td>组合 DP、TP、PP</td>
+<td>需要同时考虑负载、显存和拓扑</td>
+</tr>
+</tbody></table>
+<p><strong>进程、Rank、Device、通信域</strong>不能混为一谈：常见映射是一进程一设备；Rank 是某通信组中的成员编号；通信域规定哪些成员一起做集合通信。逻辑上相邻的 Rank，不一定物理相邻。</p>
+<p>模型装不下、每秒吞吐不足、总训练时间太长，是扩展多卡的不同动机。一般先利用机内高速互联，再考虑跨机网络；高频 TP 通信应尽量放在高速互联域内。</p>
+<h3 id="8-2-显存不只放权重"><a href="#8-2-显存不只放权重" class="headerlink" title="8.2 显存不只放权重"></a>8.2 显存不只放权重</h3><p>训练经历前向保存激活、反向计算梯度、优化器更新三个阶段。显存峰值还包括梯度、优化器状态、可能的 FP32 主权重、激活和临时 buffer。</p>
+<p>以 <strong>7B 参数、十进制 GB</strong> 为例，按不同存储口径计算固定模型状态：</p>
+<table>
+<thead>
+<tr>
+<th>口径</th>
+<th>每参数字节数</th>
+<th>7B 模型状态，不含激活</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>只存 BF16 &#x2F; FP16 权重</td>
+<td>2</td>
+<td>14 GB，仅权重</td>
+</tr>
+<tr>
+<td>BF16 权重 + BF16 梯度 + 两份 FP32 Adam 状态</td>
+<td>2+2+8&#x3D;12</td>
+<td>84 GB</td>
+</tr>
+<tr>
+<td>上一行另加 FP32 主权重</td>
+<td>16</td>
+<td>112 GB</td>
+</tr>
+<tr>
+<td>再将梯度由 BF16 改存 FP32</td>
+<td>18</td>
+<td>126 GB</td>
+</tr>
+</tbody></table>
+<p>V01 第 245 页的 84 GB 明确不含主权重与激活，第 230 页用经典 16 B&#x2F;参数，第 207 页另举 18 B&#x2F;参数的 126 GB。<strong>口径不同必须先拆账本，不能把这些数字当成同一配置下互相矛盾的总显存。</strong></p>
+<h3 id="8-3-减少内存的手段"><a href="#8-3-减少内存的手段" class="headerlink" title="8.3 减少内存的手段"></a>8.3 减少内存的手段</h3><ul>
+<li><strong>Gradient Checkpointing &#x2F; 重计算</strong>：少存部分激活，在反向时重算，用计算换显存。</li>
+<li><strong>混合精度</strong>：减少部分张量的字节数，同时关注数值稳定。</li>
+<li><strong>ZeRO</strong>：逐阶段分片优化器状态、梯度、参数，减少普通 DP 的重复保存。</li>
+<li><strong>Offload</strong>：把部分状态卸载到 CPU &#x2F; 主机内存等，换来额外传输；课件同时介绍 ZeRO-Offload、ZeRO-Infinity。</li>
+</ul>
+<p>DeepSpeed 提供相关内存优化和并行能力；Megatron-LM 侧重张量切分等大模型并行。选择方案时，既要看装得下，也要看通信与重计算是否拖慢训练。</p>
+<h3 id="8-4-梯度同步、Ring-AllReduce-与扩展效率"><a href="#8-4-梯度同步、Ring-AllReduce-与扩展效率" class="headerlink" title="8.4 梯度同步、Ring AllReduce 与扩展效率"></a>8.4 梯度同步、Ring AllReduce 与扩展效率</h3><p>同步 DP 中，各卡计算本地梯度，通过 AllReduce 汇总并按配置平均，再作一致更新。梯度可以分桶，边反向边通信；慢 Rank 和未被掩盖的通信尾部决定何时能更新。</p>
+<p>N 张卡、每卡完整梯度大小 G 字节时，Ring AllReduce 包括 Reduce-Scatter、All-Gather，两阶段各 N−1 轮，<strong>每卡累计发送量</strong>：</p>
+
+<div class="course-math">
+\[
+Q_{send}=\frac{2(N-1)}{N}G.
+\]
+</div>
+
+
+<p>课件 8 卡、14 GB 梯度例子中，每卡发送 <code>2×7/8×14=24.5 GB</code>；这不是全系统所有卡的总流量，也不是发送与接收相加的双向总量。固定全局工作量下，计算可随加卡减少，每卡同步量却趋近常数，加速不会永远线性。</p>
+<p>通信技术要区分层次：GPU 例子有 NVLink、GPUDirect、RDMA；昇腾例子中 <strong>HCCS 是硬件互联，HCCL 是集合通信库</strong>，跨机可走 RoCE。算法、链路、拓扑、拥塞与消息粒度共同决定通信代价。</p>
+<p><span id="s-inference"></span></p>
+<h2 id="9-推理：加载、执行、缓存与解码"><a href="#9-推理：加载、执行、缓存与解码" class="headerlink" title="9. 推理：加载、执行、缓存与解码"></a>9. 推理：加载、执行、缓存与解码</h2><p><em>来源：第三讲第 51–57 页；V01 第 53–68 页。</em></p>
+<h3 id="9-1-通用推理流水线"><a href="#9-1-通用推理流水线" class="headerlink" title="9.1 通用推理流水线"></a>9.1 通用推理流水线</h3><p><strong>模型加载 → 输入预处理 → 前向执行 → 输出解码。</strong> 加载时要对齐结构、参数键与 shape、dtype、设备、驱动和运行时；切到评估模式并按推理需要关闭梯度，随后预热，避免把首次编译与内存初始化混入稳定性能。</p>
+<p>训练与推理应使用一致的输入约定。分类输出取 argmax &#x2F; top-k；检测还要处理阈值与坐标，分割要恢复掩码，数值张量经过解码才成为任务结果。</p>
+<p>Checkpoint、MindIR 等产物各有加载路径。分布式 Checkpoint 可按进程保存并在支持时重分片；Safetensors 保存张量权重，模型结构与配置另行提供，文件本身也可能分片。<strong>文件能读、参数能装载、模型行为正确，是三层不同的检查。</strong></p>
+<h3 id="9-2-LLM-的-Prefill-与-Decode"><a href="#9-2-LLM-的-Prefill-与-Decode" class="headerlink" title="9.2 LLM 的 Prefill 与 Decode"></a>9.2 LLM 的 Prefill 与 Decode</h3><p><img src="/images/courses/deep-learning-systems/prefill-decode.png" srcset="/img/loading.gif" lazyload alt="Prefill处理完整提示并建立缓存，Decode逐token增加K和V"><br><em>图：第三讲第 52 页。两阶段的输入长度和复用方式不同。</em></p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>计算与状态</th>
+<th>主要关系</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Prefill</td>
+<td>并行处理提示中的多个 token，建立初始 K&#x2F;V 缓存</td>
+<td>影响首 token 时间</td>
+</tr>
+<tr>
+<td>Decode</td>
+<td>复用历史 K&#x2F;V，为新位置计算 Q&#x2F;K&#x2F;V，通常每轮生成一个 token</td>
+<td>影响后续 token 间隔</td>
+</tr>
+</tbody></table>
+<p>KV Cache 缓存的是各层历史 <strong>K、V</strong>。它减少重复投影与历史部分的重复计算，代价是随序列与并发增长占用显存；每轮新 Query 仍需要和可见的历史信息做注意力计算。</p>
+<h3 id="9-3-从-logits-选-token"><a href="#9-3-从-logits-选-token" class="headerlink" title="9.3 从 logits 选 token"></a>9.3 从 logits 选 token</h3><table>
+<thead>
+<tr>
+<th>策略</th>
+<th>做法与取舍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Greedy</td>
+<td>取最高分 &#x2F; 最高概率 token，快，但可能单调或重复</td>
+</tr>
+<tr>
+<td>Temperature</td>
+<td>改变分布集中程度；温度越高，通常越分散</td>
+</tr>
+<tr>
+<td>Top-k</td>
+<td>只在最高概率的 k 个候选中，按重新归一化后的概率采样</td>
+</tr>
+<tr>
+<td>Top-p</td>
+<td>按累计概率阈值保留候选，再采样</td>
+</tr>
+<tr>
+<td>Beam Search</td>
+<td>维护多个高分候选序列，逐步扩展；比贪婪搜索覆盖更多路径，但成本更高</td>
+</tr>
+</tbody></table>
+<p>Top-k 是限制候选集合，不是要求在 k 个词中均匀随机抽取。自回归生成把选出的 token 加回上下文，再继续下一步。</p>
+<p><span id="s-optimization"></span></p>
+<h2 id="10-推理优化：每种方法在节省什么"><a href="#10-推理优化：每种方法在节省什么" class="headerlink" title="10. 推理优化：每种方法在节省什么"></a>10. 推理优化：每种方法在节省什么</h2><p><em>来源：第三讲第 58–84 页；V01 第 161–164、231 页。</em></p>
+<h3 id="10-1-量化与低精度"><a href="#10-1-量化与低精度" class="headerlink" title="10.1 量化与低精度"></a>10.1 量化与低精度</h3><p>量化用更低位宽表示权重或激活，减少存储与数据搬运，并在硬件、Kernel 支持时加速。<strong>QAT</strong>在训练中考虑量化影响，<strong>PTQ</strong>在训练后通过校准等方式完成量化。</p>
+<p>对称量化常把实数零对应到整数零；非对称量化还使用零点偏移来适配区间。量化公式中的 scale、zero point 与通道 &#x2F; 分组粒度都会影响误差与执行成本。</p>
+<table>
+<thead>
+<tr>
+<th>课件方法</th>
+<th>重点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AdaQuant</td>
+<td>逐层校准，减少量化层与全精度层输出的差异</td>
+</tr>
+<tr>
+<td>BRECQ</td>
+<td>按网络块重构，考虑跨层依赖，并利用二阶误差 &#x2F; Fisher 信息近似评价重要性</td>
+</tr>
+<tr>
+<td>LLM.int8()</td>
+<td>向量级量化；异常特征维度走较高精度，其余走 INT8 的混合精度分解</td>
+</tr>
+<tr>
+<td>CPU INT4 推理</td>
+<td>量化算法、粒度、group size 与 INT4 Kernel &#x2F; Runtime 协同；课件列出 GPTQ、AWQ、TEQ、SignRound 和 AVX2、AVX512、VNNI、AMX 等支持</td>
+</tr>
+</tbody></table>
+<p><strong>勘误：</strong> 第三讲第 62 页的 BRECQ 引用了 AdaQuant 的论文，并将“240 倍”描述成模型速度。原论文是 Li 等人的 <em>BRECQ</em>，240 倍指相对相关 QAT 流程<strong>产出量化模型的速度</strong>，不代表推理吞吐提升 240 倍。参见 <a target="_blank" rel="noopener" href="https://openreview.net/pdf?id=POWv6hDd9XH">BRECQ 原论文</a>。</p>
+<h3 id="10-2-Orca：把调度粒度降到每次迭代"><a href="#10-2-Orca：把调度粒度降到每次迭代" class="headerlink" title="10.2 Orca：把调度粒度降到每次迭代"></a>10.2 Orca：把调度粒度降到每次迭代</h3><p>静态批处理要求同批请求相互等待：短请求结束后占位，新请求也难插入。Orca 在<strong>迭代级</strong>重新组批，已结束请求退出，新请求进入，提高资源利用与响应效率。</p>
+<p>课件的实现视角：Linear 等操作可合并 batch 与序列维度；Attention 则按请求组织各自的历史上下文，再合并结果。不同请求长度和阶段不同，不能简单当成完全相同的张量。</p>
+<h3 id="10-3-PagedAttention：减少-KV-内存浪费"><a href="#10-3-PagedAttention：减少-KV-内存浪费" class="headerlink" title="10.3 PagedAttention：减少 KV 内存浪费"></a>10.3 PagedAttention：减少 KV 内存浪费</h3><p><img src="/images/courses/deep-learning-systems/paged-attention.png" srcset="/img/loading.gif" lazyload alt="通过映射表把各请求的逻辑KV块对应到不连续的物理显存块"><br><em>图：第三讲第 73 页。借鉴操作系统分页思想，物理块无需连续分配。</em></p>
+<p>为每个请求预留最大生成长度，会产生浪费和碎片。PagedAttention 将 KV 分成固定 token 数的块，用映射表连接逻辑块与物理块，按需分配和释放。</p>
+<p>课件类比为：请求像进程，逻辑 KV Blocks 像虚拟页，物理 KV Blocks 像物理页，token 数据像页内字节。<strong>分页优化管理方式，不会消除保存 K&#x2F;V 本身需要的字节数。</strong></p>
+<p>忽略并行切分，KV 缓存大小可按 <code>2 × 层数 × 批次 × 序列长度 × KV头数 × 每头维度 × 每元素字节数</code> 估算。课件的 40 层、KV 总维度 5120、FP16 示例，每 token 约 0.8 MB；它是该模型配置的数字，不能直接套到 GQA 模型。</p>
+<h3 id="10-4-StreamingLLM：保留“汇聚注意力”的初始位置"><a href="#10-4-StreamingLLM：保留“汇聚注意力”的初始位置" class="headerlink" title="10.4 StreamingLLM：保留“汇聚注意力”的初始位置"></a>10.4 StreamingLLM：保留“汇聚注意力”的初始位置</h3><p>完整密集 Attention 的上下文成本高；只保留最近窗口又可能导致质量下降。课件介绍 <strong>Attention Sinks</strong>：初始少量 token 在注意力分布中起特殊作用。</p>
+<p>StreamingLLM 组合初始 sink token 的 KV、最近窗口的 rolling KV，以及当前 token，并处理窗口位置与位置编码的对应。课件例子保留 4 个初始位置。<strong>能持续接收流式输入，不代表模型能检索已从窗口删除的任意遥远内容。</strong></p>
+<h3 id="10-5-推测解码：小模型起草，大模型验证"><a href="#10-5-推测解码：小模型起草，大模型验证" class="headerlink" title="10.5 推测解码：小模型起草，大模型验证"></a>10.5 推测解码：小模型起草，大模型验证</h3><p>草稿模型 q 连续提出 γ 个 token，主模型 p 并行核验；接受前缀，遇到第一个拒绝位置时按修正分布重新采样。一次主模型调用可输出 1 到 γ+1 个新 token。</p>
+<p>课件的分布保持思路是：候选 x 按 <code>min(1,p(x)/q(x))</code> 接受；拒绝后从归一化的 <code>max(0,p−q)</code> 分布补采样。接受部分贡献 <code>min(p,q)</code>，补偿部分贡献 <code>p−min(p,q)</code>，合起来仍是 p。<strong>保持分布依赖正确的接受与补偿规则，不能简单把大模型认为“不够好”的词随意替换。</strong></p>
+<h3 id="10-6-FlashAttention：优化-IO，而非减少注意力语义"><a href="#10-6-FlashAttention：优化-IO，而非减少注意力语义" class="headerlink" title="10.6 FlashAttention：优化 IO，而非减少注意力语义"></a>10.6 FlashAttention：优化 IO，而非减少注意力语义</h3><p>朴素实现把完整 <code>L×L</code> 注意力分数及概率矩阵写入 HBM。FlashAttention 对 Q&#x2F;K&#x2F;V 分块，结合在线 Softmax 和输出累加，在片上完成中间处理，减少 HBM 访问。</p>
+<p>它与 PagedAttention 的侧重点不同：前者优化<strong>注意力计算的数据流和中间读写</strong>，后者优化<strong>服务中的 KV 分配和寻址</strong>。对精确密集 Attention，不能把减少中间存储误写成算术复杂度从 O(L²) 变为 O(L)。</p>
+<p><span id="s-serving"></span></p>
+<h2 id="11-从模型推理到完整服务"><a href="#11-从模型推理到完整服务" class="headerlink" title="11. 从模型推理到完整服务"></a>11. 从模型推理到完整服务</h2><p><em>来源：第三讲第 86–111 页。</em></p>
+<h3 id="11-1-应用系统的三个模块"><a href="#11-1-应用系统的三个模块" class="headerlink" title="11.1 应用系统的三个模块"></a>11.1 应用系统的三个模块</h3><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>组成与职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据预处理 &#x2F; Embedding</td>
+<td>采集、加载、解析数据，生成向量并保存到向量库</td>
+</tr>
+<tr>
+<td>Prompt 构建 &#x2F; 检索</td>
+<td>组合模板、少量示例、外部 API 信息和检索文档</td>
+</tr>
+<tr>
+<td>Prompt 执行 &#x2F; 推理</td>
+<td>调用模型，附加缓存、日志、验证和应用托管</td>
+</tr>
+</tbody></table>
+<p>这里的检索增强是在推理输入中加入相关资料，不等于把资料重新训练进权重。LLM Cache 与 KV Cache 也不同：前者可缓存应用请求 &#x2F; 回答，后者保存模型内部注意力历史。</p>
+<p>课件列举的工具生态可按职责归类，记用途比逐个记产品更有效：</p>
+<table>
+<thead>
+<tr>
+<th>用途</th>
+<th>课件例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据流水线、向量模型与向量库</td>
+<td>Databricks、Airflow；OpenAI、Cohere、Hugging Face；Pinecone、Weaviate、Vespa、Qdrant、Chroma、Faiss</td>
+</tr>
+<tr>
+<td>模型 API 与托管</td>
+<td>专有 API、开放模型 API、自托管；AWS、GCP、Azure，以及课件列出的专用服务</td>
+</tr>
+<tr>
+<td>应用缓存</td>
+<td>Redis、SQLite、GPTCache</td>
+</tr>
+<tr>
+<td>日志、评估与验证</td>
+<td>Weights &amp; Biases、MLflow、PromptLayer；Guardrails、Rebuff</td>
+</tr>
+<tr>
+<td>应用托管与编排</td>
+<td>Vercel、Steamship、Anyscale、Modal，以及 LangChain 等编排组件</td>
+</tr>
+</tbody></table>
+<p>这些是课件中的分类示例，不作为各产品当前功能、价格或可用性的比较。</p>
+<h3 id="11-2-vLLM：Scheduler、KV-管理器与模型执行器"><a href="#11-2-vLLM：Scheduler、KV-管理器与模型执行器" class="headerlink" title="11.2 vLLM：Scheduler、KV 管理器与模型执行器"></a>11.2 vLLM：Scheduler、KV 管理器与模型执行器</h3><p>课件中的 V1 主线是：加载模型并估算 KV 容量，初始化 Scheduler &#x2F; KV Manager &#x2F; ModelExecutor，按每轮 <strong>token 预算</strong>组织执行。运行中和等待中的请求、分块 Prefill、Decode 可以在调度中共同出现；资源不足时可能等待或抢占。</p>
+<p>课件例子：3 个 prompt 长度为 3、5、12，每轮 token 预算为 10：</p>
+<table>
+<thead>
+<tr>
+<th>轮次</th>
+<th>r1 &#x2F; r2 &#x2F; r3 的处理量</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Step 0</td>
+<td>3 &#x2F; 5 &#x2F; 2</td>
+<td>r1、r2 完成提示处理，r3 还剩 10 个 prompt token</td>
+</tr>
+<tr>
+<td>Step 1</td>
+<td>1 &#x2F; 1 &#x2F; 8</td>
+<td>前两者 Decode，r3 继续 Prefill</td>
+</tr>
+<tr>
+<td>Step 2</td>
+<td>1 &#x2F; 1 &#x2F; 2</td>
+<td>r3 完成剩余 Prefill</td>
+</tr>
+<tr>
+<td>Step 3</td>
+<td>1 &#x2F; 1 &#x2F; 1</td>
+<td>三者共同 Decode</td>
+</tr>
+</tbody></table>
+<p>表中的数字是<strong>调度的 token 工作量</strong>，不能把 r3 的 8 个 Prefill token 误读为生成了 8 个输出 token。大模型还可按张量并行跨卡执行，KV 块由管理器按需分配和回收。</p>
+<h3 id="11-3-MLC-LLM-与可靠服务"><a href="#11-3-MLC-LLM-与可靠服务" class="headerlink" title="11.3 MLC LLM 与可靠服务"></a>11.3 MLC LLM 与可靠服务</h3><p>MLC LLM 通过编译与 MLCEngine 面向多平台部署，课件强调本地运行的隐私、离线、定制与应用嵌入能力。第三讲第 105 页标题写 Text Generation Inference，但示例是 <code>from vllm import LLM</code>，实际属于 <strong>vLLM</strong>，复现时应按导入的库判断。</p>
+<p>课件最后把挑战归为：长任务推理与协作、多模态与动态场景、高效推理与规模服务、智能体权限和提示注入、幻觉偏见隐私，以及持续评测与治理。知识点在于：可靠性要靠过程检查、失败恢复、权限控制、监测和反馈闭环共同实现。</p>
+<p><span id="s-hardware"></span></p>
+<h2 id="12-CPU、GPU、FPGA、ASIC-与-DSA"><a href="#12-CPU、GPU、FPGA、ASIC-与-DSA" class="headerlink" title="12. CPU、GPU、FPGA、ASIC 与 DSA"></a>12. CPU、GPU、FPGA、ASIC 与 DSA</h2><p><em>来源：第一讲第 23、49–50 页；V01 第 90–111、184–200 页。</em></p>
+<h3 id="12-1-不同架构的分工与取舍"><a href="#12-1-不同架构的分工与取舍" class="headerlink" title="12.1 不同架构的分工与取舍"></a>12.1 不同架构的分工与取舍</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>主要特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CPU</td>
+<td>ISA 定义指令、数据类型、寄存器与寻址等；擅长控制逻辑和低延迟串行任务，多级缓存缓解访存</td>
+</tr>
+<tr>
+<td>协处理 &#x2F; 扩展单元</td>
+<td>如 AVX、AMX，为特定计算模式增加硬件支持</td>
+</tr>
+<tr>
+<td>GPU</td>
+<td>从图形固定管线发展到 CUDA 通用并行、SIMT 与 Tensor Core 矩阵加速；吞吐高，但仍有带宽、功耗和分支开销</td>
+</tr>
+<tr>
+<td>FPGA</td>
+<td>可重构硬件逻辑，在灵活性与定制效率之间取舍</td>
+</tr>
+<tr>
+<td>ASIC</td>
+<td>面向特定功能固化逻辑，通过驱动、CSR、表项与中断等交互</td>
+</tr>
+<tr>
+<td>DSA</td>
+<td>面向特定领域优化且保留一定可编程性，如 AI 的 TPU &#x2F; NPU、网络领域的 P4 芯片</td>
+</tr>
+</tbody></table>
+<p>DSA 常利用领域并行、数据复用、适合任务的低精度和专用编译栈提高效率；挑战是新模型适配、性能与灵活性、生态建设、标准与跨平台迁移。不同芯片的核数量、功率和峰值并不直接构成同口径性能比较。</p>
+<p>SIMD 表示一条指令同时处理多个数据元素；SIMT 用相同指令组织多个线程，课件 CUDA 例子以 32 线程组成 Warp。Tensor Core 等矩阵单元进一步支持矩阵乘累加与混合精度，不能把普通向量单元数量直接当成矩阵吞吐。</p>
+<p>课件用 TPU 脉动阵列展示数据流：权重驻留处理单元，激活与部分和在阵列中传播，减少反复访问外部存储。GPU 的 Tensor Core、CPU 的矩阵扩展也说明通用与专用能力正在相互融合。</p>
+<h3 id="12-2-Host–Device-异构执行"><a href="#12-2-Host–Device-异构执行" class="headerlink" title="12.2 Host–Device 异构执行"></a>12.2 Host–Device 异构执行</h3><p>在课件的分离式模型中，Host CPU 管控制和组织，Device 管密集计算，分别有主存与设备内存。一次任务通常是：<strong>拷入 → 下发 Kernel → 执行 → 同步 → 拷回结果</strong>。集成式 SoC 则可能共享内存，不能把独立显存和显式跨 PCIe 拷贝视为所有异构系统的必然形式。</p>
+<p>Stream 是有序任务队列：同一队列按顺序执行，不同队列在依赖与资源允许时可并发。异步调用返回只代表已提交，使用结果前须确认完成。</p>
+<p>小算子很多时，启动和下发开销可能大于实际计算；批量下发、CUDA &#x2F; ACL Graph 与整图下沉用于减少交互。数据应尽量驻留 Device，必要拷贝成批组织，并与计算重叠。课件列出的昇腾接口包括 <code>aclrtMalloc</code>、<code>aclrtMemcpy</code>、<code>aclrtCreateStream</code>、<code>aclrtSynchronizeStream</code>。</p>
+<p><span id="s-ascend"></span></p>
+<h2 id="13-昇腾达芬奇架构：计算、存储与控制协作"><a href="#13-昇腾达芬奇架构：计算、存储与控制协作" class="headerlink" title="13. 昇腾达芬奇架构：计算、存储与控制协作"></a>13. 昇腾达芬奇架构：计算、存储与控制协作</h2><p><em>来源：V00 第 30–39 页；V01 第 112–166 页。</em></p>
+<h3 id="13-1-从-SoC-到-AI-Core"><a href="#13-1-从-SoC-到-AI-Core" class="headerlink" title="13.1 从 SoC 到 AI Core"></a>13.1 从 SoC 到 AI Core</h3><p>昇腾处理器内，<strong>AI Core</strong>承担密集矩阵 &#x2F; 向量计算，<strong>AI CPU</strong>处理不适合 AI Core 的复杂算子，控制 CPU 与 TS 参与管理和任务调度；DVPP 负责图像视频预处理，外部接口与 HBM &#x2F; DDR、L2 等提供数据通路。310、910 的课件示例规模不同，不宜混用其核数和存储规格。</p>
+<p><img src="/images/courses/deep-learning-systems/ai-core.png" srcset="/img/loading.gif" lazyload alt="AI Core中的矩阵、向量、标量、存储和控制单元协同"><br><em>图：V01 第 120 页，课件所示达芬奇 AI Core 组织方式。</em></p>
+<table>
+<thead>
+<tr>
+<th>单元</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Cube</td>
+<td>矩阵乘加，是 MatMul 和卷积的主要计算资源；课件展示 16×16 分块</td>
+</tr>
+<tr>
+<td>Vector</td>
+<td>激活、归一化、逐元素计算、部分格式变换与非矩阵操作</td>
+</tr>
+<tr>
+<td>Scalar</td>
+<td>地址、参数、循环、分支与指令控制</td>
+</tr>
+<tr>
+<td>MTE &#x2F; DMA</td>
+<td>数据搬运，部分路径支持随路类型或格式转换</td>
+</tr>
+<tr>
+<td>Buffer &#x2F; 寄存器</td>
+<td>缓存输入、中间结果与累加结果，支撑复用</td>
+</tr>
+</tbody></table>
+<p>课件还介绍矩阵 A 按行、B 按列的分块存储，以及“大 Z 小 Z &#x2F; 大 Z 小 N &#x2F; 大 N 小 Z”等布局记号。记忆重点是：<strong>逻辑矩阵形状相同，物理分块布局可以不同，布局要匹配计算单元的取数方式。</strong></p>
+<h3 id="13-2-Buffer-层次与-AIV-AIC-路径"><a href="#13-2-Buffer-层次与-AIV-AIC-路径" class="headerlink" title="13.2 Buffer 层次与 AIV &#x2F; AIC 路径"></a>13.2 Buffer 层次与 AIV &#x2F; AIC 路径</h3><p>按课件 910B2 示例，L0A &#x2F; L0B 各 64 KiB、L0C 128 KiB、UB 192 KiB、L1 512 KiB、L2 192 MiB，另有 BT 等特定用途 Buffer。数值是示例型号约束，实际开发需查目标平台。</p>
+<ul>
+<li><strong>AIV 路径</strong>：CopyIn 到本地输入队列 → Vector Compute → 输出队列 → CopyOut。</li>
+<li><strong>AIC 路径</strong>：矩阵从 GM 进入本地存储 → 分块与格式转换 → Cube 计算 → 中间结果累加 &#x2F; 后处理 → 写回。</li>
+<li><strong>逻辑位置核对</strong>：A1 &#x2F; B1 对应 L1，A2 &#x2F; B2 对应 L0A &#x2F; L0B，CO1 对应 L0C；CO2 的具体落点与实现有关。</li>
+</ul>
+<blockquote>
+<p>V01 第 143 页把 A1 &#x2F; A2 等直接标成 L2 &#x2F; L1 cache，容易与物理层次混淆。上文按 <a target="_blank" rel="noopener" href="https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_00013.html">Ascend C 官方术语表</a>修正。AIC &#x2F; AIV 在分离架构中分别表示 Cube Core &#x2F; Vector Core，不能把所有型号都当成完全相同的内部结构。</p>
+</blockquote>
+<h3 id="13-3-并发流水线与同步"><a href="#13-3-并发流水线与同步" class="headerlink" title="13.3 并发流水线与同步"></a>13.3 并发流水线与同步</h3><p>标量、矩阵、向量和存储转换队列可并发；顺序发令不表示不同执行单元天然按代码顺序完成。SetFlag &#x2F; WaitFlag 等同步机制保证数据已就绪，再让依赖它的流水线继续。</p>
+<p>课件的三个场景：</p>
+<ol>
+<li><strong>MatMul + LeakyReLU</strong>：Cube 做矩阵计算，Vector 做逐元素处理，跨核接力需同步。</li>
+<li><strong>Conv + BN + ReLU</strong>：推理时固定统计量的 BN 可折叠进卷积参数，再结合激活融合，减少中间读写与启动；具体能否自动融合取决于模式和实现。</li>
+<li><strong>FlashAttention</strong>：Cube 计算 QKᵀ、AV，Vector 做缩放 &#x2F; Softmax，Scalar 管理循环与同步，并通过分块重叠执行。</li>
+</ol>
+<h3 id="13-4-HBM、Tiling-与双缓冲"><a href="#13-4-HBM、Tiling-与双缓冲" class="headerlink" title="13.4 HBM、Tiling 与双缓冲"></a>13.4 HBM、Tiling 与双缓冲</h3><p>HBM 用 TSV、堆叠 DRAM 与近计算芯片的高密度封装提供宽接口。课件从 HBM2、2E、3、3E 讲到 HBM4 的带宽、容量、通道与能耗演进；产品与路线图参数应分别理解，核心问题是<strong>带宽增长和算力增长不总匹配</strong>。</p>
+<p>Tiling 将大矩阵切成能放入片上存储的小块，追求时间复用与空间复用；大 Tile 复用好但占空间，小 Tile 有利并行却可能增加搬运。边界与对齐还可能需要补零、转置、格式转换。</p>
+<p>Double Buffer 用两组缓冲交替工作：计算当前块时预取下一块，隐藏部分搬运时间。代价是占更多片上容量，还要确保队列和同步正确；异步搬运并不意味着等待一定能完全消失。</p>
+<p><strong>GPU 也有软件管理的 Shared Memory，不能一概说“GPU 自动、NPU 手工”。</strong> 课件比较的重点是昇腾算子开发中显式 Buffer、MTE 和同步的突出地位。普通 CUDA Shared Memory 的共享范围是同一 thread block 内的线程；第 163 页“供多个 thread block 共享”的表述应附加特殊机制条件，参见 <a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/archive/13.2.2/cuda-programming-guide/02-basics/writing-cuda-kernels.html">NVIDIA CUDA 文档</a>。</p>
+<p><span id="s-performance"></span></p>
+<h2 id="14-开销估算、Roofline-与关键路径"><a href="#14-开销估算、Roofline-与关键路径" class="headerlink" title="14. 开销估算、Roofline 与关键路径"></a>14. 开销估算、Roofline 与关键路径</h2><p><em>来源：V01 第 201–237 页。</em></p>
+<h3 id="14-1-先区分模型规模与运行规模"><a href="#14-1-先区分模型规模与运行规模" class="headerlink" title="14.1 先区分模型规模与运行规模"></a>14.1 先区分模型规模与运行规模</h3><p>N 层、隐藏维度 d、FFN 中间维度 dff 决定主体权重；批次 B、序列长度 L 决定一次输入和激活规模；精度决定每个元素占多少字节。</p>
+<p>对课件采用的标准多头 Attention、两层非门控 FFN，忽略偏置与 Norm：</p>
+
+<div class="course-math">
+\[
+P_{layer}\approx4d^2+2d\,d_{ff},\qquad
+F_{fwd,layer}\approx8BLd^2+4BL^2d+4BLd\,d_{ff}.
+\]
+</div>
+
+
+<p>这里一次乘加计 2 FLOPs；主体参数按层累计，还要另计词嵌入 &#x2F; 输出层。若 <code>dff=4d</code>，每层参数约 12d²，前向约 <code>24BLd²+4BL²d</code>。GQA、SwiGLU、MoE 不能不改结构假设就套用这些系数。</p>
+<p>短序列时投影与 FFN 往往更重；L 增加，Attention 关系项按 L² 增长，其与主体矩阵乘的相对量在该假设下约为 <code>L/(6d)</code>。<strong>长序列不仅增加运算，也增加中间结果与 IO 压力。</strong></p>
+<p>常规稠密 Transformer 的粗略训练预算是 <code>C≈6PT</code>，P 为参数量，T 为训练 token 总数；前向约 2PT、反向约 4PT。它忽略部分注意力平方项、重计算、通信等，用于早期估算；训练时间要除以有效吞吐，不能直接除硬件标称峰值就当成实测时间。</p>
+<h3 id="14-2-Roofline：算力上界与带宽上界"><a href="#14-2-Roofline：算力上界与带宽上界" class="headerlink" title="14.2 Roofline：算力上界与带宽上界"></a>14.2 Roofline：算力上界与带宽上界</h3><p>设算术工作量 W 为 FLOPs，显存搬运量 Q 为字节，算术强度 I&#x3D;W&#x2F;Q；硬件峰值算力为 Ppeak，所选层次的带宽为 Bmem：</p>
+
+<div class="course-math">
+\[
+P\le\min(P_{peak},I B_{mem}),\qquad I^*=P_{peak}/B_{mem}.
+\]
+</div>
+
+
+<p><img src="/images/courses/deep-learning-systems/roofline.png" srcset="/img/loading.gif" lazyload alt="低算术强度受带宽限制，高算术强度受算力上限限制的Roofline示意"><br><em>图：V01 第 210 页。图中数字属于课件选定的硬件口径，方法本身可用于其他平台。</em></p>
+<p>I 低于脊点 I* 时常受带宽约束，提高复用可提升上界；高于脊点后受算力上界限制。显存<strong>容量</strong>回答装不装得下，显存<strong>带宽</strong>回答数据送得够不够快，两者必须分别检查。</p>
+<h3 id="14-3-Hockney、重叠与关键路径"><a href="#14-3-Hockney、重叠与关键路径" class="headerlink" title="14.3 Hockney、重叠与关键路径"></a>14.3 Hockney、重叠与关键路径</h3><p>一次消息传输可近似为 <code>α+nβ</code>，α 是固定启动时延，β 是每字节传输耗时。若集合通信共 s 轮、累计传 n 字节，则近似 <code>sα+nβ</code>。小消息更容易受启动时延影响，大消息更容易受带宽影响。</p>
+<p>计算、访存与通信并非总按顺序发生；端到端时间由依赖链中<strong>最长的关键路径</strong>决定。通信与反向重叠后，只有未被隐藏的部分继续延长 step。</p>
+<p>课件的瓶颈诊断流程是：<strong>定义负载和计时边界 → 计算工作量与搬运量 → 建立性能模型 → 对照真实依赖链 → 改一项并端到端复测</strong>。增加片上复用、重计算、压缩、并行都会转移成本，必须保持输入、精度、预热和起止边界一致，才能比较净收益。</p>
+<p><span id="s-metrics"></span></p>
+<h2 id="15-在线推理指标：吞吐、延迟与饱和"><a href="#15-在线推理指标：吞吐、延迟与饱和" class="headerlink" title="15. 在线推理指标：吞吐、延迟与饱和"></a>15. 在线推理指标：吞吐、延迟与饱和</h2><p><em>来源：V01 第 253–269 页。</em></p>
+<p><strong>一次模型前向耗时，不等于用户等待时间。</strong> 完整链路包括网络接入、预处理、排队调度、Prefill、Decode 和结果传输。</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>定义与注意事项</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TTFT</td>
+<td>请求提交到第一个输出 token 返回，通常含排队、Prefill、网络等</td>
+</tr>
+<tr>
+<td>TPOT</td>
+<td>第一个输出 token 后，相邻 token 的平均时间间隔</td>
+</tr>
+<tr>
+<td>E2E</td>
+<td>完整请求的端到端延迟</td>
+</tr>
+<tr>
+<td>P95 &#x2F; P99</td>
+<td>描述慢请求尾部的分位数，不能只看平均值</td>
+</tr>
+<tr>
+<td>TPS</td>
+<td>单位时间处理 &#x2F; 生成的 token 数，要注明输入、输出或合计</td>
+</tr>
+<tr>
+<td>RPS</td>
+<td>单位时间成功完成的请求数，与每次生成多少 token 不等价</td>
+</tr>
+<tr>
+<td>并发数 &#x2F; Batch Size</td>
+<td>前者是系统中同时存在的请求规模，后者是一批参与执行的请求数</td>
+</tr>
+</tbody></table>
+<p>若输出 token 数为 Nout&gt;1，在课件一致的测量口径下：</p>
+
+<div class="course-math">
+\[
+TPOT=\frac{E2E-TTFT}{N_{out}-1},\qquad
+E2E=TTFT+(N_{out}-1)TPOT.
+\]
+</div>
+
+
+<p><img src="/images/courses/deep-learning-systems/serving-saturation.png" srcset="/img/loading.gif" lazyload alt="并发增加后吞吐趋于平台，尾部延迟在饱和区显著上升"><br><em>图：V01 第 264 页。更高并发不一定带来更高有效吞吐。</em></p>
+<p>排查时先判断是否饱和：<strong>TTFT 高</strong>看接入、排队、Prefill；<strong>TPOT 高</strong>看 Decode 执行与数据供给；<strong>OOM &#x2F; 显存持续增长</strong>看 KV 容量和调度；同时观察 TPS、RPS、P95&#x2F;P99、错误率和设备利用率。</p>
+<p><span id="s-platform"></span></p>
+<h2 id="16-昇腾软件栈、平台与课程实验"><a href="#16-昇腾软件栈、平台与课程实验" class="headerlink" title="16. 昇腾软件栈、平台与课程实验"></a>16. 昇腾软件栈、平台与课程实验</h2><p><em>来源：第一讲第 52–74 页；V00 第 30–47 页；课程大纲第 3–6 页。</em></p>
+<h3 id="16-1-各组件分别负责什么"><a href="#16-1-各组件分别负责什么" class="headerlink" title="16.1 各组件分别负责什么"></a>16.1 各组件分别负责什么</h3><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>定位</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PyTorch + torch_npu &#x2F; MindSpore</td>
+<td>模型定义、训练与框架适配入口</td>
+</tr>
+<tr>
+<td>CANN</td>
+<td>承上启下的计算软件栈，包括图引擎、算子、通信、编译与 AscendCL 等</td>
+</tr>
+<tr>
+<td>GE</td>
+<td>图优化、编译和执行控制；配合 Runtime 与任务调度落到设备</td>
+</tr>
+<tr>
+<td>Ascend C</td>
+<td>面向算子开发，关注 Tiling、CopyIn &#x2F; Compute &#x2F; CopyOut、缓冲与同步</td>
+</tr>
+<tr>
+<td>Runtime &#x2F; Driver</td>
+<td>Device、内存、Stream、Event、任务提交与设备管理</td>
+</tr>
+<tr>
+<td>MindStudio</td>
+<td>开发、编译、运行调试与 Profiling</td>
+</tr>
+<tr>
+<td>MindSpeed</td>
+<td>训练加速，围绕计算、内存、通信、并行和长序列协同优化</td>
+</tr>
+<tr>
+<td>ATC &#x2F; OM &#x2F; msame</td>
+<td>模型转换到离线 OM，以及加载验证和离线推理；常见路线是 ONNX → ATC → OM → AscendCL</td>
+</tr>
+<tr>
+<td>MindIE &#x2F; AISBench</td>
+<td>推理引擎与服务，以及相应评测 &#x2F; 并发压测工具</td>
+</tr>
+<tr>
+<td>ModelArts &#x2F; CANNLab</td>
+<td>课件中的模型开发训练管理平台 &#x2F; 实验环境载体</td>
+</tr>
+</tbody></table>
+<p><strong>离线 OM 推理与大模型 MindIE 服务是不同部署路径，不应理解成所有 MindIE 模型都必须先变成 OM。</strong> 第一讲第 69 页已将两条调用链分开画出。</p>
+<h3 id="16-2-平台与开发循环"><a href="#16-2-平台与开发循环" class="headerlink" title="16.2 平台与开发循环"></a>16.2 平台与开发循环</h3><p>Atlas 模块、开发板、边缘小站、训练 &#x2F; 推理服务器和集群覆盖端边云；课件展示 Atlas 200DK 的系统卡、主机、网络、工具包准备，以及 800T &#x2F; 800I 等训练和推理产品。旧开发板的安装示例用于理解组成，实际版本按实验环境匹配。</p>
+<p>工程循环为：<strong>构建模型 → 编译 &#x2F; 图优化 → Profiling → 找瓶颈 → 优化 → 部署与复测</strong>。优化手段包括算子融合、拆分、替换、自动调优、量化与结构调整；可用 <code>npu-smi</code>、<code>msprof</code>、HCCL Test 等辅助定位。MLPerf、BenchIP 是课件介绍的评测入口。</p>
+<p>端侧部署还受体积、功耗、时延、隐私和异构硬件约束；课件点到混合位宽量化、压缩、超轻量运行时、算子间 &#x2F; 算子内并行，以及在线学习和联邦学习。</p>
+<h3 id="16-3-大纲中列出、当前独立讲义尚未完整展开的主题"><a href="#16-3-大纲中列出、当前独立讲义尚未完整展开的主题" class="headerlink" title="16.3 大纲中列出、当前独立讲义尚未完整展开的主题"></a>16.3 大纲中列出、当前独立讲义尚未完整展开的主题</h3><table>
+<thead>
+<tr>
+<th>主题</th>
+<th>按大纲保留的知识框架</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>适配软件栈</td>
+<td>计算图与 IR、TVM 张量表达、计算与调度分离、自动调优、VTA 适配</td>
+</tr>
+<tr>
+<td>模型轻量化</td>
+<td>剪枝、稀疏、量化、结构优化、低秩分解、蒸馏；精度与真实硬件开销协同</td>
+</tr>
+<tr>
+<td>NAS</td>
+<td>搜索空间、搜索策略、性能估计；权重共享、可微搜索、多目标与硬件感知 &#x2F; 大模型辅助搜索</td>
+</tr>
+<tr>
+<td>系统开发</td>
+<td>混合并行、LoRA、模型转换、MindIE &#x2F; AISBench、缓存调度及云边端协同</td>
+</tr>
+</tbody></table>
+<p>当前课件已经涉及其中部分内容，上表其余部分仅保留大纲级定义，不补写未提供讲义的算法细节。</p>
+<p>10 项实验串起四个模块：① PyTorch 流水线、CANNLab 环境、torch_npu 运行；② Ascend C 算子、MatMul Tiling 与双缓冲；③ 混合并行、LoRA；④ ONNX &#x2F; OM 部署、MindIE &#x2F; AISBench 压测、端侧推理应用。课件要求保留代码、报告、运行说明与关键日志，通过正确性基准和对照实验说明优化收益。</p>
+<p><span id="s-sources"></span></p>
+<h2 id="17-快速自测、易错点与课件索引"><a href="#17-快速自测、易错点与课件索引" class="headerlink" title="17. 快速自测、易错点与课件索引"></a>17. 快速自测、易错点与课件索引</h2><h3 id="17-1-六个问题贯穿全课"><a href="#17-1-六个问题贯穿全课" class="headerlink" title="17.1 六个问题贯穿全课"></a>17.1 六个问题贯穿全课</h3><ol>
+<li><strong>模型在算什么？</strong> 把层展开为张量、矩阵乘、归一化、激活、重排与依赖。</li>
+<li><strong>训练比推理多了什么？</strong> 梯度、激活保留、优化器状态，以及参数更新。</li>
+<li><strong>为什么加卡不一定更快？</strong> 通信、慢卡、流水气泡、拓扑和同步限制扩展。</li>
+<li><strong>为什么参数少不一定运行快？</strong> 真实时间还受 Kernel、布局、带宽和调度影响。</li>
+<li><strong>Prefill、Decode 为什么要分别看？</strong> 两者处理的 token 数、计算复用和主要指标不同。</li>
+<li><strong>怎样证明优化有效？</strong> 同一负载、精度、预热与计时口径下，先验证正确性，再比较端到端结果。</li>
+</ol>
+<h3 id="17-2-勘误与口径提示"><a href="#17-2-勘误与口径提示" class="headerlink" title="17.2 勘误与口径提示"></a>17.2 勘误与口径提示</h3><table>
+<thead>
+<tr>
+<th>位置</th>
+<th>本文处理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第三讲第 19 页</td>
+<td>拆开 Tokenizer→IDs 与 Embedding→向量</td>
+</tr>
+<tr>
+<td>第三讲第 37 页</td>
+<td>预处理依模型与任务确定，去停用词 &#x2F; 词干化不是通用 LLM 必需流程</td>
+</tr>
+<tr>
+<td>第三讲第 62 页</td>
+<td>BRECQ 论文归属及“240 倍”含义按原论文修正</td>
+</tr>
+<tr>
+<td>第三讲第 105 页</td>
+<td>示例实际调用 vLLM，不能按标题误认成 TGI</td>
+</tr>
+<tr>
+<td>V01 第 143 页</td>
+<td>A1 &#x2F; A2 等逻辑存储位置按官方术语表核对</td>
+</tr>
+<tr>
+<td>V01 第 158、163 页</td>
+<td>GPU 同样有显式管理存储；普通 Shared Memory 不能不加条件地跨 block 共享</td>
+</tr>
+<tr>
+<td>V01 第 207、230、245 页</td>
+<td>18、16、12 B&#x2F;参数分别拆账本，区分梯度类型、主权重和激活</td>
+</tr>
+<tr>
+<td>FlashAttention、GQA 与 Kernel 指标</td>
+<td>区分算术量、显存量、数据布局和实际吞吐，不混用复杂度与加速口径</td>
+</tr>
+</tbody></table>
+<p>第二讲关于 Adam、硬件优劣和具体产品的简化比较，以“给定任务与实现下的经验”理解。第三代智能系统、能力涌现等保持课件的观察 &#x2F; 展望性质，不上升为无条件结论。</p>
+<h3 id="17-3-六份资料与覆盖关系"><a href="#17-3-六份资料与覆盖关系" class="headerlink" title="17.3 六份资料与覆盖关系"></a>17.3 六份资料与覆盖关系</h3><p>以下均为 <strong>PDF 页序</strong>。正文中的“V00”“V01”分别指后两份资料。</p>
+<table>
+<thead>
+<tr>
+<th>文件与页数</th>
+<th>主要内容与本文对应</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>第一讲：课程概述.pdf</code>，75 页</td>
+<td>7–14、20–37：系统观与演进；39–51：输入建模实现运行输出、框架与架构；52–74：平台、开发、优化与实验。对应第 1、12、16 节</td>
+</tr>
+<tr>
+<td><code>第二讲：深度学习模型.pdf</code>，104 页</td>
+<td>3–39：NN、BP 与深层训练；41–63：CNN；65–78：语言模型与生成模型；80–94：Transformer；96–104：MiniMind。对应第 2–6 节</td>
+</tr>
+<tr>
+<td><code>第三讲：大模型技术.pdf</code>，111 页</td>
+<td>3–33：背景、分词与结构；35–49：训练与微调；51–84：推理与优化；86–108：服务与框架；110–111：未来挑战。对应第 4–11 节</td>
+</tr>
+<tr>
+<td><code>深度学习系统-课程大纲-2026.pdf</code>，6 页</td>
+<td>知识体系、后续专题与 10 项实验；只按提供的深度归纳。对应第 16 节</td>
+</tr>
+<tr>
+<td><code>昇腾体系化课程/V00-课程导学.pdf</code>，49 页</td>
+<td>7–24：系统与全栈；30–39：硬件和软件；41–47：并行、LoRA、量化、转换与推理。对应第 1、7–8、13、16 节</td>
+</tr>
+<tr>
+<td><code>昇腾体系化课程/V01-第一章：算力系统演进.pdf</code>，271 页</td>
+<td>6–89：系统抽象、训练推理与 MNIST；94–166：处理器、达芬奇与存储；171–217：多卡、异构与性能模型；223–251：Transformer 开销、显存与通信；257–269：在线推理。对应第 1–3、8–10、12–15 节</td>
+</tr>
+</tbody></table>
+<p>封面、重复目录、学习目标、致谢、人员联系方式等未逐页复述。所配图示来自对应课件，保留其语境；只有正文明确标记的概念错误、符号或统计口径作了修正和澄清。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" class="category-chain-item">深度学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" class="print-no-link">#深度学习</a>
+      
+        <a href="/tags/AI%E7%B3%BB%E7%BB%9F/" class="print-no-link">#AI系统</a>
+      
+        <a href="/tags/%E6%98%87%E8%85%BE/" class="print-no-link">#昇腾</a>
+      
+        <a href="/tags/%E8%AF%BE%E7%A8%8B%E5%A4%8D%E4%B9%A0/" class="print-no-link">#课程复习</a>
+      
+    </div>
+  
+</div>
+
+
+              
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/courses/deep-learning-foundations/" title="深度学习基础与应用：课件知识点复习">
+                        <span class="hidden-mobile">深度学习基础与应用：课件知识点复习</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!--<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>--> <i class="iconfont icon-love"></i> <!--<a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>--> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
