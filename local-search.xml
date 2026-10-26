@@ -53,6 +53,75 @@
   
   
   
+  <entry>
+    <title>操作系统</title>
+    <link href="/courses/operating-systems/"/>
+    <url>/courses/operating-systems/</url>
+    
+    <content type="html"><![CDATA[<ul><li><a href="/courses/operating-systems/lab0/">预备章：实验环境与工具（Lab0）</a>：Git、Shell 命令与输入输出重定向</li><li><a href="/courses/operating-systems/lab1/">第一章：内核启动与构建（Lab1）</a>：ELF、链接与反汇编、内核加载与 printk</li><li><a href="/courses/operating-systems/lab2/">第二章：内存管理（Lab2）</a>：虚拟地址、页表、TLB 与物理页管理</li><li><a href="/courses/operating-systems/lab3/">第三章：进程与调度（Lab3）</a>：进程地址空间、程序加载、时钟中断与上下文切换</li><li><a href="/courses/operating-systems/lab4/">第四章：系统调用与进程通信（Lab4）</a>：用户态与内核态、IPC、fork 与写时复制</li><li><a href="/courses/operating-systems/lab5/">第五章：文件系统（Lab5）</a>：设备访问、磁盘块、文件与目录</li><li><a href="/courses/operating-systems/lab6/">第六章：Shell 与管道（Lab6）</a>：管道通信、文件描述符与命令执行</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>操作系统</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>os</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>算法</title>
+    <link href="/courses/algorithms/"/>
+    <url>/courses/algorithms/</url>
+    
+    <content type="html"><![CDATA[<ul><li><a href="/courses/algorithms/master-theorem/">第一章：主定理</a>：分治递归式与时间复杂度分析</li><li><a href="/courses/algorithms/sorting/">第二章：排序算法</a>：常见排序算法的实现</li><li><a href="/courses/algorithms/dynamic-programming/">第三章：动态规划</a>：钢条切割、背包、矩阵连乘与公共子序列</li><li><a href="/courses/algorithms/graphs/">第四章：图算法</a>：图遍历、拓扑排序、最短路径、最小生成树与网络流</li><li><a href="/courses/algorithms/string-matching/">第五章：字符串匹配</a>：KMP、有限自动机、哈希匹配与快速幂</li><li><a href="/courses/algorithms/fft/">第六章：多项式和快速傅里叶变换</a>：点值表示、FFT、逆变换与多项式乘法</li><li><a href="/courses/algorithms/computational-geometry/">第七章：计算几何</a>：凸包、线段关系与旋转卡壳</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>算法</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>算法</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>课程</title>
+    <link href="/courses/"/>
+    <url>/courses/</url>
+    
+    <content type="html"><![CDATA[<ul><li><a href="/courses/algorithms/">算法</a>：主定理、排序、动态规划、图算法、字符串匹配、FFT 与计算几何</li><li><a href="/courses/operating-systems/">操作系统</a>：实验环境、内核启动、内存管理、进程调度、系统调用、文件系统与 Shell</li><li><a href="/courses/deep-learning-foundations/">深度学习基础与应用</a>：机器学习基础与图像分类</li><li><a href="/courses/deep-learning-systems/">深度学习系统</a>：模型结构、大模型训练推理、昇腾技术栈与算力系统</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>课程</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
   
   
   
@@ -68,44 +137,11 @@
   
   
   <entry>
-    <title>课程</title>
-    <link href="/courses/index.html"/>
-    <url>/courses/index.html</url>
-    
-    <content type="html"><![CDATA[<ul><li><a href="/courses/algorithms/">算法</a>：主定理、排序、动态规划、图算法、字符串匹配、FFT 与计算几何</li><li><a href="/courses/operating-systems/">操作系统</a>：实验环境、内核启动、内存管理、进程调度、系统调用、文件系统与 Shell</li><li><a href="/courses/deep-learning-foundations/">深度学习基础与应用</a>：机器学习基础与图像分类</li><li><a href="/courses/deep-learning-systems/">深度学习系统</a>：模型结构、大模型训练推理、昇腾技术栈与算力系统</li></ul>]]></content>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>多项式和快速傅里叶变换</title>
     <link href="/courses/algorithms/fft/index.html"/>
     <url>/courses/algorithms/fft/index.html</url>
     
     <content type="html"><![CDATA[<p><a href="/courses/algorithms/">← 算法章节目录</a></p><h2 id="多项式和快速傅里叶变换"><a href="#多项式和快速傅里叶变换" class="headerlink" title="多项式和快速傅里叶变换"></a>多项式和快速傅里叶变换</h2><h3 id="FFT算法"><a href="#FFT算法" class="headerlink" title="FFT算法"></a>FFT算法</h3><p>多项式用点值表示</p><p>首先设一个多项式 $A(x)$</p><p>$A(x)&#x3D;\sum_{i&#x3D;0}^{n-1}a_ix^i&#x3D;a_0+a_1x+a_2x^2+…+a_{n-1}x^{n-1}$</p><p>按$A(x)$下标的奇偶性把 $A(x)$ 分成两半，右边再提一个$x$</p><p>${A(x)&#x3D;(a_0+a_2x^2+…+a_{n-2}x^{n-2})+(a_1x+a_3x^3+…+a_{n-1}x^{n-1})}$<br>${&#x3D;(a_0+a_2x^2+…+a_{n-2}x^{n-2})+x(a_1+a_3x^2+…+a_{n-1}x^{n-2})}$</p><p>两边好像非常相似，于是再设两个多项式 $A_1(x),A_2(x)$，令</p><p>$A_1(x)&#x3D;a_0+a_2x+a_4x^2+…+a_{n-2}x^{​{n \over 2}-1}$</p><p>$A_2(x)&#x3D;a_1+a_3x+a_5x^2+…+a_{n-1}x^{​{n \over 2}-1}$</p><p>比较明显得出</p><p>$A(x)&#x3D;A_1(x^2)+xA_2(x^2)$</p><p>单位根：<br>复数$\omega$满足$\omega^n&#x3D;1$，称$\omega$是n次单位根<br>$\omega_n^k&#x3D;\cos{k\over n}2\pi +i\sin{k\over n} 2\pi$<br>再设 $k&lt; {n\over 2}$ ，把 $\omega^k_n$ 作为 $x$ 代入 $A(x)$（接下来几步变换要多想想单位根的性质）</p><p>$A(\omega^k_n)$<br>$&#x3D;A_1( (\omega^k_n)^2 )+\omega^k_nA_2( ( \omega^k_n)^2 )$<br>$&#x3D;A_1(\omega_n^{2k})+\omega_n^kA_2(\omega_n^{2k})$<br>$&#x3D;A_1( \omega^k_{n\over2} )+\omega^k_nA_2( \omega^k_{n \over 2} )$</p><p>那么对于${A(\omega^{k+{n\over2}}_n)}$的话，代入<br>${\omega^{k+{n \over 2}}_n}$</p><p>$A(\omega^{k+{n\over 2}}_n)&#x3D;A_1(\omega^{2k+n}_n)+\omega^{k+{n\over 2}}_nA_2(\omega^{2k+n}_n)$</p><p>$&#x3D;A_1(\omega^{2k}_n\omega^n_n)-\omega^k_nA_2(\omega^{2k}_n\omega^n_n)$</p><p>$&#x3D;A_1( \omega_n^{2k} )-\omega_n^kA_2(\omega_n^{2k})$</p><p>$&#x3D;A_1( \omega_{n \over 2}^k )-\omega^k_nA_2(\omega_{n \over 2}^k)$</p><p>如果已知 $A_1(\omega^k_{n\over 2})和 A_2(\omega^k_{n\over 2})$的值，我们就可以同时知道 $A(\omega^k_n)$和 $A(\omega^{k+{n\over2}}_n)$的值</p><p>现在我们就可以递归分治来搞 FFT 了</p><h3 id="FFT逆变换"><a href="#FFT逆变换" class="headerlink" title="FFT逆变换"></a>FFT逆变换</h3><p><strong>一个多项式在分治的过程中乘上单位根的共轭复数（即$\omega_n^k&#x3D;\cos{k\over n}2\pi-i\sin{k\over n} 2\pi$），分治完的每一项除以 n 即为原多项式的每一项系数</strong></p><p><strong>注意，fft只能处理$2^k$的项，所以每次fft前，需要找到相乘后大于最高系数的最小的$2^k$作为limit</strong></p><h3 id="具体代码实现"><a href="#具体代码实现" class="headerlink" title="具体代码实现"></a>具体代码实现</h3><p><strong>递归版</strong><br>时间复杂度为$nlogn$</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span><br><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-type">const</span> <span class="hljs-type">int</span> N=<span class="hljs-built_in">pow</span>(<span class="hljs-number">2</span>,<span class="hljs-number">18</span>)<span class="hljs-number">+100</span>;<br><span class="hljs-type">const</span> <span class="hljs-type">double</span> pi = <span class="hljs-built_in">acos</span>(<span class="hljs-number">-1.0</span>);<br><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Complex</span>&#123;<br> <span class="hljs-type">double</span> x, y;<br> <span class="hljs-built_in">Complex</span>(<span class="hljs-type">double</span> xx = <span class="hljs-number">0</span>, <span class="hljs-type">double</span> yy = <span class="hljs-number">0</span>)&#123;x = xx, y = yy;&#125;<br>&#125;a[N];<br>Complex <span class="hljs-keyword">operator</span> + (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x + b.x, a.y + b.y);&#125;<br>Complex <span class="hljs-keyword">operator</span> - (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x - b.x, a.y - b.y);&#125;<br>Complex <span class="hljs-keyword">operator</span> * (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);&#125;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 递归实现快速傅里叶变换（FFT）或逆变换（IFFT）</span><br><span class="hljs-comment"> * @param limit 当前处理的数组长度（必须为2的幂次）</span><br><span class="hljs-comment"> * @param a     复数数组指针（输入/输出）</span><br><span class="hljs-comment"> * @param type  变换类型：1为FFT（正变换），-1为IFFT（逆变换）</span><br><span class="hljs-comment"> */</span><br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">fft</span><span class="hljs-params">(<span class="hljs-type">int</span> limit, Complex* a, <span class="hljs-type">int</span> type)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (limit == <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span>; <br><br>    <span class="hljs-type">int</span> mid = limit &gt;&gt; <span class="hljs-number">1</span>;   <br>    Complex* a1 = (Complex*)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">sizeof</span>(Complex) * mid);  <span class="hljs-comment">// 存储偶数索引元素</span><br>    Complex* a2 = (Complex*)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">sizeof</span>(Complex) * mid);  <span class="hljs-comment">// 存储奇数索引元素</span><br><br>    <span class="hljs-comment">// 分治：将数组按奇偶索引拆分</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; limit; i += <span class="hljs-number">2</span>) &#123;<br>        a1[i &gt;&gt; <span class="hljs-number">1</span>] = a[i];      <span class="hljs-comment">// 偶数位置元素（索引0, 2, 4...）</span><br>        a2[i &gt;&gt; <span class="hljs-number">1</span>] = a[i + <span class="hljs-number">1</span>];  <span class="hljs-comment">// 奇数位置元素（索引1, 3, 5...）</span><br>    &#125;<br><br>    <span class="hljs-built_in">fft</span>(mid, a1, type);<br>    <span class="hljs-built_in">fft</span>(mid, a2, type);<br><br>    <span class="hljs-comment">// 合并结果</span><br>    <span class="hljs-function">Complex <span class="hljs-title">Wn</span><span class="hljs-params">(cos(<span class="hljs-number">2.0</span> * pi / limit), type * sin(<span class="hljs-number">2.0</span> * pi / limit))</span></span>; <span class="hljs-comment">// 计算旋转因子</span><br>    <span class="hljs-function">Complex <span class="hljs-title">w</span><span class="hljs-params">(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>)</span></span>;  <span class="hljs-comment">// 初始旋转角度为0，对应单位复数1</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; mid; i++, w = w * Wn) &#123;<br>        Complex tmp = w * a2[i];  <span class="hljs-comment">// 计算旋转后的奇数部分</span><br>        a[i] = a1[i] + tmp;       <span class="hljs-comment">// 前一半结果：偶项 + 旋转后的奇项</span><br>        a[i + mid] = a1[i] - tmp;  <span class="hljs-comment">// 后一半结果：偶项 - 旋转后的奇项</span><br>    &#125;<br><br>    <span class="hljs-built_in">free</span>(a1);<br>    <span class="hljs-built_in">free</span>(a2);<br>&#125;<br></code></pre></td></tr></table></figure><p><strong>非递归版（效率高，但是难理解）</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-type">const</span> <span class="hljs-type">int</span> N=<span class="hljs-number">100200</span>;<br><span class="hljs-type">const</span> <span class="hljs-type">double</span> pi = <span class="hljs-built_in">acos</span>(<span class="hljs-number">-1.0</span>);<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Complex</span>&#123;<br>    <span class="hljs-type">double</span> x, y;<br>    <span class="hljs-built_in">Complex</span>(<span class="hljs-type">double</span> xx = <span class="hljs-number">0</span>, <span class="hljs-type">double</span> yy = <span class="hljs-number">0</span>)&#123;x = xx, y = yy;&#125;<br>&#125;a[N],b[N];<br><br><span class="hljs-type">int</span> rev[N*<span class="hljs-number">2</span>];<br><br>Complex <span class="hljs-keyword">operator</span> + (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x + b.x, a.y + b.y);&#125;<br>Complex <span class="hljs-keyword">operator</span> - (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x - b.x, a.y - b.y);&#125;<br>Complex <span class="hljs-keyword">operator</span> * (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);&#125;<br><br><span class="hljs-type">int</span> limit=<span class="hljs-number">1</span>;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">fft</span><span class="hljs-params">(Complex *a, <span class="hljs-type">int</span> type)</span></span>&#123;<br>    Complex Wn, w;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; limit; i++)&#123;<br>    <span class="hljs-keyword">if</span>(i &lt; rev[i]) <span class="hljs-built_in">swap</span>(a[i], a[rev[i]]);<span class="hljs-comment">//得到后序列，i &lt; rev[i] 是保证只交换一次 </span><br>    &#125; <br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> mid = <span class="hljs-number">1</span>; mid &lt; limit; mid &lt;&lt;= <span class="hljs-number">1</span>)&#123;<span class="hljs-comment">//mid 是每次要处理序列长度的一半 </span><br>    Wn = Complex&#123;<span class="hljs-built_in">cos</span>(pi / mid), type * <span class="hljs-built_in">sin</span>(pi / mid)&#125;;<span class="hljs-comment">//得到单位根，角度是 2 * pi / 2 * mid， 2被约掉了 </span><br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> R = (mid &lt;&lt; <span class="hljs-number">1</span>), j = <span class="hljs-number">0</span>; j &lt; limit; j += R)&#123;<span class="hljs-comment">//枚举序列左端点 </span><br>            w = Complex&#123;<span class="hljs-number">1</span>, <span class="hljs-number">0</span>&#125;;<span class="hljs-comment">//得到单位根的 0 次方 </span><br>            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> k = <span class="hljs-number">0</span>; k &lt; mid; k++, w = w * Wn)&#123;<span class="hljs-comment">//j + k是在序列中的位置，同时得到单位根的 k 次方 </span><br>                Complex x = a[j + k], y = a[j + mid + k] * w;<span class="hljs-comment">//由单位根的性质(1),(2) 推导而来 </span><br>                a[j + k] = x + y;<br>                a[j + mid + k] = x - y;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure><hr><p><a href="/courses/algorithms/">章节目录</a> · <a href="/courses/algorithms/string-matching/">上一章：字符串匹配</a> · <a href="/courses/algorithms/computational-geometry/">下一章：计算几何</a></p>]]></content>
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>算法</title>
-    <link href="/courses/algorithms/index.html"/>
-    <url>/courses/algorithms/index.html</url>
-    
-    <content type="html"><![CDATA[<ul><li><a href="/courses/algorithms/master-theorem/">第一章：主定理</a>：分治递归式与时间复杂度分析</li><li><a href="/courses/algorithms/sorting/">第二章：排序算法</a>：常见排序算法的实现</li><li><a href="/courses/algorithms/dynamic-programming/">第三章：动态规划</a>：钢条切割、背包、矩阵连乘与公共子序列</li><li><a href="/courses/algorithms/graphs/">第四章：图算法</a>：图遍历、拓扑排序、最短路径、最小生成树与网络流</li><li><a href="/courses/algorithms/string-matching/">第五章：字符串匹配</a>：KMP、有限自动机、哈希匹配与快速幂</li><li><a href="/courses/algorithms/fft/">第六章：多项式和快速傅里叶变换</a>：点值表示、FFT、逆变换与多项式乘法</li><li><a href="/courses/algorithms/computational-geometry/">第七章：计算几何</a>：凸包、线段关系与旋转卡壳</li></ul>]]></content>
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>操作系统</title>
-    <link href="/courses/operating-systems/index.html"/>
-    <url>/courses/operating-systems/index.html</url>
-    
-    <content type="html"><![CDATA[<ul><li><a href="/courses/operating-systems/lab0/">预备章：实验环境与工具（Lab0）</a>：Git、Shell 命令与输入输出重定向</li><li><a href="/courses/operating-systems/lab1/">第一章：内核启动与构建（Lab1）</a>：ELF、链接与反汇编、内核加载与 printk</li><li><a href="/courses/operating-systems/lab2/">第二章：内存管理（Lab2）</a>：虚拟地址、页表、TLB 与物理页管理</li><li><a href="/courses/operating-systems/lab3/">第三章：进程与调度（Lab3）</a>：进程地址空间、程序加载、时钟中断与上下文切换</li><li><a href="/courses/operating-systems/lab4/">第四章：系统调用与进程通信（Lab4）</a>：用户态与内核态、IPC、fork 与写时复制</li><li><a href="/courses/operating-systems/lab5/">第五章：文件系统（Lab5）</a>：设备访问、磁盘块、文件与目录</li><li><a href="/courses/operating-systems/lab6/">第六章：Shell 与管道（Lab6）</a>：管道通信、文件描述符与命令执行</li></ul>]]></content>
     
   </entry>
   
