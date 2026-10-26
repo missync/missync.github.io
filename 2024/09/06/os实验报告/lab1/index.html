@@ -22,21 +22,21 @@
     <meta name="description" content="1.思考题1.1 ld是链接器工具，用于将编译后的目标文件链接成可执行文件或共享库。 readelf是一个用于查看ELF格式文件（包括可执行文件、共享库等）的工具。它可以显示ELF文件的各个段、符号表、重定位表等信息，帮助用户了解可执行文件的结构和内容。 mips-linux-gnu-前缀通常用于指明目标架构为MIPS架构的Linux系统。 objdump -DS hello命令用于对名为hell">
 <meta property="og:type" content="article">
 <meta property="og:title" content="os-lab1">
-<meta property="og:url" content="https://shenxiongquan.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/index.html">
+<meta property="og:url" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/index.html">
 <meta property="og:site_name" content="missing&#39;s blog">
 <meta property="og:description" content="1.思考题1.1 ld是链接器工具，用于将编译后的目标文件链接成可执行文件或共享库。 readelf是一个用于查看ELF格式文件（包括可执行文件、共享库等）的工具。它可以显示ELF文件的各个段、符号表、重定位表等信息，帮助用户了解可执行文件的结构和内容。 mips-linux-gnu-前缀通常用于指明目标架构为MIPS架构的Linux系统。 objdump -DS hello命令用于对名为hell">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://shenxiongquan.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-1.PNG">
-<meta property="og:image" content="https://shenxiongquan.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-2.PNG">
-<meta property="og:image" content="https://shenxiongquan.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-4.PNG">
-<meta property="og:image" content="https://shenxiongquan.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-3.PNG">
+<meta property="og:image" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-1.PNG">
+<meta property="og:image" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-2.PNG">
+<meta property="og:image" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-4.PNG">
+<meta property="og:image" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-3.PNG">
 <meta property="article:published_time" content="2024-09-06T07:27:30.000Z">
 <meta property="article:modified_time" content="2024-09-06T08:03:44.219Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="os">
 <meta property="article:tag" content="Makefile">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://shenxiongquan.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-1.PNG">
+<meta name="twitter:image" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-1.PNG">
   
   
   
@@ -78,7 +78,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"shenxiongquan.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;

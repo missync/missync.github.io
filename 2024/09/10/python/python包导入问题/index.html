@@ -22,12 +22,12 @@
     <meta name="description" content="Python 导入机制：绝对导入与相对导入在Python中，当项目工程较大时，我们通常会将代码划分为多个包（package）进行管理。在这种情况下，各个模块（module）之间的相互导入不可避免。如果不熟悉绝对导入和相对导入的规则，可能会遇到各种导入相关的异常错误，例如：  ModuleNotFoundError: No module named &#39;moduleY&#39; ValueEr">
 <meta property="og:type" content="article">
 <meta property="og:title" content="python包导入问题">
-<meta property="og:url" content="https://shenxiongquan.github.io/2024/09/10/Python/Python%E5%8C%85%E5%AF%BC%E5%85%A5%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:url" content="https://missync.github.io/2024/09/10/python/python%E5%8C%85%E5%AF%BC%E5%85%A5%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="missing&#39;s blog">
 <meta property="og:description" content="Python 导入机制：绝对导入与相对导入在Python中，当项目工程较大时，我们通常会将代码划分为多个包（package）进行管理。在这种情况下，各个模块（module）之间的相互导入不可避免。如果不熟悉绝对导入和相对导入的规则，可能会遇到各种导入相关的异常错误，例如：  ModuleNotFoundError: No module named &#39;moduleY&#39; ValueEr">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-09-10T03:00:19.000Z">
-<meta property="article:modified_time" content="2025-12-20T14:47:19.521Z">
+<meta property="article:modified_time" content="2026-10-26T12:30:10.477Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary_large_image">
@@ -72,7 +72,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"shenxiongquan.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -289,7 +289,7 @@
               <p id="updated-time" class="note note-info" style="">
                 
                   
-                    本文最后更新于 2025年12月20日 晚上
+                    本文最后更新于 2026年10月26日 晚上
                   
                 
               </p>
@@ -390,7 +390,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/python/" class="print-no-link">#python</a>
+        <a href="/tags/Python/" class="print-no-link">#python</a>
       
     </div>
   
