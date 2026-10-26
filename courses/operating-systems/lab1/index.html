@@ -1,0 +1,629 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/index.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="missing">
+  <meta name="keywords" content="missing,博客,北航,BUAA">
+  
+    <meta name="description" content="← 操作系统章节目录 1.思考题1.1 ld是链接器工具，用于将编译后的目标文件链接成可执行文件或共享库。 readelf是一个用于查看ELF格式文件（包括可执行文件、共享库等）的工具。它可以显示ELF文件的各个段、符号表、重定位表等信息，帮助用户了解可执行文件的结构和内容。 mips-linux-gnu-前缀通常用于指明目标架构为MIPS架构的Linux系统。 objdump -DS hello">
+<meta property="og:type" content="website">
+<meta property="og:title" content="os-lab1">
+<meta property="og:url" content="https://missync.github.io/courses/operating-systems/lab1/index.html">
+<meta property="og:site_name" content="missing&#39;s blog">
+<meta property="og:description" content="← 操作系统章节目录 1.思考题1.1 ld是链接器工具，用于将编译后的目标文件链接成可执行文件或共享库。 readelf是一个用于查看ELF格式文件（包括可执行文件、共享库等）的工具。它可以显示ELF文件的各个段、符号表、重定位表等信息，帮助用户了解可执行文件的结构和内容。 mips-linux-gnu-前缀通常用于指明目标架构为MIPS架构的Linux系统。 objdump -DS hello">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://missync.github.io/images/courses/operating-systems/lab1/lab1-1.PNG">
+<meta property="og:image" content="https://missync.github.io/images/courses/operating-systems/lab1/lab1-2.PNG">
+<meta property="og:image" content="https://missync.github.io/images/courses/operating-systems/lab1/lab1-4.PNG">
+<meta property="og:image" content="https://missync.github.io/images/courses/operating-systems/lab1/lab1-3.PNG">
+<meta property="article:published_time" content="2024-09-06T07:27:30.000Z">
+<meta property="article:modified_time" content="2026-10-26T14:10:42.998Z">
+<meta property="article:author" content="missing">
+<meta property="article:tag" content="missing,博客,北航,BUAA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://missync.github.io/images/courses/operating-systems/lab1/lab1-1.PNG">
+  
+  
+  
+  <title>os-lab1 - missing&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>missing&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/courses/" target="_self">
+                <i class="iconfont icon-list"></i>
+                <span>课程</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="os-lab1"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">os-lab1</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年10月26日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p><a href="/courses/operating-systems/">← 操作系统章节目录</a></p>
+<h2 id="1-思考题"><a href="#1-思考题" class="headerlink" title="1.思考题"></a>1.思考题</h2><h3 id="1-1"><a href="#1-1" class="headerlink" title="1.1"></a>1.1</h3><ul>
+<li>ld是链接器工具，用于将编译后的目标文件链接成可执行文件或共享库。</li>
+<li>readelf是一个用于查看ELF格式文件（包括可执行文件、共享库等）的工具。它可以显示ELF文件的各个段、符号表、重定位表等信息，帮助用户了解可执行文件的结构和内容。</li>
+<li>mips-linux-gnu-前缀通常用于指明目标架构为MIPS架构的Linux系统。</li>
+<li>objdump -DS hello命令用于对名为hello的可执行文件进行反汇编，并显示汇编代码和符号表信息。下面是每个参数的含义：</li>
+</ul>
+<ol>
+<li>objdump：用于显示目标文件信息的工具。</li>
+<li>-D：指定显示反汇编代码。该选项会将目标文件中的机器指令反汇编成汇编代码并显示。</li>
+<li>-S：指定同时显示源代码和反汇编代码。该选项会尝试将反汇编代码与源代码对应起来显示。<br>hello：要反汇编的目标文件的文件名。在这里是名为hello的可执行文件。<br>通过执行objdump -DS hello命令，可以查看hello可执行文件的反汇编代码和符号表信息，帮助理解程序的实现细节和结构。</li>
+</ol>
+<h3 id="1-2"><a href="#1-2" class="headerlink" title="1.2"></a>1.2</h3><p><img src="/images/courses/operating-systems/lab1/lab1-1.PNG" srcset="/img/loading.gif" lazyload><br><img src="/images/courses/operating-systems/lab1/lab1-2.PNG" srcset="/img/loading.gif" lazyload><br>通过 readelf -h命令，可以看到我们编写的readelf文件是ELF64，而hello文件是ELF32，我们编写的readelf文件只能够解析32位类型的文件，所以不能解析它本身。</p>
+<h3 id="1-3"><a href="#1-3" class="headerlink" title="1.3"></a>1.3</h3><p>因为上电是OS启动的第一个阶段，首先启动bootloader程序，在stage1阶段初始化硬件设备。此时对于MIPS处理器来说，MIPS体系结构上电时，启动入口的地址为0xBFC00000（或为某一个确定的地址）。<br>在stage2阶段，我们才将内核镜像加载到内存指定的位置，即内存布局图放置，我们可以从mips_init()跳转到正确的内核。</p>
+<h2 id="实验难点"><a href="#实验难点" class="headerlink" title="实验难点"></a>实验难点</h2><h3 id="1-1-1"><a href="#1-1-1" class="headerlink" title="1.1"></a>1.1</h3><p>难点在于理解elf.h文件中的结构体，以及理解ELF文件的结构。</p>
+<p><img src="/images/courses/operating-systems/lab1/lab1-4.PNG" srcset="/img/loading.gif" lazyload></p>
+<h3 id="1-2-1"><a href="#1-2-1" class="headerlink" title="1.2"></a>1.2</h3><p>根据内存示意图进行放置即可</p>
+<h3 id="1-3-1"><a href="#1-3-1" class="headerlink" title="1.3"></a>1.3</h3><ul>
+<li>于看懂printk代码所要实现的功能，理解参数和变量的含义。</li>
+<li>注意是按照%[flags][width][.precision][length]specifier这样的顺序进行的<br><img src="/images/courses/operating-systems/lab1/lab1-3.PNG" srcset="/img/loading.gif" lazyload></li>
+</ul>
+<h2 id="体会与感想"><a href="#体会与感想" class="headerlink" title="体会与感想"></a>体会与感想</h2><p>从lab1的实验，我们初步学到了os的启动过程。我们学会了如何把kernel放到内存正确的位置。还学习了ELF文件的格式。<br>在完成readelf练习的过程中，我感觉初次阅读ELF文件的源码有一定困难。</p>
+<p>同时，对于指导书中的Makefile文件，我觉得阅读起来比较吃力，许多宏定义不熟悉，许多命令和参数也不认识。</p>
+<p>在完成printk函数时，我卡了很久，在阅读各个文件源码后，才理解该函数的作用是实现printf的功能。同时对于提示中的flush the string ，即第二处需要补充的代码，我不能理解提示的要求，不知道out函数具体实现了什么功能。还有在完成print_num的时候，对于neg_flag的判断也卡了一下。</p>
+<p>我认为需要稳固c语言和mips的基础，增强代码的阅读能力，才能更好的理解os实验的源码。</p>
+<hr>
+<p><a href="/courses/operating-systems/">章节目录</a> · <a href="/courses/operating-systems/lab0/">上一章：实验环境与工具（Lab0）</a> · <a href="/courses/operating-systems/lab2/">下一章：内存管理（Lab2）</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!--<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>--> <i class="iconfont icon-love"></i> <!--<a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>--> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

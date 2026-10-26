@@ -1,0 +1,684 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/index.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="missing">
+  <meta name="keywords" content="missing,博客,北航,BUAA">
+  
+    <meta name="description" content="← 操作系统章节目录 1.思考题4.1  内核在保存现场的时候是如何避免破坏通用寄存器的？  保存现场过程中，先通过k0寄存器暂存sp栈指针的值，之后将其余通用寄存器的值直接存到cp的协寄存器中。  系统陷入内核调用后可以直接从当时的&#96;$a0-$a3&#96;参数寄存器中得到用户调用&#96;msyscall&#96;留下的信息吗？  可以。从用户函数syscall_*()到内核函数sys_*()时，$a1-$a3未改变">
+<meta property="og:type" content="website">
+<meta property="og:title" content="os-lab4">
+<meta property="og:url" content="https://missync.github.io/courses/operating-systems/lab4/index.html">
+<meta property="og:site_name" content="missing&#39;s blog">
+<meta property="og:description" content="← 操作系统章节目录 1.思考题4.1  内核在保存现场的时候是如何避免破坏通用寄存器的？  保存现场过程中，先通过k0寄存器暂存sp栈指针的值，之后将其余通用寄存器的值直接存到cp的协寄存器中。  系统陷入内核调用后可以直接从当时的&#96;$a0-$a3&#96;参数寄存器中得到用户调用&#96;msyscall&#96;留下的信息吗？  可以。从用户函数syscall_*()到内核函数sys_*()时，$a1-$a3未改变">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://missync.github.io/images/courses/operating-systems/lab4/lab4-1.PNG">
+<meta property="og:image" content="https://missync.github.io/images/courses/operating-systems/lab4/lab4-2.PNG">
+<meta property="article:published_time" content="2024-09-06T07:27:30.000Z">
+<meta property="article:modified_time" content="2026-10-26T14:10:43.016Z">
+<meta property="article:author" content="missing">
+<meta property="article:tag" content="missing,博客,北航,BUAA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://missync.github.io/images/courses/operating-systems/lab4/lab4-1.PNG">
+  
+  
+  
+  <title>os-lab4 - missing&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>missing&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/courses/" target="_self">
+                <i class="iconfont icon-list"></i>
+                <span>课程</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="os-lab4"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">os-lab4</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年10月26日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p><a href="/courses/operating-systems/">← 操作系统章节目录</a></p>
+<h2 id="1-思考题"><a href="#1-思考题" class="headerlink" title="1.思考题"></a>1.思考题</h2><p>4.1</p>
+<ol>
+<li><code>内核在保存现场的时候是如何避免破坏通用寄存器的？</code></li>
+</ol>
+<p>保存现场过程中，先通过<code>k0</code>寄存器暂存<code>sp</code>栈指针的值，之后将其余通用寄存器的值直接存到<code>cp</code>的协寄存器中。</p>
+<ol start="2">
+<li><code>系统陷入内核调用后可以直接从当时的`$a0-$a3`参数寄存器中得到用户调用`msyscall`留下的信息吗？</code></li>
+</ol>
+<p>可以。从用户函数<code>syscall_*()</code>到内核函数<code>sys_*()</code>时，<code>$a1-$a3</code>未改变,<code>$a0</code>在<code>handle_sys()</code>的时候被修改为内核函数的地址，但在内核函数<code>sys_*()</code>仅为占位符，不会被用到。</p>
+<ol start="3">
+<li><code>我们是怎么做到让sys开头的函数“认为”我们提供了和用户调用msyscall时同样的参数的？</code></li>
+</ol>
+<p>用户调用时的参数：用户进程的寄存器现场(保存在了内核栈的<code>TF_5-TF_7</code>)的<code>$a1-$a3</code>;用户栈的参数<code>$a4$a5</code><br>把上面两部分参数分别拷贝至<code>arg1-arg5</code>,在sys函数中作为参数传入。</p>
+<ol start="4">
+<li><code>内核处理系统调用的过程对Trapframe做了哪些更改？这种修改对应的用户态的变化是什么？</code></li>
+</ol>
+<p>对<code>Trapframe</code>结构体中的<code>cp0_epc</code>的值增加了4，并将<code>sys</code>开头函数的返回值存入<code>v0</code>寄存器，保证了系统调用后用户态进程可以获得正确的返回值，并且从触发系统调用的下一条指令继续执行。</p>
+<p>4.2<br>判断<code>e-&gt;env_id != envid</code>的情况是为了确保所请求的<code>envid</code>与找到的环境的实际ID匹配。如果没有这个检查，可能将错误的<code>env</code>分配给<code>*penv</code></p>
+<p>4.3</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span>(!envid)&#123;<br>  *penv=curenv;<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br> &#125;<span class="hljs-keyword">else</span>&#123;<br>  e=&amp;envs[ENVX(envid)];<br> &#125;<br> <span class="hljs-keyword">if</span> (e-&gt;env_status == ENV_FREE || e-&gt;env_id != envid) &#123;<br>  <span class="hljs-keyword">return</span> -E_BAD_ENV;<br> &#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>从<code>envid2env</code>函数中可以看出，<code>curenv</code>分配的<code>envid</code>为0，因此，0用来作为目前运行进程的特判符。所以在给<code>env</code>分配<code>envid</code>时，使用的<code>mkenvid</code>返回值不能为0。</p>
+<p>4.4</p>
+<p>C</p>
+<p>4.5</p>
+<p><code>USTACKTOP</code>以下的应该映射。<br>但是<code>UTEMP</code>之下的<code>invalid memory</code> 是为处理页写入异常时做缓冲区用的，不需要共享。<br><code>UTOP</code>以上页面的内存与页表是所有进程共享的，且用户进程无权限访问，不需要做父子进程间的<code>duppage</code>。</p>
+<p>4.6</p>
+<ul>
+<li>vpt和vpd分别代表页表项数组和页目录项数组，可以使用<code>vpt[index]</code>和<code>vpd[index]</code>的方式去访问页表项和页目录项。</li>
+<li>由于用户进程下的系统调用的虚拟内存管理的函数传入的pgdir均为env结构体的kuseg的进程页目录，并且env_setup_vm()时把页目录进行自映射e-&gt;env_pgdir[PDX(UVPT)] &#x3D; e-&gt;env_cr3，所以实现了用户进程的虚拟内存管理，可以通过两级页表机制访问。<br>-参考vpt和vpd的定义代码：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> vpt ((const volatile Pte *)UVPT) <span class="hljs-comment">//它将 UVPT（用户虚拟页表基址）转换为 Pte 类型的指针。</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> vpd ((const volatile Pde *)(UVPT + (PDX(UVPT) &lt;&lt; PGSHIFT)))<span class="hljs-comment">//虚拟页目录基址转换为页目录项</span></span><br></code></pre></td></tr></table></figure>
+
+<p>其中<code>vpd</code>的定义体现了页目录自映射。</p>
+<p>-可以，因为在pmap.c中实现的虚拟内存机制，给页表项和页目录项的perm均为可写。</p>
+<p>4.7</p>
+<ul>
+<li>注意以下代码：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (tf-&gt;regs[<span class="hljs-number">29</span>] &lt; USTACKTOP || tf-&gt;regs[<span class="hljs-number">29</span>] &gt;= UXSTACKTOP) &#123;<br> tf-&gt;regs[<span class="hljs-number">29</span>] = UXSTACKTOP;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们可以看到，这里实现了类似“异常重入”的机制，即sp指针已经位于用户异常栈，即此时已经发生<code>tlb_mod</code>异常时，当再次发生相同的异常，重新将sp指向栈顶，会发生这种“异常重入”。</p>
+<ul>
+<li><code>tlb_mod</code>的异常处理比较特殊，真正的核心处理函数为<code>cow_entry()</code>，而这个函数位于用户态空间，也就是说，我们实际是在用户态进行异常处理的核心部分，所以我们需要将异常的现场<code>Trapframe</code>复制到用户空间，方便处理完异常后恢复现场。</li>
+</ul>
+<p>4.8</p>
+<p>解放内核，不用内核执行大量的页面拷贝工作。同时符合MIPS4KC的微内核设计，将一些功能放到用户空间实现，提高了内核的稳定性和可移植性。</p>
+<p>4.9</p>
+<ul>
+<li><p>第一次<code>syscall_set_tlb_mod_entry</code>是针对父进程设置的。子进程 <code>RUNNABLE</code> 后会从 <code>syscall_exo_fork</code> 逐级调用的 syscall 指令之后开始执行。如果在 <code>syscall_exo_fork</code> 之后再 <code>syscall_set_tlb_mod_entry</code>，那么子进程也会执行这个系统调用。</p>
+</li>
+<li><p>父进程运行时在函数调用等情形下会修改栈。在栈空间的页面标记为写时复制之后，父进程继续运行并修改栈，就会触发 TLB Mod 异常。所以在写时复制保护机制完成之前就需要 <code>syscall_set_tlb_mod_entry</code>。</p>
+</li>
+</ul>
+<h2 id="2-难点分析"><a href="#2-难点分析" class="headerlink" title="2.难点分析"></a>2.难点分析</h2><ol>
+<li>系统调用<br>对于系统调用中几个函数调用顺序的理解。<br><img src="/images/courses/operating-systems/lab4/lab4-1.PNG" srcset="/img/loading.gif" lazyload><br>系统调用本身是为了陷入内核态，因为一些操作只能在内核态实现。<br>其中从用户态到内核态的函数传参较难理解。</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">do_syscall</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Trapframe *tf)</span> &#123;<br> <span class="hljs-type">int</span> (*func)(u_int, u_int, u_int, u_int, u_int);<br> <span class="hljs-type">int</span> sysno = tf-&gt;regs[<span class="hljs-number">4</span>];<br> <span class="hljs-keyword">if</span> (sysno &lt; <span class="hljs-number">0</span> || sysno &gt;= MAX_SYSNO) &#123;<br>  tf-&gt;regs[<span class="hljs-number">2</span>] = -E_NO_SYS;<br>  <span class="hljs-keyword">return</span>;<br> &#125;<br><br> <span class="hljs-comment">/* Step 1: Add the EPC in &#x27;tf&#x27; by a word (size of an instruction). */</span><br> <span class="hljs-comment">/* Exercise 4.2: Your code here. (1/4) */</span><br> tf-&gt;cp0_epc+=<span class="hljs-number">4</span>;<br> <span class="hljs-comment">/* Step 2: Use &#x27;sysno&#x27; to get &#x27;func&#x27; from &#x27;syscall_table&#x27;. */</span><br> <span class="hljs-comment">/* Exercise 4.2: Your code here. (2/4) */</span><br> func=syscall_table[sysno];<br> <span class="hljs-comment">/* Step 3: First 3 args are stored in $a1, $a2, $a3. */</span><br> u_int arg1 = tf-&gt;regs[<span class="hljs-number">5</span>];<br> u_int arg2 = tf-&gt;regs[<span class="hljs-number">6</span>];<br> u_int arg3 = tf-&gt;regs[<span class="hljs-number">7</span>];<br><br> <span class="hljs-comment">/* Step 4: Last 2 args are stored in stack at [$sp + 16 bytes], [$sp + 20 bytes]. */</span><br> u_int arg4, arg5;<br> <span class="hljs-comment">/* Exercise 4.2: Your code here. (3/4) */</span><br> arg4=*(u_int *)(tf-&gt;regs[<span class="hljs-number">29</span>]+<span class="hljs-number">16</span>);<br> arg5=*(u_int *)(tf-&gt;regs[<span class="hljs-number">29</span>]+<span class="hljs-number">20</span>);<br> <span class="hljs-comment">/* Step 5: Invoke &#x27;func&#x27; with retrieved arguments and store its return value to $v0 in &#x27;tf&#x27;.</span><br><span class="hljs-comment">  */</span><br> <span class="hljs-comment">/* Exercise 4.2: Your code here. (4/4) */</span><br> tf-&gt;regs[<span class="hljs-number">2</span>]=func(arg1,arg2,arg3,arg4,arg5);<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>我们通过Trapframe结构体保存了用户现场的上下文，以此在内核态进行传参，同时再通过<strong>系统调用处理函数表</strong>跳转到具体的调用函数，同时又在tf-&gt;regs[2]中，即v0寄存器中保存系统调用的返回值。</p>
+<ol>
+<li>进程间IPC通信</li>
+</ol>
+<p>这里的主要难点在于集中了对lab3和lab4前半部分的的综合理解运用，涉及了进程间的切换和系统调用。</p>
+<p><img src="/images/courses/operating-systems/lab4/lab4-2.PNG" srcset="/img/loading.gif" lazyload></p>
+<p>按照上述的图示去理解ipc的通信过程，即一个进程先发出<code>ipc_recv</code>的信号之后，再调用<code>schedule(1)</code>切换到另一个进程进行<code>ipc_send</code>，从而实现两个进程间的通信。</p>
+<ol>
+<li>fork的实现</li>
+</ol>
+<p>首先要理解函数<code>duppage()</code>，这是实现父进程将地址空间中需要与子进程共享的页面映射给子进程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c">syscall_mem_map(<span class="hljs-number">0</span>, addr, envid, addr, perm);<span class="hljs-comment">//先将子进程映射到父进程映射的物理页实现共享</span><br><span class="hljs-keyword">if</span>(r)<br>syscall_mem_map(<span class="hljs-number">0</span>,addr,<span class="hljs-number">0</span>,addr,perm);<span class="hljs-comment">//再用新的映射覆盖自己旧的映射改变权限位</span><br></code></pre></td></tr></table></figure>
+<p>同时注意先修改子进程的权限，如果先直接映射自身，那么权限位改为PTE_COW后，无法再对子进程进行映射（会陷入写时异常，还没有实现）</p>
+<p>我们还需要注意fork中涉及处理页写入异常，这是一种特殊的异常，异常处理的核心函数<code>cow_entry()</code>是在用户态下调用的。<br>函数中<code>memcpy((void*)UCOW,(void*)ROUNDDOWN(va,PAGE_SIZE),PAGE_SIZE);</code>复制写时错误页的信息，需要进行向下对齐，本质上是将地址的后12位清0，得到页号。</p>
+<p>fork函数在进行映射之前，一定要查询页目录项和页表项是否有效。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; VPN(USTACKTOP); i++) &#123;<br>  <span class="hljs-keyword">if</span> ((vpd[i &gt;&gt; <span class="hljs-number">10</span>] &amp; PTE_V) &amp;&amp; (vpt[i] &amp; PTE_V)) &#123;<br>   duppage(child, i);<br>  &#125;<br> &#125;<br></code></pre></td></tr></table></figure>
+
+<p>fork函数是由父进程进行调用的，但是却有两个返回值，这是因为子进程的返回值：<code>e-&gt;env_tf.regs[2]=0;</code>,即保留在v0寄存器中。</p>
+<h2 id="3-实验体会"><a href="#3-实验体会" class="headerlink" title="3.实验体会"></a>3.实验体会</h2><p>涉及不同进程之间的操作以及系统调用，这部分内容综合了整个前面的lab，难度较大，需要对OS有深刻的认识。</p>
+<p>课下需要填写的内容较多，分散在不同的文件，实则上如果从os的涉及来看，各个文件的代码是联系紧密的。</p>
+<p>课上上机考察十分细致，需要对整个系统调用的过程和进程之间的ipc的工作过程有清晰的认识，要理解函数之间的调用关系。</p>
+<p>要时刻注意区分<strong>内核态</strong>和<strong>用户态</strong>，这样在补充函数时不会出现一些奇奇怪怪的bug。</p>
+<hr>
+<p><a href="/courses/operating-systems/">章节目录</a> · <a href="/courses/operating-systems/lab3/">上一章：进程与调度（Lab3）</a> · <a href="/courses/operating-systems/lab5/">下一章：文件系统（Lab5）</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!--<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>--> <i class="iconfont icon-love"></i> <!--<a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>--> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

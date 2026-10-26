@@ -1,0 +1,629 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/index.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="missing">
+  <meta name="keywords" content="missing,博客,北航,BUAA">
+  
+    <meta name="description" content="← 算法章节目录 多项式和快速傅里叶变换FFT算法多项式用点值表示 首先设一个多项式 $A(x)$ $A(x)&#x3D;\sum_{i&#x3D;0}^{n-1}a_ix^i&#x3D;a_0+a_1x+a_2x^2+…+a_{n-1}x^{n-1}$ 按$A(x)$下标的奇偶性把 $A(x)$ 分成两半，右边再提一个$x$ ${A(x)&#x3D;(a_0+a_2x^2+…+a_{n-2}x^">
+<meta property="og:type" content="website">
+<meta property="og:title" content="多项式和快速傅里叶变换">
+<meta property="og:url" content="https://missync.github.io/courses/algorithms/fft/index.html">
+<meta property="og:site_name" content="missing&#39;s blog">
+<meta property="og:description" content="← 算法章节目录 多项式和快速傅里叶变换FFT算法多项式用点值表示 首先设一个多项式 $A(x)$ $A(x)&#x3D;\sum_{i&#x3D;0}^{n-1}a_ix^i&#x3D;a_0+a_1x+a_2x^2+…+a_{n-1}x^{n-1}$ 按$A(x)$下标的奇偶性把 $A(x)$ 分成两半，右边再提一个$x$ ${A(x)&#x3D;(a_0+a_2x^2+…+a_{n-2}x^">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-09-10T08:28:08.000Z">
+<meta property="article:modified_time" content="2026-10-26T14:10:42.985Z">
+<meta property="article:author" content="missing">
+<meta property="article:tag" content="missing,博客,北航,BUAA">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>多项式和快速傅里叶变换 - missing&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>missing&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/courses/" target="_self">
+                <i class="iconfont icon-list"></i>
+                <span>课程</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="多项式和快速傅里叶变换"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">多项式和快速傅里叶变换</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年10月26日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p><a href="/courses/algorithms/">← 算法章节目录</a></p>
+<h2 id="多项式和快速傅里叶变换"><a href="#多项式和快速傅里叶变换" class="headerlink" title="多项式和快速傅里叶变换"></a>多项式和快速傅里叶变换</h2><h3 id="FFT算法"><a href="#FFT算法" class="headerlink" title="FFT算法"></a>FFT算法</h3><p>多项式用点值表示</p>
+<p>首先设一个多项式 $A(x)$</p>
+<p>$A(x)&#x3D;\sum_{i&#x3D;0}^{n-1}a_ix^i&#x3D;a_0+a_1x+a_2x^2+…+a_{n-1}x^{n-1}$</p>
+<p>按$A(x)$下标的奇偶性把 $A(x)$ 分成两半，右边再提一个$x$</p>
+<p>${A(x)&#x3D;(a_0+a_2x^2+…+a_{n-2}x^{n-2})+(a_1x+a_3x^3+…+a_{n-1}x^{n-1})}$<br>${&#x3D;(a_0+a_2x^2+…+a_{n-2}x^{n-2})+x(a_1+a_3x^2+…+a_{n-1}x^{n-2})}$</p>
+<p>两边好像非常相似，于是再设两个多项式 $A_1(x),A_2(x)$，令</p>
+<p>$A_1(x)&#x3D;a_0+a_2x+a_4x^2+…+a_{n-2}x^{​{n \over 2}-1}$</p>
+<p>$A_2(x)&#x3D;a_1+a_3x+a_5x^2+…+a_{n-1}x^{​{n \over 2}-1}$</p>
+<p>比较明显得出</p>
+<p>$A(x)&#x3D;A_1(x^2)+xA_2(x^2)$</p>
+<p>单位根：<br>复数$\omega$满足$\omega^n&#x3D;1$，称$\omega$是n次单位根<br>$\omega_n^k&#x3D;\cos{k\over n}2\pi +i\sin{k\over n} 2\pi$<br>再设 $k&lt; {n\over 2}$ ，把 $\omega^k_n$ 作为 $x$ 代入 $A(x)$（接下来几步变换要多想想单位根的性质）</p>
+<p>$A(\omega^k_n)$<br>$&#x3D;A_1( (\omega^k_n)^2 )+\omega^k_nA_2( ( \omega^k_n)^2 )$<br>$&#x3D;A_1(\omega_n^{2k})+\omega_n^kA_2(\omega_n^{2k})$<br>$&#x3D;A_1( \omega^k_{n\over2} )+\omega^k_nA_2( \omega^k_{n \over 2} )$</p>
+<p>那么对于${A(\omega^{k+{n\over2}}_n)}$的话，代入<br>${\omega^{k+{n \over 2}}_n}$</p>
+<p>$A(\omega^{k+{n\over 2}}_n)&#x3D;A_1(\omega^{2k+n}_n)+\omega^{k+{n\over 2}}_nA_2(\omega^{2k+n}_n)$</p>
+<p>$&#x3D;A_1(\omega^{2k}_n\omega^n_n)-\omega^k_nA_2(\omega^{2k}_n\omega^n_n)$</p>
+<p>$&#x3D;A_1( \omega_n^{2k} )-\omega_n^kA_2(\omega_n^{2k})$</p>
+<p>$&#x3D;A_1( \omega_{n \over 2}^k )-\omega^k_nA_2(\omega_{n \over 2}^k)$</p>
+<p>如果已知 $A_1(\omega^k_{n\over 2})和 A_2(\omega^k_{n\over 2})$的值，我们就可以同时知道 $A(\omega^k_n)$和 $A(\omega^{k+{n\over2}}_n)$的值</p>
+<p>现在我们就可以递归分治来搞 FFT 了</p>
+<h3 id="FFT逆变换"><a href="#FFT逆变换" class="headerlink" title="FFT逆变换"></a>FFT逆变换</h3><p><strong>一个多项式在分治的过程中乘上单位根的共轭复数（即$\omega_n^k&#x3D;\cos{k\over n}2\pi-i\sin{k\over n} 2\pi$），分治完的每一项除以 n 即为原多项式的每一项系数</strong></p>
+<p><strong>注意，fft只能处理$2^k$的项，所以每次fft前，需要找到相乘后大于最高系数的最小的$2^k$作为limit</strong></p>
+<h3 id="具体代码实现"><a href="#具体代码实现" class="headerlink" title="具体代码实现"></a>具体代码实现</h3><p><strong>递归版</strong><br>时间复杂度为$nlogn$</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span><br><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-type">const</span> <span class="hljs-type">int</span> N=<span class="hljs-built_in">pow</span>(<span class="hljs-number">2</span>,<span class="hljs-number">18</span>)<span class="hljs-number">+100</span>;<br><span class="hljs-type">const</span> <span class="hljs-type">double</span> pi = <span class="hljs-built_in">acos</span>(<span class="hljs-number">-1.0</span>);<br><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Complex</span>&#123;<br> <span class="hljs-type">double</span> x, y;<br> <span class="hljs-built_in">Complex</span>(<span class="hljs-type">double</span> xx = <span class="hljs-number">0</span>, <span class="hljs-type">double</span> yy = <span class="hljs-number">0</span>)&#123;x = xx, y = yy;&#125;<br>&#125;a[N];<br>Complex <span class="hljs-keyword">operator</span> + (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x + b.x, a.y + b.y);&#125;<br>Complex <span class="hljs-keyword">operator</span> - (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x - b.x, a.y - b.y);&#125;<br>Complex <span class="hljs-keyword">operator</span> * (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);&#125;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 递归实现快速傅里叶变换（FFT）或逆变换（IFFT）</span><br><span class="hljs-comment"> * @param limit 当前处理的数组长度（必须为2的幂次）</span><br><span class="hljs-comment"> * @param a     复数数组指针（输入/输出）</span><br><span class="hljs-comment"> * @param type  变换类型：1为FFT（正变换），-1为IFFT（逆变换）</span><br><span class="hljs-comment"> */</span><br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">fft</span><span class="hljs-params">(<span class="hljs-type">int</span> limit, Complex* a, <span class="hljs-type">int</span> type)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (limit == <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span>; <br><br>    <span class="hljs-type">int</span> mid = limit &gt;&gt; <span class="hljs-number">1</span>;   <br>    Complex* a1 = (Complex*)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">sizeof</span>(Complex) * mid);  <span class="hljs-comment">// 存储偶数索引元素</span><br>    Complex* a2 = (Complex*)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">sizeof</span>(Complex) * mid);  <span class="hljs-comment">// 存储奇数索引元素</span><br><br>    <span class="hljs-comment">// 分治：将数组按奇偶索引拆分</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; limit; i += <span class="hljs-number">2</span>) &#123;<br>        a1[i &gt;&gt; <span class="hljs-number">1</span>] = a[i];      <span class="hljs-comment">// 偶数位置元素（索引0, 2, 4...）</span><br>        a2[i &gt;&gt; <span class="hljs-number">1</span>] = a[i + <span class="hljs-number">1</span>];  <span class="hljs-comment">// 奇数位置元素（索引1, 3, 5...）</span><br>    &#125;<br><br>    <span class="hljs-built_in">fft</span>(mid, a1, type);<br>    <span class="hljs-built_in">fft</span>(mid, a2, type);<br><br>    <span class="hljs-comment">// 合并结果</span><br>    <span class="hljs-function">Complex <span class="hljs-title">Wn</span><span class="hljs-params">(cos(<span class="hljs-number">2.0</span> * pi / limit), type * sin(<span class="hljs-number">2.0</span> * pi / limit))</span></span>; <span class="hljs-comment">// 计算旋转因子</span><br>    <span class="hljs-function">Complex <span class="hljs-title">w</span><span class="hljs-params">(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>)</span></span>;  <span class="hljs-comment">// 初始旋转角度为0，对应单位复数1</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; mid; i++, w = w * Wn) &#123;<br>        Complex tmp = w * a2[i];  <span class="hljs-comment">// 计算旋转后的奇数部分</span><br>        a[i] = a1[i] + tmp;       <span class="hljs-comment">// 前一半结果：偶项 + 旋转后的奇项</span><br>        a[i + mid] = a1[i] - tmp;  <span class="hljs-comment">// 后一半结果：偶项 - 旋转后的奇项</span><br>    &#125;<br><br>    <span class="hljs-built_in">free</span>(a1);<br>    <span class="hljs-built_in">free</span>(a2);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>非递归版（效率高，但是难理解）</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-type">const</span> <span class="hljs-type">int</span> N=<span class="hljs-number">100200</span>;<br><span class="hljs-type">const</span> <span class="hljs-type">double</span> pi = <span class="hljs-built_in">acos</span>(<span class="hljs-number">-1.0</span>);<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Complex</span>&#123;<br>    <span class="hljs-type">double</span> x, y;<br>    <span class="hljs-built_in">Complex</span>(<span class="hljs-type">double</span> xx = <span class="hljs-number">0</span>, <span class="hljs-type">double</span> yy = <span class="hljs-number">0</span>)&#123;x = xx, y = yy;&#125;<br>&#125;a[N],b[N];<br><br><span class="hljs-type">int</span> rev[N*<span class="hljs-number">2</span>];<br><br>Complex <span class="hljs-keyword">operator</span> + (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x + b.x, a.y + b.y);&#125;<br>Complex <span class="hljs-keyword">operator</span> - (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x - b.x, a.y - b.y);&#125;<br>Complex <span class="hljs-keyword">operator</span> * (Complex a, Complex b)&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">Complex</span>(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);&#125;<br><br><span class="hljs-type">int</span> limit=<span class="hljs-number">1</span>;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">fft</span><span class="hljs-params">(Complex *a, <span class="hljs-type">int</span> type)</span></span>&#123;<br>    Complex Wn, w;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; limit; i++)&#123;<br>    <span class="hljs-keyword">if</span>(i &lt; rev[i]) <span class="hljs-built_in">swap</span>(a[i], a[rev[i]]);<span class="hljs-comment">//得到后序列，i &lt; rev[i] 是保证只交换一次 </span><br>    &#125; <br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> mid = <span class="hljs-number">1</span>; mid &lt; limit; mid &lt;&lt;= <span class="hljs-number">1</span>)&#123;<span class="hljs-comment">//mid 是每次要处理序列长度的一半 </span><br>    Wn = Complex&#123;<span class="hljs-built_in">cos</span>(pi / mid), type * <span class="hljs-built_in">sin</span>(pi / mid)&#125;;<span class="hljs-comment">//得到单位根，角度是 2 * pi / 2 * mid， 2被约掉了 </span><br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> R = (mid &lt;&lt; <span class="hljs-number">1</span>), j = <span class="hljs-number">0</span>; j &lt; limit; j += R)&#123;<span class="hljs-comment">//枚举序列左端点 </span><br>            w = Complex&#123;<span class="hljs-number">1</span>, <span class="hljs-number">0</span>&#125;;<span class="hljs-comment">//得到单位根的 0 次方 </span><br>            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> k = <span class="hljs-number">0</span>; k &lt; mid; k++, w = w * Wn)&#123;<span class="hljs-comment">//j + k是在序列中的位置，同时得到单位根的 k 次方 </span><br>                Complex x = a[j + k], y = a[j + mid + k] * w;<span class="hljs-comment">//由单位根的性质(1),(2) 推导而来 </span><br>                a[j + k] = x + y;<br>                a[j + mid + k] = x - y;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p><a href="/courses/algorithms/">章节目录</a> · <a href="/courses/algorithms/string-matching/">上一章：字符串匹配</a> · <a href="/courses/algorithms/computational-geometry/">下一章：计算几何</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!--<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>--> <i class="iconfont icon-love"></i> <!--<a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>--> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

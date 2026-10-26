@@ -1,0 +1,603 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/index.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="missing">
+  <meta name="keywords" content="missing,博客,北航,BUAA">
+  
+    <meta name="description" content="← 算法章节目录 排序算法1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798">
+<meta property="og:type" content="website">
+<meta property="og:title" content="排序算法">
+<meta property="og:url" content="https://missync.github.io/courses/algorithms/sorting/index.html">
+<meta property="og:site_name" content="missing&#39;s blog">
+<meta property="og:description" content="← 算法章节目录 排序算法1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-09-10T08:27:39.000Z">
+<meta property="article:modified_time" content="2026-10-26T14:10:42.973Z">
+<meta property="article:author" content="missing">
+<meta property="article:tag" content="missing,博客,北航,BUAA">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>排序算法 - missing&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>missing&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/courses/" target="_self">
+                <i class="iconfont icon-list"></i>
+                <span>课程</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="排序算法"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">排序算法</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年10月26日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p><a href="/courses/algorithms/">← 算法章节目录</a></p>
+<h2 id="排序算法"><a href="#排序算法" class="headerlink" title="排序算法"></a>排序算法</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br></pre></td><td class="code"><pre><code class="hljs c"><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;malloc.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;ctype.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;math.h&gt;</span></span><br> <br><span class="hljs-type">int</span> count;<span class="hljs-comment">//排序趟数</span><br><br><span class="hljs-comment">//一些排序需要用到交换 </span><br><span class="hljs-type">void</span> <span class="hljs-title function_">swap</span><span class="hljs-params">(<span class="hljs-type">int</span>* a, <span class="hljs-type">int</span>* b)</span> &#123;<br>    <span class="hljs-type">int</span> temp = *b;<br>    *b = *a;<br>    *a = temp;<br>&#125; <br><br><span class="hljs-comment">//堆排序，adjust是调整函数 </span><br><span class="hljs-type">void</span> <span class="hljs-title function_">adjust</span><span class="hljs-params">(<span class="hljs-type">int</span> k[ ],<span class="hljs-type">int</span> i,<span class="hljs-type">int</span> n)</span><br>&#123;<br>    <span class="hljs-type">int</span> j,parent;<br>    parent=k[i];<span class="hljs-comment">//注意parent一直没变 </span><br>    j=<span class="hljs-number">2</span>*i+<span class="hljs-number">1</span>;<span class="hljs-comment">//j是左孩子 </span><br>    <span class="hljs-keyword">while</span>(j&lt;=n)&#123;<br>     count++;<br>        <span class="hljs-keyword">if</span>(j&lt;n&amp;&amp;k[j]&lt;k[j+<span class="hljs-number">1</span>])<br>            j++; <span class="hljs-comment">//j给出i结点左、右孩子中最大值的节点 </span><br>        <span class="hljs-keyword">if</span>(parent&gt;=k[j]) <br>            <span class="hljs-keyword">break</span>; <span class="hljs-comment">//如果孩子节点最大值小于根节点，不用交换 </span><br>        k[(j<span class="hljs-number">-1</span>)/<span class="hljs-number">2</span>]=k[j]; <span class="hljs-comment">//把最大的孩子节点移到父节点位置 </span><br>        <br>        j=<span class="hljs-number">2</span>*j+<span class="hljs-number">1</span>;<span class="hljs-comment">//防止交换以后使得子树不是大顶堆，把j看作子树的父节点 </span><br>    &#125;<span class="hljs-comment">//循环结束时 </span><br>    k[(j<span class="hljs-number">-1</span>)/<span class="hljs-number">2</span>]=parent;<span class="hljs-comment">//把父亲节点parent放到最后 </span><br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">heapsort</span><span class="hljs-params">(<span class="hljs-type">int</span> k[],<span class="hljs-type">int</span> n)</span>&#123;<br> <span class="hljs-type">int</span> i;<br> <span class="hljs-type">int</span> temp;<br> <span class="hljs-keyword">for</span>(i=n/<span class="hljs-number">2</span>;i&gt;=<span class="hljs-number">0</span>;i--)<br> adjust(k,i,n);<span class="hljs-comment">//先从最后一个节点的父节点开始调整，一个个往前推 </span><br> <br> <span class="hljs-keyword">for</span>(i=n<span class="hljs-number">-1</span>;i&gt;<span class="hljs-number">0</span>;i--)&#123;<br>  temp=k[i+<span class="hljs-number">1</span>]; <br>  k[i+<span class="hljs-number">1</span>]=k[<span class="hljs-number">0</span>];<br>  k[<span class="hljs-number">0</span>]=temp;<span class="hljs-comment">//此时根节点破坏了整个树的堆的特性，把根节点放到最后一个节点 </span><br>  adjust(k,<span class="hljs-number">0</span>,i<span class="hljs-number">-1</span>);<span class="hljs-comment">//再对新得到的树进行堆调整 </span><br> &#125;<br>&#125;<br><br><span class="hljs-comment">//堆排序的另一个版本，更加容易理解 </span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">max_heapify</span><span class="hljs-params">(<span class="hljs-type">int</span> arr[], <span class="hljs-type">int</span> i, <span class="hljs-type">int</span> n )</span> &#123;<br>    <span class="hljs-comment">//建立父节点指标和子节点指标</span><br>      <span class="hljs-type">int</span> largest = i; <span class="hljs-comment">// 将最大元素设置为堆顶元素</span><br>      <span class="hljs-type">int</span> l = <span class="hljs-number">2</span> * i + <span class="hljs-number">1</span>; <span class="hljs-comment">// left = 2*i + 1</span><br>      <span class="hljs-type">int</span> r = <span class="hljs-number">2</span> * i + <span class="hljs-number">2</span>; <span class="hljs-comment">// right = 2*i + 2</span><br>  <br>      <span class="hljs-comment">// 如果 left 比 root 大的话</span><br>      <span class="hljs-keyword">if</span> (l &lt;=n &amp;&amp; arr[l] &gt; arr[largest])<br>          largest = l;<br>  <br>      <span class="hljs-comment">// I如果 right 比 root 大的话</span><br>      <span class="hljs-keyword">if</span> (r &lt;=n &amp;&amp; arr[r] &gt; arr[largest])<br>          largest = r;<br>  <br>      <span class="hljs-keyword">if</span> (largest != i) &#123;<br>          swap(&amp;arr[i],&amp;arr[largest]);<br>          <span class="hljs-comment">// 递归地定义子堆</span><br>          max_heapify(arr, n, largest);<br>      &#125;<br> <br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">heap_sort</span><span class="hljs-params">(<span class="hljs-type">int</span> arr[], <span class="hljs-type">int</span> len)</span> &#123;<br>    <span class="hljs-type">int</span> i;<br>    <span class="hljs-comment">//初始化，i从最后一个父节点开始调整</span><br>    <span class="hljs-keyword">for</span> (i = len / <span class="hljs-number">2</span> - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i--)<br>        max_heapify(arr, i, len - <span class="hljs-number">1</span>);<br>        <br>    <span class="hljs-comment">//先将第一个元素和已排好元素前一位做交换，再重新调整，直到排序完毕</span><br>    <span class="hljs-keyword">for</span> (i = len - <span class="hljs-number">1</span>; i &gt; <span class="hljs-number">0</span>; i--) &#123;<br>        swap(&amp;arr[<span class="hljs-number">0</span>], &amp;arr[i]);<br>        max_heapify(arr, <span class="hljs-number">0</span>, i - <span class="hljs-number">1</span>);<br>    &#125;<br>&#125;<br><br><br><span class="hljs-comment">//二路归并排序 </span><br><span class="hljs-type">void</span> <span class="hljs-title function_">MergeArray</span><span class="hljs-params">(<span class="hljs-type">int</span> a[],<span class="hljs-type">int</span> head,<span class="hljs-type">int</span> mid,<span class="hljs-type">int</span> tail)</span><br>&#123;<br> <span class="hljs-comment">//p即为左半部分数组和右半部分数组排序合并后的数组 </span><br> <span class="hljs-type">int</span> i=head,j=mid+<span class="hljs-number">1</span>,k=<span class="hljs-number">0</span>;<br> <span class="hljs-type">int</span> *p=(<span class="hljs-type">int</span> *)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">int</span>)*(tail-head+<span class="hljs-number">1</span>));<br> <span class="hljs-keyword">while</span>(i&lt;=mid&amp;&amp;j&lt;=tail)<br> &#123;<br>  count++;<br>  <span class="hljs-keyword">if</span>(a[i]&lt;=a[j])p[k++]=a[i++];<br>  <span class="hljs-keyword">else</span> p[k++]=a[j++]; <br>  <br> &#125;<span class="hljs-comment">//对左半数组和右半数组进行比较，从小到大排序构建p </span><br> <span class="hljs-keyword">while</span>(i&lt;=mid)p[k++]=a[i++];<span class="hljs-comment">//把左半部分没合并的加入到p中 </span><br> <span class="hljs-keyword">while</span>(j&lt;=tail)p[k++]=a[j++];<span class="hljs-comment">//把右半部分没合并的加入到p中 </span><br> <span class="hljs-keyword">for</span>(k=<span class="hljs-number">0</span>;k&lt;=tail-head;k++)a[head+k]=p[k];<span class="hljs-comment">//把p放到a的对应位置中 </span><br> <span class="hljs-built_in">free</span>(p);<br> <br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">MergeSort</span><span class="hljs-params">(<span class="hljs-type">int</span> a[],<span class="hljs-type">int</span> head,<span class="hljs-type">int</span> tail)</span><br>&#123;<br> <span class="hljs-keyword">if</span>(head&lt;tail)<br> &#123;<br>  <span class="hljs-type">int</span> mid=(head+tail)/<span class="hljs-number">2</span>;<br>  MergeSort(a,head,mid);<span class="hljs-comment">//对左半部分进行排序 </span><br>  MergeSort(a,mid+<span class="hljs-number">1</span>,tail);<span class="hljs-comment">//对右半部分进行排序 </span><br>  MergeArray(a,head,mid,tail);<span class="hljs-comment">//对左右两边的数组进行合并 </span><br> &#125;<br>&#125;<br><br><br><span class="hljs-comment">//快排 </span><br><span class="hljs-type">void</span> <span class="hljs-title function_">quickSort</span><span class="hljs-params">(<span class="hljs-type">int</span> k[ ],<span class="hljs-type">int</span> left,<span class="hljs-type">int</span> right)</span><br>&#123;     <br>    <span class="hljs-type">int</span> i, last;<br>    <span class="hljs-keyword">if</span>(left&lt;right)&#123;<br>       last=left; <br>        <span class="hljs-keyword">for</span>(i=left+<span class="hljs-number">1</span>;i&lt;=right;i++)&#123;<br>         count++;<br>            <span class="hljs-keyword">if</span>(k[i]&lt;k[left]&amp;&amp;(++last)&lt;i)<br>         swap(&amp;k[last],&amp;k[i]);<br> <span class="hljs-comment">//不断把k[i]中小于k[left]的元素往左移动，使得last正好指在小于left元素的最右边，last右侧的元素均大于left </span><br>  &#125;<br>        swap(&amp;k[left],&amp;k[last]);<span class="hljs-comment">//交换last和left处的元素 </span><br>        quickSort(k,left,last<span class="hljs-number">-1</span>); <br>        quickSort(k,last+<span class="hljs-number">1</span>,right);   <br>    &#125;<br>&#125;<br><br><span class="hljs-comment">//统计排序趟数 </span><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span>&#123;<br>    <span class="hljs-type">int</span> n,op;<br>    <span class="hljs-type">int</span> a[<span class="hljs-number">120</span>];<br>    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;n,&amp;op);<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;n;i++)<br>    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;a[i]);<br>    <span class="hljs-keyword">switch</span> (op) &#123;<br>    <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:<br>    selectsort(a,n);<br>        <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:<br>    bubblesort(a,n);<br>        <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:<br>    heapsort(a,n<span class="hljs-number">-1</span>);<br>        <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:<br>    MergeSort(a,<span class="hljs-number">0</span>,n<span class="hljs-number">-1</span>);  <br>        <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">case</span> <span class="hljs-number">5</span>:<br>    quickSort(a,<span class="hljs-number">0</span>,n<span class="hljs-number">-1</span>);       <br>        <span class="hljs-keyword">break</span>;<br>    &#125;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;n;i++)<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>,a[i]);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n%d&quot;</span>,count);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+<hr>
+<p><a href="/courses/algorithms/">章节目录</a> · <a href="/courses/algorithms/master-theorem/">上一章：主定理</a> · <a href="/courses/algorithms/dynamic-programming/">下一章：动态规划</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!--<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>--> <i class="iconfont icon-love"></i> <!--<a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>--> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
