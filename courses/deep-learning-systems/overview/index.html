@@ -19,24 +19,34 @@
   <meta name="author" content="missing">
   <meta name="keywords" content="missing,博客,北航,BUAA">
   
-    <meta name="description" content="missing的博客">
+    <meta name="description" content="框架、编译、运行时、异构硬件、模型执行与云边端部署。">
 <meta property="og:type" content="website">
-<meta property="og:title" content="标签 - AI系统">
-<meta property="og:url" content="https://missync.github.io/tags/AI%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:title" content="深度学习系统（一）：系统组成与执行流程">
+<meta property="og:url" content="https://missync.github.io/courses/deep-learning-systems/overview/index.html">
 <meta property="og:site_name" content="missing&#39;s blog">
-<meta property="og:description" content="missing的博客">
+<meta property="og:description" content="框架、编译、运行时、异构硬件、模型执行与云边端部署。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/system-stack.png">
+<meta property="article:published_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-25T16:00:00.000Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="missing,博客,北航,BUAA">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://missync.github.io/images/courses/deep-learning-systems/system-stack.png">
   
   
   
-  <title>标签 - AI系统 - missing&#39;s blog</title>
+  <title>深度学习系统（一）：系统组成与执行流程 - missing&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
 
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
 
 
 
@@ -99,7 +109,7 @@
   <header>
     
 
-<div class="header-inner" style="height: 80vh;">
+<div class="header-inner" style="height: 70vh;">
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
@@ -205,17 +215,13 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="标签 - AI系统"></span>
+            <span id="subtitle" data-typed-text="深度学习系统（一）：系统组成与执行流程"></span>
           
         </div>
 
         
       </div>
 
-      
-        <div class="scroll-down-bar">
-          <i class="iconfont icon-arrowdown"></i>
-        </div>
       
     </div>
   </div>
@@ -236,21 +242,139 @@
               <div class="col-12 col-md-10 m-auto">
                 
 
-<div class="list-group">
-  <p class="h4">共计 1 篇文章</p>
-  <hr>
-  
-  
-    
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
       
-      <p class="h5">2026</p>
-    
-    <a href="/courses/deep-learning-systems/" class="list-group-item list-group-item-action">
-      <time>10-26</time>
-      <div class="list-group-item-title">深度学习系统：从模型到昇腾软硬件的课件复习</div>
-    </a>
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">深度学习系统（一）：系统组成与执行流程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
+
+<h2 id="1-深度学习系统的组成"><a href="#1-深度学习系统的组成" class="headerlink" title="1. 深度学习系统的组成"></a>1. 深度学习系统的组成</h2><p>深度学习系统是连接算法与硬件的软硬件基础设施，支持模型训练、推理和部署。系统设计同时考虑准确率、时延、吞吐、存储、通信与能耗。</p>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>应用与算法</td>
+<td>定义任务、模型、损失和优化目标</td>
+</tr>
+<tr>
+<td>框架</td>
+<td>提供张量、网络层、自动微分和模型训练接口</td>
+</tr>
+<tr>
+<td>编译</td>
+<td>优化计算图、融合算子、选择实现并生成设备代码</td>
+</tr>
+<tr>
+<td>运行时</td>
+<td>管理内存、任务队列、同步与通信</td>
+</tr>
+<tr>
+<td>硬件</td>
+<td>提供计算单元、存储与互联</td>
+</tr>
+<tr>
+<td>部署服务</td>
+<td>加载模型、处理请求、调度执行并监测运行状态</td>
+</tr>
+</tbody></table>
+<p><img src="/images/courses/deep-learning-systems/system-stack.png" srcset="/img/loading.gif" lazyload alt="算法、框架、编译、运行时、硬件与部署之间的关系"></p>
+<h2 id="2-从模型到执行"><a href="#2-从模型到执行" class="headerlink" title="2. 从模型到执行"></a>2. 从模型到执行</h2><p>一项 AI 任务通常经历输入处理、建模、实现、运行和输出解码。模型层描述计算语义；框架将其展开为算子；编译器与算子库将算子映射为设备 Kernel。</p>
+<p><strong>一个算子不一定对应一个 Kernel。</strong> 多个算子可以融合为同一 Kernel，一个复杂算子也可能由多个 Kernel 完成。</p>
+<p>传统模式识别先提取人工特征再训练分类器；深度学习通过多层网络共同学习特征和预测映射。系统负责把这些计算组织到实际硬件上执行。</p>
+<h2 id="3-算法与系统的协同"><a href="#3-算法与系统的协同" class="headerlink" title="3. 算法与系统的协同"></a>3. 算法与系统的协同</h2><p>模型规模增长会增加计算、参数、激活和通信开销。更少的参数或 FLOPs 不一定意味着更短的实际运行时间，性能还取决于算子实现、数据布局、访存和调度。</p>
+<p>系统优化需要先识别瓶颈，再选择算子融合、数据复用、低精度、并行或模型结构调整。优化前后应在相同输入、精度、预热和计时边界下比较正确性与端到端性能。</p>
+<h2 id="4-云、边、端部署"><a href="#4-云、边、端部署" class="headerlink" title="4. 云、边、端部署"></a>4. 云、边、端部署</h2><p>云端通常面向较高并发和吞吐，边缘设备强调靠近数据与低时延，端侧设备还受体积、功耗、内存与离线条件约束。</p>
+<p>不同部署位置会影响模型规模、压缩方案、运行时与隐私边界。CPU、GPU、NPU、存储和网络共同构成异构计算平台。</p>
+<hr>
+<p><a href="/courses/deep-learning-systems/">课程目录</a> · <a href="/courses/deep-learning-systems/models/">下一章：深度学习模型</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
   
 </div>
+
+
+              
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
 
 
 
@@ -353,6 +477,142 @@
 
 
 
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
 
   <script defer src="/js/leancloud.js" ></script>
 

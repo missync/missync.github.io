@@ -1,0 +1,862 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/index.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="missing">
+  <meta name="keywords" content="missing,博客,北航,BUAA">
+  
+    <meta name="description" content="张量与计算图、异构执行、AI Core、Tiling、训练显存、AllReduce、Roofline 与在线服务性能。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="深度学习系统：算力架构与性能分析">
+<meta property="og:url" content="https://missync.github.io/courses/deep-learning-systems/compute-systems/index.html">
+<meta property="og:site_name" content="missing&#39;s blog">
+<meta property="og:description" content="张量与计算图、异构执行、AI Core、Tiling、训练显存、AllReduce、Roofline 与在线服务性能。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/ai-core.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/roofline.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/serving-saturation.png">
+<meta property="article:published_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:author" content="missing">
+<meta property="article:tag" content="missing,博客,北航,BUAA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://missync.github.io/images/courses/deep-learning-systems/ai-core.png">
+  
+  
+  
+  <title>深度学习系统：算力架构与性能分析 - missing&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>missing&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="深度学习系统：算力架构与性能分析"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">深度学习系统：算力架构与性能分析</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
+
+<h2 id="1-计算抽象与训练流程"><a href="#1-计算抽象与训练流程" class="headerlink" title="1. 计算抽象与训练流程"></a>1. 计算抽象与训练流程</h2><h3 id="1-1-张量、算子与计算图"><a href="#1-1-张量、算子与计算图" class="headerlink" title="1.1 张量、算子与计算图"></a>1.1 张量、算子与计算图</h3><p>训练范式还要区分：监督学习使用带标签映射；无监督学习从数据中发现结构，如 K-means、PCA；自监督学习从数据构造目标，如 BERT、MAE 的遮挡预测。</p>
+<p><strong>张量要同时看 shape、维度语义、dtype 和内存布局。</strong> 图像常用 NCHW，自然语言表示常用批次×序列×特征；点云、图等还涉及稀疏张量。相同元素数，不代表相同语义或相同物理访问效率。</p>
+<p>计算图用节点表示算子、边表示张量依赖；自动微分构造反向计算。动态图边运行边建立依赖，便于调试；静态图先构建 &#x2F; 编译再执行，有更大的全局优化空间。现代框架通常兼具即时执行与图捕获：如 <code>torch.compile</code>、<code>tf.function</code>、MindSpore Graph &#x2F; PyNative、<code>jax.jit</code>、Paddle 动转静。</p>
+<p>分支和循环可由宿主语言、控制流原语或源码解析表达。展开后的单次执行可按依赖调度；包含循环的完整程序表达不能简单等同于一张固定 DAG。运行时根据就绪依赖组织执行，图捕获失败处可能出现 graph break。</p>
+<h3 id="1-2-MNIST-案例串起训练、评估与恢复"><a href="#1-2-MNIST-案例串起训练、评估与恢复" class="headerlink" title="1.2 MNIST 案例串起训练、评估与恢复"></a>1.2 MNIST 案例串起训练、评估与恢复</h3><p>MNIST 包含 60,000 张训练图、10,000 张测试图，28×28 灰度、10 分类。处理包括 <code>1/255</code> 缩放、按均值 0.1307、标准差 0.3081 归一化、HWC→CHW、标签转 Int32、分批。</p>
+<table>
+<thead>
+<tr>
+<th>对象</th>
+<th>形状 &#x2F; 流程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>batch 图像 &#x2F; 标签</td>
+<td><code>[64,1,28,28]</code> Float32 &#x2F; <code>[64]</code> Int32</td>
+</tr>
+<tr>
+<td>网络</td>
+<td>Flatten → 784→512→512→10，隐藏层 ReLU</td>
+</tr>
+<tr>
+<td>参数量</td>
+<td>401,920 + 262,656 + 5,130 &#x3D; <strong>669,706</strong></td>
+</tr>
+<tr>
+<td>logits</td>
+<td><code>[64,10]</code>，接交叉熵得到标量损失</td>
+</tr>
+<tr>
+<td>一次 step</td>
+<td>前向与 loss → 自动求梯度 → SGD 更新，学习率设为 0.01</td>
+</tr>
+<tr>
+<td>一个 epoch</td>
+<td>遍历各批次，各执行一次训练 step</td>
+</tr>
+<tr>
+<td>评估</td>
+<td>切换评估模式，累计损失与正确数，不更新参数</td>
+</tr>
+<tr>
+<td>保存 &#x2F; 恢复</td>
+<td>保存 Checkpoint；恢复同结构网络，检查未匹配参数，再核对预测</td>
+</tr>
+</tbody></table>
+<p>单张图推理仍需保留 batch 维 <code>[1,1,28,28]</code>。Batch Size 改变会改变批张量和 logits 的第一维，<strong>不会改变这套网络的参数数量</strong>。</p>
+<h2 id="2-推理：加载、执行、缓存与解码"><a href="#2-推理：加载、执行、缓存与解码" class="headerlink" title="2. 推理：加载、执行、缓存与解码"></a>2. 推理：加载、执行、缓存与解码</h2><h3 id="2-1-通用推理流水线"><a href="#2-1-通用推理流水线" class="headerlink" title="2.1 通用推理流水线"></a>2.1 通用推理流水线</h3><p><strong>模型加载 → 输入预处理 → 前向执行 → 输出解码。</strong> 加载时要对齐结构、参数键与 shape、dtype、设备、驱动和运行时；切到评估模式并按推理需要关闭梯度，随后预热，避免把首次编译与内存初始化混入稳定性能。</p>
+<p>训练与推理应使用一致的输入约定。分类输出取 argmax &#x2F; top-k；检测还要处理阈值与坐标，分割要恢复掩码，数值张量经过解码才成为任务结果。</p>
+<p>Checkpoint、MindIR 等产物各有加载路径。分布式 Checkpoint 可按进程保存并在支持时重分片；Safetensors 保存张量权重，模型结构与配置另行提供，文件本身也可能分片。<strong>文件能读、参数能装载、模型行为正确，是三层不同的检查。</strong></p>
+<h2 id="3-CPU、GPU、FPGA、ASIC-与-DSA"><a href="#3-CPU、GPU、FPGA、ASIC-与-DSA" class="headerlink" title="3. CPU、GPU、FPGA、ASIC 与 DSA"></a>3. CPU、GPU、FPGA、ASIC 与 DSA</h2><h3 id="3-1-不同架构的分工与取舍"><a href="#3-1-不同架构的分工与取舍" class="headerlink" title="3.1 不同架构的分工与取舍"></a>3.1 不同架构的分工与取舍</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>主要特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CPU</td>
+<td>ISA 定义指令、数据类型、寄存器与寻址等；擅长控制逻辑和低延迟串行任务，多级缓存缓解访存</td>
+</tr>
+<tr>
+<td>协处理 &#x2F; 扩展单元</td>
+<td>如 AVX、AMX，为特定计算模式增加硬件支持</td>
+</tr>
+<tr>
+<td>GPU</td>
+<td>从图形固定管线发展到 CUDA 通用并行、SIMT 与 Tensor Core 矩阵加速；吞吐高，但仍有带宽、功耗和分支开销</td>
+</tr>
+<tr>
+<td>FPGA</td>
+<td>可重构硬件逻辑，在灵活性与定制效率之间取舍</td>
+</tr>
+<tr>
+<td>ASIC</td>
+<td>面向特定功能固化逻辑，通过驱动、CSR、表项与中断等交互</td>
+</tr>
+<tr>
+<td>DSA</td>
+<td>面向特定领域优化且保留一定可编程性，如 AI 的 TPU &#x2F; NPU、网络领域的 P4 芯片</td>
+</tr>
+</tbody></table>
+<p>DSA 常利用领域并行、数据复用、适合任务的低精度和专用编译栈提高效率；挑战是新模型适配、性能与灵活性、生态建设、标准与跨平台迁移。不同芯片的核数量、功率和峰值并不直接构成同口径性能比较。</p>
+<p>SIMD 表示一条指令同时处理多个数据元素；SIMT 用相同指令组织多个线程，CUDA 中一个 Warp 包含 32 个线程。Tensor Core 等矩阵单元进一步支持矩阵乘累加与混合精度，不能把普通向量单元数量直接当成矩阵吞吐。</p>
+<p>TPU 脉动阵列的一种数据流是：权重驻留处理单元，激活与部分和在阵列中传播，减少反复访问外部存储。GPU 的 Tensor Core、CPU 的矩阵扩展也说明通用与专用能力正在相互融合。</p>
+<h3 id="3-2-Host–Device-异构执行"><a href="#3-2-Host–Device-异构执行" class="headerlink" title="3.2 Host–Device 异构执行"></a>3.2 Host–Device 异构执行</h3><p>分离式异构系统中，Host CPU 管控制和组织，Device 管密集计算，分别有主存与设备内存。一次任务通常是：<strong>拷入 → 下发 Kernel → 执行 → 同步 → 拷回结果</strong>。集成式 SoC 则可能共享内存，不能把独立显存和显式跨 PCIe 拷贝视为所有异构系统的必然形式。</p>
+<p>Stream 是有序任务队列：同一队列按顺序执行，不同队列在依赖与资源允许时可并发。异步调用返回只代表已提交，使用结果前须确认完成。</p>
+<p>小算子很多时，启动和下发开销可能大于实际计算；批量下发、CUDA &#x2F; ACL Graph 与整图下沉用于减少交互。数据应尽量驻留 Device，必要拷贝成批组织，并与计算重叠。昇腾接口包括 <code>aclrtMalloc</code>、<code>aclrtMemcpy</code>、<code>aclrtCreateStream</code>、<code>aclrtSynchronizeStream</code>。</p>
+<h2 id="4-昇腾达芬奇架构：计算、存储与控制协作"><a href="#4-昇腾达芬奇架构：计算、存储与控制协作" class="headerlink" title="4. 昇腾达芬奇架构：计算、存储与控制协作"></a>4. 昇腾达芬奇架构：计算、存储与控制协作</h2><h3 id="4-1-从-SoC-到-AI-Core"><a href="#4-1-从-SoC-到-AI-Core" class="headerlink" title="4.1 从 SoC 到 AI Core"></a>4.1 从 SoC 到 AI Core</h3><p>昇腾处理器内，<strong>AI Core</strong>承担密集矩阵 &#x2F; 向量计算，<strong>AI CPU</strong>处理不适合 AI Core 的复杂算子，控制 CPU 与 TS 参与管理和任务调度；DVPP 负责图像视频预处理，外部接口与 HBM &#x2F; DDR、L2 等提供数据通路。310、910 等型号的计算规模和存储规格不同。</p>
+<p><img src="/images/courses/deep-learning-systems/ai-core.png" srcset="/img/loading.gif" lazyload alt="AI Core中的矩阵、向量、标量、存储和控制单元协同"></p>
+<table>
+<thead>
+<tr>
+<th>单元</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Cube</td>
+<td>矩阵乘加，是 MatMul 和卷积的主要计算资源；支持相应的矩阵分块计算</td>
+</tr>
+<tr>
+<td>Vector</td>
+<td>激活、归一化、逐元素计算、部分格式变换与非矩阵操作</td>
+</tr>
+<tr>
+<td>Scalar</td>
+<td>地址、参数、循环、分支与指令控制</td>
+</tr>
+<tr>
+<td>MTE &#x2F; DMA</td>
+<td>数据搬运，部分路径支持随路类型或格式转换</td>
+</tr>
+<tr>
+<td>Buffer &#x2F; 寄存器</td>
+<td>缓存输入、中间结果与累加结果，支撑复用</td>
+</tr>
+</tbody></table>
+<p>矩阵可采用 A 按行、B 按列的分块存储，以及“大 Z 小 Z &#x2F; 大 Z 小 N &#x2F; 大 N 小 Z”等布局记号。<strong>逻辑矩阵形状相同，物理分块布局可以不同，布局要匹配计算单元的取数方式。</strong></p>
+<h3 id="4-2-Buffer-层次与-AIV-AIC-路径"><a href="#4-2-Buffer-层次与-AIV-AIC-路径" class="headerlink" title="4.2 Buffer 层次与 AIV &#x2F; AIC 路径"></a>4.2 Buffer 层次与 AIV &#x2F; AIC 路径</h3><p>以 910B2 为例，L0A &#x2F; L0B 各 64 KiB、L0C 128 KiB、UB 192 KiB、L1 512 KiB、L2 192 MiB，另有 BT 等特定用途 Buffer。数值是示例型号约束，实际开发需查目标平台。</p>
+<ul>
+<li><strong>AIV 路径</strong>：CopyIn 到本地输入队列 → Vector Compute → 输出队列 → CopyOut。</li>
+<li><strong>AIC 路径</strong>：矩阵从 GM 进入本地存储 → 分块与格式转换 → Cube 计算 → 中间结果累加 &#x2F; 后处理 → 写回。</li>
+<li><strong>逻辑位置核对</strong>：A1 &#x2F; B1 对应 L1，A2 &#x2F; B2 对应 L0A &#x2F; L0B，CO1 对应 L0C；CO2 的具体落点与实现有关。</li>
+</ul>
+<h3 id="4-3-并发流水线与同步"><a href="#4-3-并发流水线与同步" class="headerlink" title="4.3 并发流水线与同步"></a>4.3 并发流水线与同步</h3><p>标量、矩阵、向量和存储转换队列可并发；顺序发令不表示不同执行单元天然按代码顺序完成。SetFlag &#x2F; WaitFlag 等同步机制保证数据已就绪，再让依赖它的流水线继续。</p>
+<p>典型协作场景：</p>
+<ol>
+<li><strong>MatMul + LeakyReLU</strong>：Cube 做矩阵计算，Vector 做逐元素处理，跨核接力需同步。</li>
+<li><strong>Conv + BN + ReLU</strong>：推理时固定统计量的 BN 可折叠进卷积参数，再结合激活融合，减少中间读写与启动；具体能否自动融合取决于模式和实现。</li>
+<li><strong>FlashAttention</strong>：Cube 计算 QKᵀ、AV，Vector 做缩放 &#x2F; Softmax，Scalar 管理循环与同步，并通过分块重叠执行。</li>
+</ol>
+<h3 id="4-4-HBM、Tiling-与双缓冲"><a href="#4-4-HBM、Tiling-与双缓冲" class="headerlink" title="4.4 HBM、Tiling 与双缓冲"></a>4.4 HBM、Tiling 与双缓冲</h3><p>HBM 用 TSV、堆叠 DRAM 与近计算芯片的高密度封装提供宽接口。HBM 的演进围绕带宽、容量、通道和能耗展开，<strong>带宽增长和算力增长不总匹配</strong>。</p>
+<p>Tiling 将大矩阵切成能放入片上存储的小块，追求时间复用与空间复用；大 Tile 复用好但占空间，小 Tile 有利并行却可能增加搬运。边界与对齐还可能需要补零、转置、格式转换。</p>
+<p>Double Buffer 用两组缓冲交替工作：计算当前块时预取下一块，隐藏部分搬运时间。代价是占更多片上容量，还要确保队列和同步正确；异步搬运并不意味着等待一定能完全消失。</p>
+<p>GPU 的 Shared Memory 和昇腾的片上 Buffer 都涉及软件管理。普通 CUDA Shared Memory 在同一 thread block 的线程间共享；昇腾算子通过显式 Buffer、MTE 与事件同步组织数据流。</p>
+<h2 id="5-训练显存与集合通信"><a href="#5-训练显存与集合通信" class="headerlink" title="5. 训练显存与集合通信"></a>5. 训练显存与集合通信</h2><h3 id="5-1-显存不只放权重"><a href="#5-1-显存不只放权重" class="headerlink" title="5.1 显存不只放权重"></a>5.1 显存不只放权重</h3><p>训练经历前向保存激活、反向计算梯度、优化器更新三个阶段。显存峰值还包括梯度、优化器状态、可能的 FP32 主权重、激活和临时 buffer。</p>
+<p>以 <strong>7B 参数、十进制 GB</strong> 为例，按不同存储口径计算固定模型状态：</p>
+<table>
+<thead>
+<tr>
+<th>口径</th>
+<th>每参数字节数</th>
+<th>7B 模型状态，不含激活</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>只存 BF16 &#x2F; FP16 权重</td>
+<td>2</td>
+<td>14 GB，仅权重</td>
+</tr>
+<tr>
+<td>BF16 权重 + BF16 梯度 + 两份 FP32 Adam 状态</td>
+<td>2+2+8&#x3D;12</td>
+<td>84 GB</td>
+</tr>
+<tr>
+<td>上一行另加 FP32 主权重</td>
+<td>16</td>
+<td>112 GB</td>
+</tr>
+<tr>
+<td>再将梯度由 BF16 改存 FP32</td>
+<td>18</td>
+<td>126 GB</td>
+</tr>
+</tbody></table>
+<p>显存估算需要明确权重、梯度、优化器状态与主权重的数据类型，再加上激活和临时缓冲区的峰值。</p>
+<h3 id="5-2-减少内存的手段"><a href="#5-2-减少内存的手段" class="headerlink" title="5.2 减少内存的手段"></a>5.2 减少内存的手段</h3><ul>
+<li><strong>Gradient Checkpointing &#x2F; 重计算</strong>：少存部分激活，在反向时重算，用计算换显存。</li>
+<li><strong>混合精度</strong>：减少部分张量的字节数，同时关注数值稳定。</li>
+<li><strong>ZeRO</strong>：逐阶段分片优化器状态、梯度、参数，减少普通 DP 的重复保存。</li>
+<li><strong>Offload</strong>：把部分状态卸载到 CPU &#x2F; 主机内存等，换来额外传输；如 ZeRO-Offload、ZeRO-Infinity。</li>
+</ul>
+<p>DeepSpeed 提供相关内存优化和并行能力；Megatron-LM 侧重张量切分等大模型并行。选择方案时，既要看装得下，也要看通信与重计算是否拖慢训练。</p>
+<h3 id="5-3-梯度同步、Ring-AllReduce-与扩展效率"><a href="#5-3-梯度同步、Ring-AllReduce-与扩展效率" class="headerlink" title="5.3 梯度同步、Ring AllReduce 与扩展效率"></a>5.3 梯度同步、Ring AllReduce 与扩展效率</h3><p>同步 DP 中，各卡计算本地梯度，通过 AllReduce 汇总并按配置平均，再作一致更新。梯度可以分桶，边反向边通信；慢 Rank 和未被掩盖的通信尾部决定何时能更新。</p>
+<p>N 张卡、每卡完整梯度大小 G 字节时，Ring AllReduce 包括 Reduce-Scatter、All-Gather，两阶段各 N−1 轮，<strong>每卡累计发送量</strong>：</p>
+
+<div class="course-math">
+\[
+Q_{send}=\frac{2(N-1)}{N}G.
+\]
+</div>
+
+
+<p>8 卡、14 GB 梯度时，每卡发送 <code>2×7/8×14=24.5 GB</code>；这不是全系统所有卡的总流量，也不是发送与接收相加的双向总量。固定全局工作量下，计算可随加卡减少，每卡同步量却趋近常数，加速不会永远线性。</p>
+<p>通信技术要区分层次：GPU 例子有 NVLink、GPUDirect、RDMA；昇腾例子中 <strong>HCCS 是硬件互联，HCCL 是集合通信库</strong>，跨机可走 RoCE。算法、链路、拓扑、拥塞与消息粒度共同决定通信代价。</p>
+<h2 id="6-推理优化：每种方法在节省什么"><a href="#6-推理优化：每种方法在节省什么" class="headerlink" title="6. 推理优化：每种方法在节省什么"></a>6. 推理优化：每种方法在节省什么</h2><h3 id="6-1-FlashAttention：优化-IO，而非减少注意力语义"><a href="#6-1-FlashAttention：优化-IO，而非减少注意力语义" class="headerlink" title="6.1 FlashAttention：优化 IO，而非减少注意力语义"></a>6.1 FlashAttention：优化 IO，而非减少注意力语义</h3><p>朴素实现把完整 <code>L×L</code> 注意力分数及概率矩阵写入 HBM。FlashAttention 对 Q&#x2F;K&#x2F;V 分块，结合在线 Softmax 和输出累加，在片上完成中间处理，减少 HBM 访问。</p>
+<p>它与 PagedAttention 的侧重点不同：前者优化<strong>注意力计算的数据流和中间读写</strong>，后者优化<strong>服务中的 KV 分配和寻址</strong>。对精确密集 Attention，不能把减少中间存储误写成算术复杂度从 O(L²) 变为 O(L)。</p>
+<h2 id="7-开销估算、Roofline-与关键路径"><a href="#7-开销估算、Roofline-与关键路径" class="headerlink" title="7. 开销估算、Roofline 与关键路径"></a>7. 开销估算、Roofline 与关键路径</h2><h3 id="7-1-先区分模型规模与运行规模"><a href="#7-1-先区分模型规模与运行规模" class="headerlink" title="7.1 先区分模型规模与运行规模"></a>7.1 先区分模型规模与运行规模</h3><p>N 层、隐藏维度 d、FFN 中间维度 dff 决定主体权重；批次 B、序列长度 L 决定一次输入和激活规模；精度决定每个元素占多少字节。</p>
+<p>对于标准多头 Attention、两层非门控 FFN，忽略偏置与 Norm：</p>
+
+<div class="course-math">
+\[
+P_{layer}\approx4d^2+2d\,d_{ff},\qquad
+F_{fwd,layer}\approx8BLd^2+4BL^2d+4BLd\,d_{ff}.
+\]
+</div>
+
+
+<p>这里一次乘加计 2 FLOPs；主体参数按层累计，还要另计词嵌入 &#x2F; 输出层。若 <code>dff=4d</code>，每层参数约 12d²，前向约 <code>24BLd²+4BL²d</code>。GQA、SwiGLU、MoE 不能不改结构假设就套用这些系数。</p>
+<p>短序列时投影与 FFN 往往更重；L 增加，Attention 关系项按 L² 增长，其与主体矩阵乘的相对量在该假设下约为 <code>L/(6d)</code>。<strong>长序列不仅增加运算，也增加中间结果与 IO 压力。</strong></p>
+<p>常规稠密 Transformer 的粗略训练预算是 <code>C≈6PT</code>，P 为参数量，T 为训练 token 总数；前向约 2PT、反向约 4PT。它忽略部分注意力平方项、重计算、通信等，用于早期估算；训练时间要除以有效吞吐，不能直接除硬件标称峰值就当成实测时间。</p>
+<h3 id="7-2-Roofline：算力上界与带宽上界"><a href="#7-2-Roofline：算力上界与带宽上界" class="headerlink" title="7.2 Roofline：算力上界与带宽上界"></a>7.2 Roofline：算力上界与带宽上界</h3><p>设算术工作量 W 为 FLOPs，显存搬运量 Q 为字节，算术强度 I&#x3D;W&#x2F;Q；硬件峰值算力为 Ppeak，所选层次的带宽为 Bmem：</p>
+
+<div class="course-math">
+\[
+P\le\min(P_{peak},I B_{mem}),\qquad I^*=P_{peak}/B_{mem}.
+\]
+</div>
+
+
+<p><img src="/images/courses/deep-learning-systems/roofline.png" srcset="/img/loading.gif" lazyload alt="低算术强度受带宽限制，高算术强度受算力上限限制的Roofline示意"></p>
+<p>I 低于脊点 I* 时常受带宽约束，提高复用可提升上界；高于脊点后受算力上界限制。显存<strong>容量</strong>回答装不装得下，显存<strong>带宽</strong>回答数据送得够不够快，两者必须分别检查。</p>
+<h3 id="7-3-Hockney、重叠与关键路径"><a href="#7-3-Hockney、重叠与关键路径" class="headerlink" title="7.3 Hockney、重叠与关键路径"></a>7.3 Hockney、重叠与关键路径</h3><p>一次消息传输可近似为 <code>α+nβ</code>，α 是固定启动时延，β 是每字节传输耗时。若集合通信共 s 轮、累计传 n 字节，则近似 <code>sα+nβ</code>。小消息更容易受启动时延影响，大消息更容易受带宽影响。</p>
+<p>计算、访存与通信并非总按顺序发生；端到端时间由依赖链中<strong>最长的关键路径</strong>决定。通信与反向重叠后，只有未被隐藏的部分继续延长 step。</p>
+<p>瓶颈诊断流程为：<strong>定义负载和计时边界 → 计算工作量与搬运量 → 建立性能模型 → 对照真实依赖链 → 改一项并端到端复测</strong>。增加片上复用、重计算、压缩、并行都会转移成本，必须保持输入、精度、预热和起止边界一致，才能比较净收益。</p>
+<h2 id="8-在线推理指标：吞吐、延迟与饱和"><a href="#8-在线推理指标：吞吐、延迟与饱和" class="headerlink" title="8. 在线推理指标：吞吐、延迟与饱和"></a>8. 在线推理指标：吞吐、延迟与饱和</h2><p><strong>一次模型前向耗时，不等于用户等待时间。</strong> 完整链路包括网络接入、预处理、排队调度、Prefill、Decode 和结果传输。</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>定义与注意事项</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TTFT</td>
+<td>请求提交到第一个输出 token 返回，通常含排队、Prefill、网络等</td>
+</tr>
+<tr>
+<td>TPOT</td>
+<td>第一个输出 token 后，相邻 token 的平均时间间隔</td>
+</tr>
+<tr>
+<td>E2E</td>
+<td>完整请求的端到端延迟</td>
+</tr>
+<tr>
+<td>P95 &#x2F; P99</td>
+<td>描述慢请求尾部的分位数，不能只看平均值</td>
+</tr>
+<tr>
+<td>TPS</td>
+<td>单位时间处理 &#x2F; 生成的 token 数，要注明输入、输出或合计</td>
+</tr>
+<tr>
+<td>RPS</td>
+<td>单位时间成功完成的请求数，与每次生成多少 token 不等价</td>
+</tr>
+<tr>
+<td>并发数 &#x2F; Batch Size</td>
+<td>前者是系统中同时存在的请求规模，后者是一批参与执行的请求数</td>
+</tr>
+</tbody></table>
+<p>若输出 token 数为 Nout&gt;1，在计时边界一致时：</p>
+
+<div class="course-math">
+\[
+TPOT=\frac{E2E-TTFT}{N_{out}-1},\qquad
+E2E=TTFT+(N_{out}-1)TPOT.
+\]
+</div>
+
+
+<p><img src="/images/courses/deep-learning-systems/serving-saturation.png" srcset="/img/loading.gif" lazyload alt="并发增加后吞吐趋于平台，尾部延迟在饱和区显著上升"><br><em>更高并发不一定带来更高有效吞吐。</em></p>
+<p>排查时先判断是否饱和：<strong>TTFT 高</strong>看接入、排队、Prefill；<strong>TPOT 高</strong>看 Decode 执行与数据供给；<strong>OOM &#x2F; 显存持续增长</strong>看 KV 容量和调度；同时观察 TPS、RPS、P95&#x2F;P99、错误率和设备利用率。</p>
+<hr>
+<p><a href="/courses/deep-learning-systems/">课程目录</a> · <a href="/courses/deep-learning-systems/ascend-stack/">上一章：昇腾技术栈</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!--<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>--> <i class="iconfont icon-love"></i> <!--<a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>--> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

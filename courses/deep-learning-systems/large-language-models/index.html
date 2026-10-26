@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/index.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="missing">
+  <meta name="keywords" content="missing,博客,北航,BUAA">
+  
+    <meta name="description" content="预训练、微调、LoRA、并行训练、KV Cache、量化、连续批处理、PagedAttention 与推测解码。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="深度学习系统（三）：大模型训练、推理与服务">
+<meta property="og:url" content="https://missync.github.io/courses/deep-learning-systems/large-language-models/index.html">
+<meta property="og:site_name" content="missing&#39;s blog">
+<meta property="og:description" content="预训练、微调、LoRA、并行训练、KV Cache、量化、连续批处理、PagedAttention 与推测解码。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/prefill-decode.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/paged-attention.png">
+<meta property="article:published_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:author" content="missing">
+<meta property="article:tag" content="missing,博客,北航,BUAA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://missync.github.io/images/courses/deep-learning-systems/prefill-decode.png">
+  
+  
+  
+  <title>深度学习系统（三）：大模型训练、推理与服务 - missing&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>missing&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="深度学习系统（三）：大模型训练、推理与服务"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">深度学习系统（三）：大模型训练、推理与服务</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
+
+<h2 id="1-预训练、微调与人类对齐"><a href="#1-预训练、微调与人类对齐" class="headerlink" title="1. 预训练、微调与人类对齐"></a>1. 预训练、微调与人类对齐</h2><h3 id="1-1-各阶段在学什么"><a href="#1-1-各阶段在学什么" class="headerlink" title="1.1 各阶段在学什么"></a>1.1 各阶段在学什么</h3><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>数据与目标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>预训练</td>
+<td>网页、书籍、对话等通用数据，以及代码、科学、多语等专用数据；学习通用语言与知识表示</td>
+</tr>
+<tr>
+<td>SFT &#x2F; 指令微调</td>
+<td>人工或半自动构造的“指令—回答”示例，学习按要求完成任务</td>
+</tr>
+<tr>
+<td>人类对齐 &#x2F; RLHF</td>
+<td>利用偏好反馈进一步调整回答行为；通常包含初始训练、收集反馈、强化学习并迭代</td>
+</tr>
+<tr>
+<td>提示与任务定制</td>
+<td>用模板、示例和领域信息组织任务输入，不一定更新模型权重</td>
+</tr>
+</tbody></table>
+<p>预测下一个 token、预测遮挡内容等属于<strong>从数据自身构造监督信号的自监督学习</strong>。</p>
+<p>预处理要考虑清洗、去重、格式统一与敏感信息处理。常见预训练目标包括：<strong>自回归语言建模、只对后缀计损失的前缀语言建模、中间填充 FIM</strong>；模型学习什么，与损失计算覆盖哪些位置有关。</p>
+<h3 id="1-2-参数高效微调"><a href="#1-2-参数高效微调" class="headerlink" title="1.2 参数高效微调"></a>1.2 参数高效微调</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>核心思路</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LoRA</td>
+<td>冻结原权重，用两个小矩阵表示低秩增量；推理时在适用情况下合并回权重</td>
+</tr>
+<tr>
+<td>AdaLoRA</td>
+<td>动态分配不同权重更新的秩预算</td>
+</tr>
+<tr>
+<td>Prefix Tuning</td>
+<td>在注意力的 K&#x2F;V 前加入可训练连续前缀</td>
+</tr>
+<tr>
+<td>Prompt Tuning</td>
+<td>在输入表示前加入可学习的连续提示向量</td>
+</tr>
+</tbody></table>
+<p>设原权重 W₀ 为 <code>d_out×d_in</code>，低秩维度 r 远小于这两个维度，取 B 为 <code>d_out×r</code>、A 为 <code>r×d_in</code>：</p>
+
+<div class="course-math">
+\[
+W=W_0+BA,\qquad P_{trainable}=r(d_{in}+d_{out}).
+\]
+</div>
+
+
+<p>低秩分解的字母约定可以不同，矩阵形状决定相乘次序。LoRA 主要减少可训练参数、梯度和优化器状态，<strong>基础模型权重与前向激活仍有开销</strong>。</p>
+<h2 id="2-分布式训练：并行、显存与通信"><a href="#2-分布式训练：并行、显存与通信" class="headerlink" title="2. 分布式训练：并行、显存与通信"></a>2. 分布式训练：并行、显存与通信</h2><h3 id="2-1-三类并行与基本术语"><a href="#2-1-三类并行与基本术语" class="headerlink" title="2.1 三类并行与基本术语"></a>2.1 三类并行与基本术语</h3><table>
+<thead>
+<tr>
+<th>并行方式</th>
+<th>切分对象</th>
+<th>主要代价</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DP 数据并行</td>
+<td>每卡相同模型，不同样本批次</td>
+<td>同步梯度；普通 DP 不减少每卡模型副本</td>
+</tr>
+<tr>
+<td>TP 张量并行</td>
+<td>将同一层的矩阵 &#x2F; 张量分到多卡</td>
+<td>层内需要频繁通信</td>
+</tr>
+<tr>
+<td>PP 流水线并行</td>
+<td>按层或阶段切模型</td>
+<td>传激活与反向梯度；负载不均和流水气泡</td>
+</tr>
+<tr>
+<td>3D 混合并行</td>
+<td>组合 DP、TP、PP</td>
+<td>需要同时考虑负载、显存和拓扑</td>
+</tr>
+</tbody></table>
+<p><strong>进程、Rank、Device、通信域</strong>不能混为一谈：常见映射是一进程一设备；Rank 是某通信组中的成员编号；通信域规定哪些成员一起做集合通信。逻辑上相邻的 Rank，不一定物理相邻。</p>
+<p>模型装不下、每秒吞吐不足、总训练时间太长，是扩展多卡的不同动机。一般先利用机内高速互联，再考虑跨机网络；高频 TP 通信应尽量放在高速互联域内。</p>
+<h3 id="2-2-减少内存的手段"><a href="#2-2-减少内存的手段" class="headerlink" title="2.2 减少内存的手段"></a>2.2 减少内存的手段</h3><ul>
+<li><strong>Gradient Checkpointing &#x2F; 重计算</strong>：少存部分激活，在反向时重算，用计算换显存。</li>
+<li><strong>混合精度</strong>：减少部分张量的字节数，同时关注数值稳定。</li>
+<li><strong>ZeRO</strong>：逐阶段分片优化器状态、梯度、参数，减少普通 DP 的重复保存。</li>
+<li><strong>Offload</strong>：把部分状态卸载到 CPU &#x2F; 主机内存等，换来额外传输；如 ZeRO-Offload、ZeRO-Infinity。</li>
+</ul>
+<p>DeepSpeed 提供相关内存优化和并行能力；Megatron-LM 侧重张量切分等大模型并行。选择方案时，既要看装得下，也要看通信与重计算是否拖慢训练。</p>
+<h2 id="3-推理：加载、执行、缓存与解码"><a href="#3-推理：加载、执行、缓存与解码" class="headerlink" title="3. 推理：加载、执行、缓存与解码"></a>3. 推理：加载、执行、缓存与解码</h2><h3 id="3-1-LLM-的-Prefill-与-Decode"><a href="#3-1-LLM-的-Prefill-与-Decode" class="headerlink" title="3.1 LLM 的 Prefill 与 Decode"></a>3.1 LLM 的 Prefill 与 Decode</h3><p><img src="/images/courses/deep-learning-systems/prefill-decode.png" srcset="/img/loading.gif" lazyload alt="Prefill处理完整提示并建立缓存，Decode逐token增加K和V"><br><em>两阶段的输入长度和复用方式不同。</em></p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>计算与状态</th>
+<th>主要关系</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Prefill</td>
+<td>并行处理提示中的多个 token，建立初始 K&#x2F;V 缓存</td>
+<td>影响首 token 时间</td>
+</tr>
+<tr>
+<td>Decode</td>
+<td>复用历史 K&#x2F;V，为新位置计算 Q&#x2F;K&#x2F;V，通常每轮生成一个 token</td>
+<td>影响后续 token 间隔</td>
+</tr>
+</tbody></table>
+<p>KV Cache 缓存的是各层历史 <strong>K、V</strong>。它减少重复投影与历史部分的重复计算，代价是随序列与并发增长占用显存；每轮新 Query 仍需要和可见的历史信息做注意力计算。</p>
+<h3 id="3-2-从-logits-选-token"><a href="#3-2-从-logits-选-token" class="headerlink" title="3.2 从 logits 选 token"></a>3.2 从 logits 选 token</h3><table>
+<thead>
+<tr>
+<th>策略</th>
+<th>做法与取舍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Greedy</td>
+<td>取最高分 &#x2F; 最高概率 token，快，但可能单调或重复</td>
+</tr>
+<tr>
+<td>Temperature</td>
+<td>改变分布集中程度；温度越高，通常越分散</td>
+</tr>
+<tr>
+<td>Top-k</td>
+<td>只在最高概率的 k 个候选中，按重新归一化后的概率采样</td>
+</tr>
+<tr>
+<td>Top-p</td>
+<td>按累计概率阈值保留候选，再采样</td>
+</tr>
+<tr>
+<td>Beam Search</td>
+<td>维护多个高分候选序列，逐步扩展；比贪婪搜索覆盖更多路径，但成本更高</td>
+</tr>
+</tbody></table>
+<p>Top-k 是限制候选集合，不是要求在 k 个词中均匀随机抽取。自回归生成把选出的 token 加回上下文，再继续下一步。</p>
+<h2 id="4-推理优化：每种方法在节省什么"><a href="#4-推理优化：每种方法在节省什么" class="headerlink" title="4. 推理优化：每种方法在节省什么"></a>4. 推理优化：每种方法在节省什么</h2><h3 id="4-1-量化与低精度"><a href="#4-1-量化与低精度" class="headerlink" title="4.1 量化与低精度"></a>4.1 量化与低精度</h3><p>量化用更低位宽表示权重或激活，减少存储与数据搬运，并在硬件、Kernel 支持时加速。<strong>QAT</strong>在训练中考虑量化影响，<strong>PTQ</strong>在训练后通过校准等方式完成量化。</p>
+<p>对称量化常把实数零对应到整数零；非对称量化还使用零点偏移来适配区间。量化公式中的 scale、zero point 与通道 &#x2F; 分组粒度都会影响误差与执行成本。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>重点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AdaQuant</td>
+<td>逐层校准，减少量化层与全精度层输出的差异</td>
+</tr>
+<tr>
+<td>BRECQ</td>
+<td>按网络块重构，考虑跨层依赖，并利用二阶误差 &#x2F; Fisher 信息近似评价重要性</td>
+</tr>
+<tr>
+<td>LLM.int8()</td>
+<td>向量级量化；异常特征维度走较高精度，其余走 INT8 的混合精度分解</td>
+</tr>
+<tr>
+<td>CPU INT4 推理</td>
+<td>量化算法、粒度、group size 与 INT4 Kernel &#x2F; Runtime 协同；可结合 GPTQ、AWQ 等量化方法与 AVX、VNNI、AMX 等指令支持</td>
+</tr>
+</tbody></table>
+<h3 id="4-2-Orca：把调度粒度降到每次迭代"><a href="#4-2-Orca：把调度粒度降到每次迭代" class="headerlink" title="4.2 Orca：把调度粒度降到每次迭代"></a>4.2 Orca：把调度粒度降到每次迭代</h3><p>静态批处理要求同批请求相互等待：短请求结束后占位，新请求也难插入。Orca 在<strong>迭代级</strong>重新组批，已结束请求退出，新请求进入，提高资源利用与响应效率。</p>
+<p>Linear 等操作可合并 batch 与序列维度；Attention 则按请求组织各自的历史上下文，再合并结果。不同请求长度和阶段不同，不能简单当成完全相同的张量。</p>
+<h3 id="4-3-PagedAttention：减少-KV-内存浪费"><a href="#4-3-PagedAttention：减少-KV-内存浪费" class="headerlink" title="4.3 PagedAttention：减少 KV 内存浪费"></a>4.3 PagedAttention：减少 KV 内存浪费</h3><p><img src="/images/courses/deep-learning-systems/paged-attention.png" srcset="/img/loading.gif" lazyload alt="通过映射表把各请求的逻辑KV块对应到不连续的物理显存块"><br><em>借鉴操作系统分页思想，物理块无需连续分配。</em></p>
+<p>为每个请求预留最大生成长度，会产生浪费和碎片。PagedAttention 将 KV 分成固定 token 数的块，用映射表连接逻辑块与物理块，按需分配和释放。</p>
+<p>分页中的对应关系是：请求像进程，逻辑 KV Blocks 像虚拟页，物理 KV Blocks 像物理页，token 数据像页内字节。<strong>分页优化管理方式，不会消除保存 K&#x2F;V 本身需要的字节数。</strong></p>
+<p>忽略并行切分，KV 缓存大小可按 <code>2 × 层数 × 批次 × 序列长度 × KV头数 × 每头维度 × 每元素字节数</code> 估算。40 层、KV 总维度 5120、FP16 时，每 token 约 0.8 MB；GQA 应按实际 KV 头数重新计算。</p>
+<h3 id="4-4-StreamingLLM：保留“汇聚注意力”的初始位置"><a href="#4-4-StreamingLLM：保留“汇聚注意力”的初始位置" class="headerlink" title="4.4 StreamingLLM：保留“汇聚注意力”的初始位置"></a>4.4 StreamingLLM：保留“汇聚注意力”的初始位置</h3><p>完整密集 Attention 的上下文成本高；只保留最近窗口又可能导致质量下降。<strong>Attention Sinks</strong> 指初始少量 token 在注意力分布中起特殊作用。</p>
+<p>StreamingLLM 组合初始 sink token 的 KV、最近窗口的 rolling KV，以及当前 token，并处理窗口位置与位置编码的对应。例如，可保留 4 个初始位置。<strong>能持续接收流式输入，不代表模型能检索已从窗口删除的任意遥远内容。</strong></p>
+<h3 id="4-5-推测解码：小模型起草，大模型验证"><a href="#4-5-推测解码：小模型起草，大模型验证" class="headerlink" title="4.5 推测解码：小模型起草，大模型验证"></a>4.5 推测解码：小模型起草，大模型验证</h3><p>草稿模型 q 连续提出 γ 个 token，主模型 p 并行核验；接受前缀，遇到第一个拒绝位置时按修正分布重新采样。一次主模型调用可输出 1 到 γ+1 个新 token。</p>
+<p>为了保持主模型的采样分布，候选 x 按 <code>min(1,p(x)/q(x))</code> 接受；拒绝后从归一化的 <code>max(0,p−q)</code> 分布补采样。接受部分贡献 <code>min(p,q)</code>，补偿部分贡献 <code>p−min(p,q)</code>，合起来仍是 p。<strong>保持分布依赖正确的接受与补偿规则，不能简单把大模型认为“不够好”的词随意替换。</strong></p>
+<h2 id="5-从模型推理到完整服务"><a href="#5-从模型推理到完整服务" class="headerlink" title="5. 从模型推理到完整服务"></a>5. 从模型推理到完整服务</h2><h3 id="5-1-应用系统的三个模块"><a href="#5-1-应用系统的三个模块" class="headerlink" title="5.1 应用系统的三个模块"></a>5.1 应用系统的三个模块</h3><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>组成与职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据预处理 &#x2F; Embedding</td>
+<td>采集、加载、解析数据，生成向量并保存到向量库</td>
+</tr>
+<tr>
+<td>Prompt 构建 &#x2F; 检索</td>
+<td>组合模板、少量示例、外部 API 信息和检索文档</td>
+</tr>
+<tr>
+<td>Prompt 执行 &#x2F; 推理</td>
+<td>调用模型，附加缓存、日志、验证和应用托管</td>
+</tr>
+</tbody></table>
+<p>这里的检索增强是在推理输入中加入相关资料，不等于把资料重新训练进权重。LLM Cache 与 KV Cache 也不同：前者可缓存应用请求 &#x2F; 回答，后者保存模型内部注意力历史。</p>
+<h3 id="5-2-vLLM：Scheduler、KV-管理器与模型执行器"><a href="#5-2-vLLM：Scheduler、KV-管理器与模型执行器" class="headerlink" title="5.2 vLLM：Scheduler、KV 管理器与模型执行器"></a>5.2 vLLM：Scheduler、KV 管理器与模型执行器</h3><p>vLLM V1 的执行流程为：加载模型并估算 KV 容量，初始化 Scheduler &#x2F; KV Manager &#x2F; ModelExecutor，按每轮 <strong>token 预算</strong>组织执行。运行中和等待中的请求、分块 Prefill、Decode 可以在调度中共同出现；资源不足时可能等待或抢占。</p>
+<p>例如，3 个 prompt 长度为 3、5、12，每轮 token 预算为 10：</p>
+<table>
+<thead>
+<tr>
+<th>轮次</th>
+<th>r1 &#x2F; r2 &#x2F; r3 的处理量</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Step 0</td>
+<td>3 &#x2F; 5 &#x2F; 2</td>
+<td>r1、r2 完成提示处理，r3 还剩 10 个 prompt token</td>
+</tr>
+<tr>
+<td>Step 1</td>
+<td>1 &#x2F; 1 &#x2F; 8</td>
+<td>前两者 Decode，r3 继续 Prefill</td>
+</tr>
+<tr>
+<td>Step 2</td>
+<td>1 &#x2F; 1 &#x2F; 2</td>
+<td>r3 完成剩余 Prefill</td>
+</tr>
+<tr>
+<td>Step 3</td>
+<td>1 &#x2F; 1 &#x2F; 1</td>
+<td>三者共同 Decode</td>
+</tr>
+</tbody></table>
+<p>表中的数字是<strong>调度的 token 工作量</strong>，不能把 r3 的 8 个 Prefill token 误读为生成了 8 个输出 token。大模型还可按张量并行跨卡执行，KV 块由管理器按需分配和回收。</p>
+<h3 id="5-3-MLC-LLM-与可靠服务"><a href="#5-3-MLC-LLM-与可靠服务" class="headerlink" title="5.3 MLC LLM 与可靠服务"></a>5.3 MLC LLM 与可靠服务</h3><p>MLC LLM 通过编译与 MLCEngine 面向多平台部署，本地运行支持离线使用、定制与应用嵌入。</p>
+<p>服务的可靠性还涉及长任务推理与协作、多模态与动态场景、高效推理与规模服务、智能体权限和提示注入、幻觉偏见隐私，以及持续评测与治理。可靠性要靠过程检查、失败恢复、权限控制、监测和反馈闭环共同实现。</p>
+<hr>
+<p><a href="/courses/deep-learning-systems/">课程目录</a> · <a href="/courses/deep-learning-systems/models/">上一章：神经网络与模型结构</a> · <a href="/courses/deep-learning-systems/ascend-stack/">下一章：昇腾技术栈</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!--<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>--> <i class="iconfont icon-love"></i> <!--<a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>--> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
