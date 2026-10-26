@@ -19,19 +19,19 @@
   <meta name="author" content="missing">
   <meta name="keywords" content="missing,博客,北航,BUAA">
   
-    <meta name="description" content="1.思考题1.1 ld是链接器工具，用于将编译后的目标文件链接成可执行文件或共享库。 readelf是一个用于查看ELF格式文件（包括可执行文件、共享库等）的工具。它可以显示ELF文件的各个段、符号表、重定位表等信息，帮助用户了解可执行文件的结构和内容。 mips-linux-gnu-前缀通常用于指明目标架构为MIPS架构的Linux系统。 objdump -DS hello命令用于对名为hell">
+    <meta name="description" content="← 操作系统章节目录 1.思考题1.1 ld是链接器工具，用于将编译后的目标文件链接成可执行文件或共享库。 readelf是一个用于查看ELF格式文件（包括可执行文件、共享库等）的工具。它可以显示ELF文件的各个段、符号表、重定位表等信息，帮助用户了解可执行文件的结构和内容。 mips-linux-gnu-前缀通常用于指明目标架构为MIPS架构的Linux系统。 objdump -DS hello">
 <meta property="og:type" content="article">
 <meta property="og:title" content="os-lab1">
 <meta property="og:url" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/index.html">
 <meta property="og:site_name" content="missing&#39;s blog">
-<meta property="og:description" content="1.思考题1.1 ld是链接器工具，用于将编译后的目标文件链接成可执行文件或共享库。 readelf是一个用于查看ELF格式文件（包括可执行文件、共享库等）的工具。它可以显示ELF文件的各个段、符号表、重定位表等信息，帮助用户了解可执行文件的结构和内容。 mips-linux-gnu-前缀通常用于指明目标架构为MIPS架构的Linux系统。 objdump -DS hello命令用于对名为hell">
+<meta property="og:description" content="← 操作系统章节目录 1.思考题1.1 ld是链接器工具，用于将编译后的目标文件链接成可执行文件或共享库。 readelf是一个用于查看ELF格式文件（包括可执行文件、共享库等）的工具。它可以显示ELF文件的各个段、符号表、重定位表等信息，帮助用户了解可执行文件的结构和内容。 mips-linux-gnu-前缀通常用于指明目标架构为MIPS架构的Linux系统。 objdump -DS hello">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-1.PNG">
 <meta property="og:image" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-2.PNG">
 <meta property="og:image" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-4.PNG">
 <meta property="og:image" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab1/lab1-3.PNG">
 <meta property="article:published_time" content="2024-09-06T07:27:30.000Z">
-<meta property="article:modified_time" content="2024-09-06T08:03:44.219Z">
+<meta property="article:modified_time" content="2026-10-26T13:56:02.506Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="os">
 <meta property="article:tag" content="Makefile">
@@ -242,7 +242,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          836 字
+          867 字
         
       </span>
     
@@ -253,7 +253,7 @@
         
         
         
-          7 分钟
+          8 分钟
         
       </span>
     
@@ -295,7 +295,7 @@
               <p id="updated-time" class="note note-info" style="">
                 
                   
-                    本文最后更新于 2024年9月6日 下午
+                    本文最后更新于 2026年10月26日 晚上
                   
                 
               </p>
@@ -303,7 +303,8 @@
             
               <div class="markdown-body">
                 
-                <h2 id="1-思考题"><a href="#1-思考题" class="headerlink" title="1.思考题"></a>1.思考题</h2><h3 id="1-1"><a href="#1-1" class="headerlink" title="1.1"></a>1.1</h3><ul>
+                <p><a href="/courses/operating-systems/">← 操作系统章节目录</a></p>
+<h2 id="1-思考题"><a href="#1-思考题" class="headerlink" title="1.思考题"></a>1.思考题</h2><h3 id="1-1"><a href="#1-1" class="headerlink" title="1.1"></a>1.1</h3><ul>
 <li>ld是链接器工具，用于将编译后的目标文件链接成可执行文件或共享库。</li>
 <li>readelf是一个用于查看ELF格式文件（包括可执行文件、共享库等）的工具。它可以显示ELF文件的各个段、符号表、重定位表等信息，帮助用户了解可执行文件的结构和内容。</li>
 <li>mips-linux-gnu-前缀通常用于指明目标架构为MIPS架构的Linux系统。</li>
@@ -327,6 +328,8 @@
 <p>同时，对于指导书中的Makefile文件，我觉得阅读起来比较吃力，许多宏定义不熟悉，许多命令和参数也不认识。</p>
 <p>在完成printk函数时，我卡了很久，在阅读各个文件源码后，才理解该函数的作用是实现printf的功能。同时对于提示中的flush the string ，即第二处需要补充的代码，我不能理解提示的要求，不知道out函数具体实现了什么功能。还有在完成print_num的时候，对于neg_flag的判断也卡了一下。</p>
 <p>我认为需要稳固c语言和mips的基础，增强代码的阅读能力，才能更好的理解os实验的源码。</p>
+<hr>
+<p><a href="/courses/operating-systems/">章节目录</a> · <a href="/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab0/">上一章：实验环境与工具（Lab0）</a> · <a href="/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab2/">下一章：内存管理（Lab2）</a></p>
 
                 
               </div>
@@ -371,29 +374,6 @@
 
               
 
-              
-                <div class="post-prevnext my-3">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab0/" title="os-lab0">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">os-lab0</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab2/" title="os-lab2">
-                        <span class="hidden-mobile">os-lab2</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
               
             </div>
 

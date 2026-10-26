@@ -19,15 +19,15 @@
   <meta name="author" content="missing">
   <meta name="keywords" content="missing,博客,北航,BUAA">
   
-    <meta name="description" content="字符串匹配1. kmp算法核心是对next数组的构建。next[j]表示，在B[0]-B[j]所组成的这个子串中最长公共真前后缀的长度为x，通俗地说，若next[j]的值为x，则说明这个（B[0]-B[j]所组成的）子串的前x个字符和后x个字符相同。 时间复杂度为$O(n+m)$ 12345678910111213141516171819202122232425262728293031323334">
+    <meta name="description" content="← 算法章节目录 字符串匹配1. kmp算法核心是对next数组的构建。next[j]表示，在B[0]-B[j]所组成的这个子串中最长公共真前后缀的长度为x，通俗地说，若next[j]的值为x，则说明这个（B[0]-B[j]所组成的）子串的前x个字符和后x个字符相同。 时间复杂度为$O(n+m)$ 12345678910111213141516171819202122232425262728293">
 <meta property="og:type" content="article">
 <meta property="og:title" content="字符串匹配">
 <meta property="og:url" content="https://missync.github.io/2024/09/10/%E7%AE%97%E6%B3%95/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8C%B9%E9%85%8D/index.html">
 <meta property="og:site_name" content="missing&#39;s blog">
-<meta property="og:description" content="字符串匹配1. kmp算法核心是对next数组的构建。next[j]表示，在B[0]-B[j]所组成的这个子串中最长公共真前后缀的长度为x，通俗地说，若next[j]的值为x，则说明这个（B[0]-B[j]所组成的）子串的前x个字符和后x个字符相同。 时间复杂度为$O(n+m)$ 12345678910111213141516171819202122232425262728293031323334">
+<meta property="og:description" content="← 算法章节目录 字符串匹配1. kmp算法核心是对next数组的构建。next[j]表示，在B[0]-B[j]所组成的这个子串中最长公共真前后缀的长度为x，通俗地说，若next[j]的值为x，则说明这个（B[0]-B[j]所组成的）子串的前x个字符和后x个字符相同。 时间复杂度为$O(n+m)$ 12345678910111213141516171819202122232425262728293">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-09-10T08:27:55.000Z">
-<meta property="article:modified_time" content="2024-09-12T11:52:05.443Z">
+<meta property="article:modified_time" content="2026-10-26T13:56:02.494Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary_large_image">
@@ -236,7 +236,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          990 字
+          1k 字
         
       </span>
     
@@ -289,7 +289,7 @@
               <p id="updated-time" class="note note-info" style="">
                 
                   
-                    本文最后更新于 2024年9月12日 晚上
+                    本文最后更新于 2026年10月26日 晚上
                   
                 
               </p>
@@ -297,7 +297,8 @@
             
               <div class="markdown-body">
                 
-                <h2 id="字符串匹配"><a href="#字符串匹配" class="headerlink" title="字符串匹配"></a>字符串匹配</h2><h3 id="1-kmp算法"><a href="#1-kmp算法" class="headerlink" title="1. kmp算法"></a>1. <strong>kmp算法</strong></h3><p>核心是对next数组的构建。<br>next[j]表示，在B[0]-B[j]所组成的这个子串中最长公共真前后缀的长度为x，通俗地说，若next[j]的值为x，则说明这个（B[0]-B[j]所组成的）子串的前x个字符和后x个字符相同。</p>
+                <p><a href="/courses/algorithms/">← 算法章节目录</a></p>
+<h2 id="字符串匹配"><a href="#字符串匹配" class="headerlink" title="字符串匹配"></a>字符串匹配</h2><h3 id="1-kmp算法"><a href="#1-kmp算法" class="headerlink" title="1. kmp算法"></a>1. <strong>kmp算法</strong></h3><p>核心是对next数组的构建。<br>next[j]表示，在B[0]-B[j]所组成的这个子串中最长公共真前后缀的长度为x，通俗地说，若next[j]的值为x，则说明这个（B[0]-B[j]所组成的）子串的前x个字符和后x个字符相同。</p>
 <p>时间复杂度为$O(n+m)$</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span><br><br><span class="hljs-type">const</span> <span class="hljs-type">int</span> MAXN=<span class="hljs-number">1e5</span>;<br><br><span class="hljs-type">char</span> s[MAXN],t[MAXN];<span class="hljs-comment">//s是模式串，t是被匹配串 </span><br><span class="hljs-type">int</span> nxt[MAXN];<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">kmp</span><span class="hljs-params">(<span class="hljs-type">char</span> s[],<span class="hljs-type">char</span> t[])</span></span>&#123;<br><br>    <span class="hljs-type">int</span> n=<span class="hljs-built_in">strlen</span>(s),m=<span class="hljs-built_in">strlen</span>(t);<br>    <span class="hljs-type">int</span> j;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;n;i++)&#123;<br>            <span class="hljs-type">int</span> j=nxt[i<span class="hljs-number">-1</span>];<br>        <span class="hljs-keyword">while</span>(j&amp;&amp;s[i]!=s[j])&#123;<br>                j=nxt[j<span class="hljs-number">-1</span>];<br>        &#125;<span class="hljs-comment">//递推思维找nxt[i]</span><br>        <span class="hljs-keyword">if</span>(s[i]==s[j])&#123;<br>            nxt[i]=j<span class="hljs-number">+1</span>;<br>        &#125;<span class="hljs-keyword">else</span>&#123;<br>            nxt[i]=<span class="hljs-number">0</span>;<br>        &#125;<br>    &#125;<br>    <br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>,j=<span class="hljs-number">0</span>;i&lt;m;i++)&#123;<br>        <span class="hljs-keyword">while</span>(j&amp;&amp;t[i]!=s[j])&#123;<br>            j=nxt[j<span class="hljs-number">-1</span>];<br>        &#125;<br>        <span class="hljs-keyword">if</span>(t[i]==s[j])&#123;<br>            j++;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (j == n)<br>        &#123;<br>            <span class="hljs-type">int</span> ans = i - j + <span class="hljs-number">1</span>;<br>            j = nxt[j<span class="hljs-number">-1</span>];<span class="hljs-comment">//匹配成功 </span><br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -306,6 +307,10 @@
 <h3 id="3-哈希匹配法"><a href="#3-哈希匹配法" class="headerlink" title="3. 哈希匹配法"></a>3. <strong>哈希匹配法</strong></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BASE 256</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> MODULUS 101</span><br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">RabinKarp</span><span class="hljs-params">(<span class="hljs-type">char</span> t[], <span class="hljs-type">char</span> p[])</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-type">int</span> t_len = <span class="hljs-built_in">strlen</span>(t);<br>    <span class="hljs-type">int</span> p_len = <span class="hljs-built_in">strlen</span>(p);<br><br>    <span class="hljs-comment">// 哈希滚动之用</span><br>    <span class="hljs-type">int</span> h = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; p_len - <span class="hljs-number">1</span>; i++)<br>        h = (h * BASE) % MODULUS;<br><br>    <span class="hljs-type">int</span> t_hash = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">int</span> p_hash = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; p_len; i++)<br>    &#123;<br>        t_hash = (BASE * t_hash + t[i]) % MODULUS;<br>        p_hash = (BASE * p_hash + p[i]) % MODULUS;<br>    &#125;<br><br>    <span class="hljs-type">int</span> i = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span> (i &lt;= t_len - p_len)<br>    &#123;<br>         <span class="hljs-comment">// 考虑到哈希碰撞的可能性，还需要用 memcmp 再比对一下</span><br>        <span class="hljs-keyword">if</span> (t_hash == p_hash &amp;&amp; <span class="hljs-built_in">memcmp</span>(p, t + i, p_len) == <span class="hljs-number">0</span>)<br>            cout &lt;&lt; p &lt;&lt; <span class="hljs-string">&quot; is found at index &quot;</span> &lt;&lt; i &lt;&lt; endl;<br><br>        <span class="hljs-comment">// 前缀和思想</span><br>        t_hash = (BASE * (t_hash - t[i] * h) + t[i + p_len]) % MODULUS;<br><br>        <span class="hljs-comment">// 防止出现负数</span><br>        <span class="hljs-keyword">if</span> (t_hash &lt; <span class="hljs-number">0</span>)<br>            t_hash = t_hash + MODULUS;<br><br>        i++;<br>    &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-type">char</span> t[<span class="hljs-number">100</span>] = <span class="hljs-string">&quot;It is a test, but not just a test&quot;</span>;<br>    <span class="hljs-type">char</span> p[<span class="hljs-number">10</span>] = <span class="hljs-string">&quot;test&quot;</span>;<br><br>    <span class="hljs-built_in">RabinKarp</span>(t, p);<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <h3 id="快速幂"><a href="#快速幂" class="headerlink" title="快速幂"></a>快速幂</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">ll <span class="hljs-title">fast_pow_mod</span><span class="hljs-params">(ll a, ll b, ll m)</span></span>&#123;<br>    a %= m;<br>    ll res = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">while</span> (b &gt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">if</span> (b &amp; <span class="hljs-number">1</span>) res = res * a % m;<br>        a = a * a % m;<br>        b &gt;&gt;= <span class="hljs-number">1</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> res;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<hr>
+<p><a href="/courses/algorithms/">章节目录</a> · <a href="/2024/09/10/%E7%AE%97%E6%B3%95/%E5%9B%BE%E7%AE%97%E6%B3%95/">上一章：图算法</a> · <a href="/2024/09/10/%E7%AE%97%E6%B3%95/%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%92%8C%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2/">下一章：多项式和快速傅里叶变换</a></p>
 
                 
               </div>
@@ -348,29 +353,6 @@
 
               
 
-              
-                <div class="post-prevnext my-3">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2024/09/10/%E7%AE%97%E6%B3%95/%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%92%8C%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2/" title="多项式和快速傅里叶变换">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">多项式和快速傅里叶变换</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2024/09/10/%E7%AE%97%E6%B3%95/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" title="排序算法">
-                        <span class="hidden-mobile">排序算法</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
               
             </div>
 

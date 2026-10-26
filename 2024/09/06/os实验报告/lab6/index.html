@@ -19,16 +19,16 @@
   <meta name="author" content="missing">
   <meta name="keywords" content="missing,博客,北航,BUAA">
   
-    <meta name="description" content="思考题6.1 以下是修改的代码： 1234567891011121314151617181920212223242526272829303132#include&lt;stdlib.h&gt;#include&lt;unistd.h&gt;int fildes[2];char buf[100];int status;int main()&#123;    status &#x3D; pipe(fildes)">
+    <meta name="description" content="← 操作系统章节目录 思考题6.1 以下是修改的代码： 1234567891011121314151617181920212223242526272829303132#include&lt;stdlib.h&gt;#include&lt;unistd.h&gt;int fildes[2];char buf[100];int status;int main()&#123;    status &#x3D; p">
 <meta property="og:type" content="article">
 <meta property="og:title" content="os-lab6">
 <meta property="og:url" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab6/index.html">
 <meta property="og:site_name" content="missing&#39;s blog">
-<meta property="og:description" content="思考题6.1 以下是修改的代码： 1234567891011121314151617181920212223242526272829303132#include&lt;stdlib.h&gt;#include&lt;unistd.h&gt;int fildes[2];char buf[100];int status;int main()&#123;    status &#x3D; pipe(fildes)">
+<meta property="og:description" content="← 操作系统章节目录 思考题6.1 以下是修改的代码： 1234567891011121314151617181920212223242526272829303132#include&lt;stdlib.h&gt;#include&lt;unistd.h&gt;int fildes[2];char buf[100];int status;int main()&#123;    status &#x3D; p">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://missync.github.io/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab6/lab6-1.PNG">
 <meta property="article:published_time" content="2024-09-06T07:27:30.000Z">
-<meta property="article:modified_time" content="2024-09-06T08:00:48.303Z">
+<meta property="article:modified_time" content="2026-10-26T13:56:02.516Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="os">
 <meta property="article:tag" content="shell">
@@ -239,7 +239,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.4k 字
+          2.5k 字
         
       </span>
     
@@ -292,7 +292,7 @@
               <p id="updated-time" class="note note-info" style="">
                 
                   
-                    本文最后更新于 2024年9月6日 下午
+                    本文最后更新于 2026年10月26日 晚上
                   
                 
               </p>
@@ -300,7 +300,8 @@
             
               <div class="markdown-body">
                 
-                <h1 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h1><p>6.1</p>
+                <p><a href="/courses/operating-systems/">← 操作系统章节目录</a></p>
+<h1 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h1><p>6.1</p>
 <p>以下是修改的代码：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">int</span> fildes[<span class="hljs-number">2</span>];<br><span class="hljs-type">char</span> buf[<span class="hljs-number">100</span>];<br><span class="hljs-type">int</span> status;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span>&#123;<br>    status = pipe(fildes);<br>    <br>    <span class="hljs-keyword">if</span>(status == <span class="hljs-number">-1</span>)&#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;error\n&quot;</span>);<br>    &#125;<br>    <br>    <span class="hljs-keyword">switch</span>(fork())&#123;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">-1</span>:<br>            <span class="hljs-keyword">break</span>;<br>            <br>        <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>:  <span class="hljs-comment">// 作为写者的子进程</span><br>         close(fildes[<span class="hljs-number">0</span>]);  <span class="hljs-comment">// 关闭不用的读端</span><br>            write(fildes[<span class="hljs-number">1</span>], <span class="hljs-string">&quot;Hello world\n&quot;</span>, <span class="hljs-number">12</span>); <span class="hljs-comment">// 向管道中写入数据</span><br>            close(fildes[<span class="hljs-number">1</span>]); <span class="hljs-comment">// 写入结束，关闭写端</span><br>            <span class="hljs-built_in">exit</span>(EXIT_SUCCESS);<br>        <span class="hljs-keyword">default</span>: <span class="hljs-comment">// 作为读者的父进程</span><br>            close(fildes[<span class="hljs-number">1</span>]); <span class="hljs-comment">// 关闭不用的写端</span><br>            read(fildes[<span class="hljs-number">0</span>], buf, <span class="hljs-number">100</span>); <span class="hljs-comment">// 从管道中读数据</span><br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;father-process read:%s\n&quot;</span>, buf); <span class="hljs-comment">// 打印读出的数据</span><br>            close(fildes[<span class="hljs-number">0</span>]); <span class="hljs-comment">// 读取结束，关闭读端</span><br>            <span class="hljs-built_in">exit</span>(EXIT_SUCESS);<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
 
@@ -446,6 +447,8 @@
 </ol>
 <h1 id="体会感想"><a href="#体会感想" class="headerlink" title="体会感想"></a>体会感想</h1><p>比较轻松的一次lab，但是综合性也比较强，特别是后面两个函数比较复杂，涉及了之前的一些内容。</p>
 <p>总之os告一段落了，自己对os有了整体的认识，但是具体到某个流程的分析，或许会有磕磕绊绊。收获很大。</p>
+<hr>
+<p><a href="/courses/operating-systems/">章节目录</a> · <a href="/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab5/">上一章：文件系统（Lab5）</a></p>
 
                 
               </div>
@@ -490,29 +493,6 @@
 
               
 
-              
-                <div class="post-prevnext my-3">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2024/09/06/os%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/lab5/" title="os-lab5">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">os-lab5</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2024/09/06/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/" title="分布式系统基础">
-                        <span class="hidden-mobile">分布式系统基础</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
               
             </div>
 
