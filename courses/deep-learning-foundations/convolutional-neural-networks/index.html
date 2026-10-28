@@ -1,0 +1,1010 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/index.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="missing">
+  <meta name="keywords" content="missing,博客,北航,BUAA">
+  
+    <meta name="description" content="局部连接与权重共享、卷积尺寸与参数量、感受野、池化、经典 CNN 架构与迁移学习。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="深度学习基础与应用（四）：卷积神经网络">
+<meta property="og:url" content="https://missync.github.io/courses/deep-learning-foundations/convolutional-neural-networks/index.html">
+<meta property="og:site_name" content="missing&#39;s blog">
+<meta property="og:description" content="局部连接与权重共享、卷积尺寸与参数量、感受野、池化、经典 CNN 架构与迁移学习。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-10-28T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-28T04:00:00.000Z">
+<meta property="article:author" content="missing">
+<meta property="article:tag" content="missing,博客,北航,BUAA">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/convolution-feature-maps.png">
+<meta name="twitter:image" content="https://missync.github.io/images/courses/deep-learning-foundations/convolution-feature-maps.png">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>深度学习基础与应用（四）：卷积神经网络 - missing&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>missing&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/courses/" target="_self">
+                <i class="iconfont icon-list"></i>
+                <span>课程</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="深度学习基础与应用（四）：卷积神经网络"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">深度学习基础与应用（四）：卷积神经网络</h1>
+            
+            
+              <div class="markdown-body">
+<style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
+<h2 id="1-为什么图像处理不必处处全连接"><a href="#1-为什么图像处理不必处处全连接" class="headerlink" title="1. 为什么图像处理不必处处全连接"></a>1. 为什么图像处理不必处处全连接</h2>
+<p>上一章说明了神经网络怎样求梯度和控制过拟合。本章把图像本身的空间结构加入网络设计：<strong>局部连接减少每个位置需要观察的范围，权重共享让同一种模式可以在不同位置被检测。</strong></p>
+<h3 id="1-1-全连接层的问题"><a href="#1-1-全连接层的问题" class="headerlink" title="1.1 全连接层的问题"></a>1.1 全连接层的问题</h3>
+<p>32×32×3 的彩色图像展开后有 3072 个输入数。若下一层有 1000 个神经元，全连接层就需要 3072×1000 个权重，另加 1000 个偏置。分辨率增大后，参数量增长很快。</p>
+<p>展开操作本身不丢掉像素数值，但<strong>全连接层没有显式利用邻近像素之间的空间关系</strong>。图像里的边缘、角点和纹理通常具有局部性，同一种模式也可能出现在不同位置。</p>
+<table>
+<thead>
+<tr>
+<th>观察</th>
+<th>对应设计</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>很多视觉模式只占图像的一小部分</td>
+<td>局部连接 Local Connection</td>
+<td>每个输出只连接一个局部窗口</td>
+</tr>
+<tr>
+<td>同样的模式会出现在不同位置</td>
+<td>权重共享 Weight Sharing</td>
+<td>同一卷积核在空间上滑动使用</td>
+</tr>
+<tr>
+<td>复杂形状可由简单模式组合</td>
+<td>多层特征提取</td>
+<td>逐层组合局部模式并扩大感受野</td>
+</tr>
+</tbody></table>
+<p>局部连接本身仍可以让不同位置使用不同权重。<strong>卷积层进一步让这些位置共享同一组权重</strong>，这是参数量显著下降的关键。</p>
+<h3 id="1-2-空间维度与通道维度"><a href="#1-2-空间维度与通道维度" class="headerlink" title="1.2 空间维度与通道维度"></a>1.2 空间维度与通道维度</h3>
+<p>课件按 H×W×C 描述图像：H 为高，W 为宽，C 为通道数。RGB 的 C=3；中间层的通道是网络学到的特征，不再要求具有颜色语义。</p>
+<p>一个普通卷积核的形状是 Kₕ×K𝑤×Cᵢₙ，覆盖全部输入通道；在一个空间窗口内做加权求和，再加偏置，得到一个输出数。<strong>一个核形成一张输出特征图，Cₒᵤₜ 个核形成 Cₒᵤₜ 个输出通道。</strong></p>
+<p><img src="/images/courses/deep-learning-foundations/convolution-feature-maps.png" srcset="/img/loading.gif" lazyload alt="多个卷积核分别生成特征图并沿通道维堆叠">
+<em>课件第 39 页：32×32×3 输入，6 个 5×5×3 核，无填充、步长 1，得到 28×28×6 输出。</em></p>
+<h2 id="2-卷积怎样计算-尺寸-参数量与计算量"><a href="#2-卷积怎样计算-尺寸-参数量与计算量" class="headerlink" title="2. 卷积怎样计算：尺寸、参数量与计算量"></a>2. 卷积怎样计算：尺寸、参数量与计算量</h2>
+<h3 id="2-1-卷积运算的索引形式"><a href="#2-1-卷积运算的索引形式" class="headerlink" title="2.1 卷积运算的索引形式"></a>2.1 卷积运算的索引形式</h3>
+<p>忽略 batch，令输入为 X、权重为 K、偏置为 b；用 s 表示步长、p 表示对称填充，越过原图边界的输入按零填充处理。普通二维卷积层可以写为：</p>
+<div class="course-math">
+\[
+Y_{u,v,o}=b_o+
+\sum_{c=0}^{C_{\mathrm{in}}-1}
+\sum_{i=0}^{K_h-1}\sum_{j=0}^{K_w-1}
+K_{i,j,c,o}\,X_{us+i-p,\,vs+j-p,\,c}.
+\]
+</div>
+
+<p>深度学习里通常把这种不翻转卷积核的互相关运算也称为“卷积”。不同输出通道有各自的核和偏置，同一输出通道在各空间位置共享它们。</p>
+<h3 id="2-2-输出尺寸"><a href="#2-2-输出尺寸" class="headerlink" title="2.2 输出尺寸"></a>2.2 输出尺寸</h3>
+<p>以下讨论普通卷积，不考虑膨胀卷积与分组卷积。核尺寸为 Kₕ×K𝑤，步长为 s，四周对称填充为 p 时：</p>
+<div class="course-math">
+\[
+H_{\mathrm{out}}=\left\lfloor\frac{H+2p-K_h}{s}\right\rfloor+1,
+\qquad
+W_{\mathrm{out}}=\left\lfloor\frac{W+2p-K_w}{s}\right\rfloor+1.
+\]
+</div>
+
+<table>
+<thead>
+<tr>
+<th>输入与设置</th>
+<th>输出空间尺寸</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>7×7，3×3 核，s=1，p=0</td>
+<td>5×5</td>
+<td>边界无法完整放入窗口</td>
+</tr>
+<tr>
+<td>7×7，3×3 核，s=2，p=0</td>
+<td>3×3</td>
+<td>更大步长使输出更小</td>
+</tr>
+<tr>
+<td>7×7，3×3 核，s=1，p=1</td>
+<td>7×7</td>
+<td>用填充保持高宽</td>
+</tr>
+</tbody></table>
+<p>课件用“窗口是否整齐落在边界”帮助选择配置。若窗口不能恰好覆盖终点，常见实现按上式向下取整，只使用合法的窗口位置。对于奇数边长核、s=1，取 p=(K−1)/2 可保持空间尺寸；<strong>步长大于 1 时不能直接套用这一结论</strong>。</p>
+<h3 id="2-3-参数量-与输出空间大小无关"><a href="#2-3-参数量-与输出空间大小无关" class="headerlink" title="2.3 参数量：与输出空间大小无关"></a>2.3 参数量：与输出空间大小无关</h3>
+<p>每个输出通道需要 KₕK𝑤Cᵢₙ 个权重和一个偏置，因此：</p>
+<div class="course-math">
+\[
+P_{\mathrm{conv}}=C_{\mathrm{out}}(K_hK_wC_{\mathrm{in}}+1).
+\]
+</div>
+
+<p>课件的计算题：输入 32×32×3，使用 10 个 5×5 核，s=1、p=2。</p>
+<ul>
+<li>输出高宽：(32+2×2−5)/1+1=32，因此输出为 <strong>32×32×10</strong>。</li>
+<li>每个核有 5×5×3=75 个权重，加一个偏置为 76 个参数。</li>
+<li>总参数量为 <strong>10×76=760</strong>；不含偏置时为 750。</li>
+</ul>
+<p><strong>输入通道决定每个核的深度，输出通道等于核的个数。</strong> 每个核在 32×32 个位置反复使用，参数无需为每个位置重新保存。</p>
+<h3 id="2-4-参数量少不代表计算量小"><a href="#2-4-参数量少不代表计算量小" class="headerlink" title="2.4 参数量少不代表计算量小"></a>2.4 参数量少不代表计算量小</h3>
+<p>同一组权重需要在每个输出位置执行一次。忽略偏置、激活和边界细节，单样本卷积的乘加次数约为：</p>
+<div class="course-math">
+\[
+\mathrm{MACs}=H_{\mathrm{out}}W_{\mathrm{out}}
+C_{\mathrm{out}}K_hK_wC_{\mathrm{in}}.
+\]
+</div>
+
+<p>MAC 表示一次乘加。若分别把一次乘法与一次加法计为一次浮点运算，则 FLOPs 约为 2×MACs，比较数字前应先统一统计口径。</p>
+<h2 id="3-1-1-卷积与感受野"><a href="#3-1-1-卷积与感受野" class="headerlink" title="3. 1×1 卷积与感受野"></a>3. 1×1 卷积与感受野</h2>
+<h3 id="3-1-1-1-卷积不是只看一个通道"><a href="#3-1-1-1-卷积不是只看一个通道" class="headerlink" title="3.1 1×1 卷积不是只看一个通道"></a>3.1 1×1 卷积不是只看一个通道</h3>
+<p>1×1 核没有空间邻域混合，但它覆盖全部输入通道，能在每个像素位置执行同一组通道线性变换：</p>
+<div class="course-math">
+\[
+Y_{u,v,o}=\sum_{c=1}^{C_{\mathrm{in}}}W_{o,c}X_{u,v,c}+b_o.
+\]
+</div>
+
+<p>例如输入 56×56×64，使用 32 个 1×1 核、s=1、p=0，输出是 56×56×32。空间高宽不变，通道数从 64 降到 32，含偏置参数量为 32×(64+1)=2080。</p>
+<p>它既可降通道，也可升通道；配合激活函数还能增加非线性变换。保持空间尺寸依赖步长与填充设置，并非所有 1×1 卷积都保持高宽。</p>
+<h3 id="3-2-感受野随层数扩大"><a href="#3-2-感受野随层数扩大" class="headerlink" title="3.2 感受野随层数扩大"></a>3.2 感受野随层数扩大</h3>
+<p><strong>感受野 Receptive Field</strong> 是某层一个输出单元在原始输入上可能依赖的区域。一个 3×3 核只观察上一层的 3×3 区域，但上一层每个位置又依赖更早的区域，因此多层叠加会扩大对原图的覆盖。</p>
+<p>设第 l 层核边长为 kₗ、步长为 sₗ，rₗ 为理论感受野边长，jₗ 为相邻输出位置在原图上的间距。无膨胀时可递推为：</p>
+<div class="course-math">
+\[
+r_0=j_0=1,\qquad
+r_l=r_{l-1}+(k_l-1)j_{l-1},\qquad
+j_l=j_{l-1}s_l.
+\]
+</div>
+
+<p>连续三个 3×3、s=1 的卷积，感受野依次为 3×3、5×5、7×7。若中间加入步长为 2 的下采样，后续一格就对应原图上更大的间距，感受野增长也会更快。</p>
+<p><img src="/images/courses/deep-learning-foundations/receptive-field.png" srcset="/img/loading.gif" lazyload alt="多层局部连接逐渐扩大对输入的感受范围">
+<em>课件第 69 页：理论感受野说明可能依赖的范围，不代表该范围内每个输入像素的实际影响都同样大。</em></p>
+<p>卷积的权重共享带来平移等变的倾向：输入模式平移，输出响应也相应移动。边界填充、步长与池化会影响这种关系；<strong>卷积层本身不保证最终分类结果对任意平移都严格不变</strong>。</p>
+<h2 id="4-池化层-全连接层与完整-CNN"><a href="#4-池化层-全连接层与完整-CNN" class="headerlink" title="4. 池化层、全连接层与完整 CNN"></a>4. 池化层、全连接层与完整 CNN</h2>
+<h3 id="4-1-池化是按通道进行的局部汇总"><a href="#4-1-池化是按通道进行的局部汇总" class="headerlink" title="4.1 池化是按通道进行的局部汇总"></a>4.1 池化是按通道进行的局部汇总</h3>
+<p>Max Pooling 取窗口最大值，Average Pooling 取平均值。常见的 2×2、s=2 池化，将高宽各减半，通常保留通道数。</p>
+<p><img src="/images/courses/deep-learning-foundations/max-pooling.png" srcset="/img/loading.gif" lazyload alt="2×2 最大池化的数值示例">
+<em>课件第 72 页：每个通道独立操作，在每个 2×2 窗口内保留最大值。</em></p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>是否通常含可学习参数</th>
+<th>主要作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Conv</td>
+<td>是</td>
+<td>学习局部模式与通道组合</td>
+</tr>
+<tr>
+<td>激活函数</td>
+<td>多数没有，PReLU 等有例外</td>
+<td>加入非线性</td>
+</tr>
+<tr>
+<td>Max / Average Pooling</td>
+<td>否</td>
+<td>下采样、局部汇总，减少后续开销</td>
+</tr>
+<tr>
+<td>FC</td>
+<td>是</td>
+<td>将特征映射为类别分数等任务输出</td>
+</tr>
+</tbody></table>
+<p>Max Pooling 反向时把梯度传给前向选中的最大位置；Average Pooling 则按平均规则分配梯度。窗口重叠时，同一输入收到的贡献仍需相加。</p>
+<h3 id="4-2-一个尺寸变化例子"><a href="#4-2-一个尺寸变化例子" class="headerlink" title="4.2 一个尺寸变化例子"></a>4.2 一个尺寸变化例子</h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>配置</th>
+<th>输出 H×W×C</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入</td>
+<td>RGB 图片</td>
+<td>32×32×3</td>
+</tr>
+<tr>
+<td>Conv + ReLU</td>
+<td>16 个 3×3 核，s=1，p=1</td>
+<td>32×32×16</td>
+</tr>
+<tr>
+<td>MaxPool</td>
+<td>2×2，s=2</td>
+<td>16×16×16</td>
+</tr>
+<tr>
+<td>Conv + ReLU</td>
+<td>32 个 3×3 核，s=1，p=1</td>
+<td>16×16×32</td>
+</tr>
+<tr>
+<td>MaxPool</td>
+<td>2×2，s=2</td>
+<td>8×8×32</td>
+</tr>
+<tr>
+<td>Flatten + FC</td>
+<td>展平后映射为 10 类分数</td>
+<td>2048 → 10</td>
+</tr>
+</tbody></table>
+<p>这是为理解尺寸计算构造的示例。<strong>展平维度应从上一层实际输出计算</strong>，输入大小、填充或步长一变，全连接层的输入维度也可能变化。</p>
+<p>全局平均池化 GAP 则将每个通道的整个空间取平均，把 H×W×C 变成 C 维向量，再接分类头。它不等于常规 2×2 局部池化，可显著减小分类头的参数量。</p>
+<h2 id="5-经典-CNN-每一代主要解决什么问题"><a href="#5-经典-CNN-每一代主要解决什么问题" class="headerlink" title="5. 经典 CNN：每一代主要解决什么问题"></a>5. 经典 CNN：每一代主要解决什么问题</h2>
+<table>
+<thead>
+<tr>
+<th>网络</th>
+<th>核心设计</th>
+<th>理解重点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AlexNet</td>
+<td>卷积特征提取、ReLU、池化、FC、Dropout，使用 GPU 训练</td>
+<td>大规模图像分类中深层 CNN 的重要突破</td>
+</tr>
+<tr>
+<td>VGGNet</td>
+<td>反复堆叠小尺寸 3×3 卷积</td>
+<td>用规则结构增加深度</td>
+</tr>
+<tr>
+<td>GoogLeNet</td>
+<td>Inception 多分支、1×1 降维、GAP</td>
+<td>同时提取多尺度特征并控制计算开销</td>
+</tr>
+<tr>
+<td>ResNet</td>
+<td>残差分支与快捷连接相加</td>
+<td>缓解深层网络的优化退化问题</td>
+</tr>
+<tr>
+<td>DenseNet</td>
+<td>把前面各层特征按通道拼接给后层</td>
+<td>特征复用与更直接的信息传递</td>
+</tr>
+</tbody></table>
+<h3 id="5-1-AlexNet-卷积提特征-FC-做分类"><a href="#5-1-AlexNet-卷积提特征-FC-做分类" class="headerlink" title="5.1 AlexNet：卷积提特征，FC 做分类"></a>5.1 AlexNet：卷积提特征，FC 做分类</h3>
+<p>课件采用输入为 227×227×3 的教学配置：第一层 96 个 11×11 核，s=4、p=0，因此输出高宽为 (227−11)/4+1=55，输出为 <strong>55×55×96</strong>。含偏置参数量为：</p>
+<div class="course-math">
+\[
+P=(11\times11\times3+1)\times96=34\,944.
+\]
+</div>
+
+<p>整个网络包含 5 个卷积层和 3 个全连接层，在若干位置使用最大池化，FC 部分使用 Dropout。学习这类架构时，应先顺着<strong>输入尺寸、输出通道、下采样位置、最终分类头</strong>检查一遍，再计算参数量。</p>
+<h3 id="5-2-VGG-为什么反复使用-3-3"><a href="#5-2-VGG-为什么反复使用-3-3" class="headerlink" title="5.2 VGG：为什么反复使用 3×3"></a>5.2 VGG：为什么反复使用 3×3</h3>
+<p>VGG 的典型做法是使用 3×3、s=1、p=1 卷积保持空间高宽，再用 2×2、s=2 池化下采样。VGG-16 的 16 个带权重层是 13 个卷积层加 3 个全连接层。</p>
+<p>假设各层通道数均为 C，忽略偏置：</p>
+<table>
+<thead>
+<tr>
+<th>达到的理论感受野</th>
+<th>一次大核卷积</th>
+<th>多次 3×3 卷积</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5×5</td>
+<td>25C² 个权重</td>
+<td>两层：18C² 个权重</td>
+</tr>
+<tr>
+<td>7×7</td>
+<td>49C² 个权重</td>
+<td>三层：27C² 个权重</td>
+</tr>
+</tbody></table>
+<p>小核堆叠在该假设下减少参数，同时能插入更多非线性。<strong>感受野相同不表示计算出的函数相同</strong>，因为中间还增加了特征变换与激活。</p>
+<p>课件还强调显存分析。参数存储和激活存储要分开算：一个 N×H×W×C 的 FP32 激活仅数据本体就需 4NHWC 字节；训练还要考虑梯度、保存的中间结果及优化器状态。早期高分辨率激活和末端大型 FC 都可能造成较大开销。</p>
+<h3 id="5-3-GoogLeNet-多尺度分支与瓶颈层"><a href="#5-3-GoogLeNet-多尺度分支与瓶颈层" class="headerlink" title="5.3 GoogLeNet：多尺度分支与瓶颈层"></a>5.3 GoogLeNet：多尺度分支与瓶颈层</h3>
+<p>Inception 模块将同一输入交给并行的 1×1、3×3、5×5 卷积及池化分支，各分支保持相同空间高宽，再沿通道维拼接。</p>
+<p>课件中的朴素模块输入为 28×28×256，分支输出通道分别为 128、192、96、256，故拼接后为 28×28×672，总计 526848 个激活值。<strong>这里约 527K 指激活元素数，不是模型参数量。</strong></p>
+<p>直接在 256 个输入通道上执行大核卷积，成本很高。因此先用 1×1 卷积减少通道，再执行 3×3 或 5×5；池化分支之后也用 1×1 控制输出通道。</p>
+<p><img src="/images/courses/deep-learning-foundations/inception-bottleneck.png" srcset="/img/loading.gif" lazyload alt="在大核卷积前使用1×1瓶颈层的Inception模块">
+<em>课件第 110 页：各分支输出沿通道维拼接，改进模块输出为 28×28×480。</em></p>
+<p>以 3×3、192 输出通道分支为例，忽略偏置：</p>
+<div class="course-math">
+\[
+P_{\mathrm{direct}}=3\times3\times256\times192=442\,368,
+\]
+\[
+P_{\mathrm{bottleneck}}=1\times1\times256\times64
++3\times3\times64\times192=126\,976.
+\]
+</div>
+
+<p>1×1 层虽然新增一次计算，却能降低后续大核的成本。原版 GoogLeNet 还通过 GAP 减少末端 FC 开销，并在训练中使用辅助分类器改善中间层监督；推理主要使用最终分类输出。</p>
+<h3 id="5-4-ResNet-让网络学习残差"><a href="#5-4-ResNet-让网络学习残差" class="headerlink" title="5.4 ResNet：让网络学习残差"></a>5.4 ResNet：让网络学习残差</h3>
+<p>课件展示的退化现象是：普通网络加深后，<strong>训练误差也可能升高</strong>。这不能仅用过拟合解释，因为过拟合通常是训练集拟合很好、验证表现变差。</p>
+<p>残差块不直接拟合目标映射 H(x)，而是学习 F(x)=H(x)−x，再把输入加回来：</p>
+<div class="course-math">
+\[
+y=x+F(x;W).
+\]
+</div>
+
+<p><img src="/images/courses/deep-learning-foundations/residual-block.png" srcset="/img/loading.gif" lazyload alt="普通网络块与残差网络块的比较">
+<em>课件第 124 页：若所需变换接近恒等映射，残差分支可以学习接近 0 的修正。</em></p>
+<p>只考虑相加节点、采用列向量梯度记法，反向传播包含一条来自恒等分支的直接贡献：</p>
+<div class="course-math">
+\[
+\nabla_x L=\nabla_y L+J_F(x)^{\mathsf T}\nabla_y L.
+\]
+</div>
+
+<p>J_F 是残差映射的 Jacobian。若块后还有激活函数，要把其导数继续纳入；恒等路径有助于梯度传播，但不保证任意深度都自动训练成功。</p>
+<p>相加要求形状匹配。通道数或空间尺寸改变时，可用投影快捷连接，例如带相应步长的 1×1 卷积，将 x 变为 Wₛx。常见 ResNet-18/34 使用两层 3×3 的基本块，ResNet-50/101/152 使用 1×1、3×3、1×1 的瓶颈块。</p>
+<p>课件训练配置还包括 Batch Normalization 与 Kaiming 初始化。这些与残差结构共同帮助深层网络训练；初始化的作用是控制信号尺度，而不是用一个固定权值填满网络。</p>
+<h3 id="5-5-DenseNet-相加与拼接的区别"><a href="#5-5-DenseNet-相加与拼接的区别" class="headerlink" title="5.5 DenseNet：相加与拼接的区别"></a>5.5 DenseNet：相加与拼接的区别</h3>
+<p>DenseNet 将一个 dense block 内前面各层的特征拼接后交给当前层：</p>
+<div class="course-math">
+\[
+x_l=H_l([x_0,x_1,\ldots,x_{l-1}]).
+\]
+</div>
+
+<p>方括号表示通道拼接。若初始通道为 C₀，每层新增 k 个通道，则 l 层后共有 C₀+lk 个通道，k 称为增长率。Transition layer 在 dense block 之间压缩通道或下采样。</p>
+<table>
+<thead>
+<tr>
+<th>连接方式</th>
+<th>操作</th>
+<th>对通道的影响</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ResNet</td>
+<td>x+F(x)，逐元素相加</td>
+<td>相加的两路形状必须匹配</td>
+</tr>
+<tr>
+<td>DenseNet</td>
+<td>[x₀,x₁,…]，沿通道拼接</td>
+<td>保留各路特征，通道数累积增长</td>
+</tr>
+</tbody></table>
+<p>特征复用可以提高参数利用率，但大量特征的保存和拼接也会带来显存、访存开销，不能仅凭参数量判断实际运行成本。</p>
+<h2 id="6-迁移学习-按数据量与任务差异决定微调范围"><a href="#6-迁移学习-按数据量与任务差异决定微调范围" class="headerlink" title="6. 迁移学习：按数据量与任务差异决定微调范围"></a>6. 迁移学习：按数据量与任务差异决定微调范围</h2>
+<p>预训练 CNN 的浅层往往包含较通用的边缘、纹理等特征，越靠后的表示通常越贴近预训练任务。迁移学习利用这些已学到的表示，为新任务训练分类头或微调部分网络。</p>
+<table>
+<thead>
+<tr>
+<th>目标数据</th>
+<th>与预训练数据相似</th>
+<th>与预训练数据差异大</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据较少</td>
+<td>冻结骨干作特征提取器，主要训练新分类头</td>
+<td>优先增加数据或合理增强；深层微调更容易过拟合</td>
+</tr>
+<tr>
+<td>数据较多</td>
+<td>可微调较靠后的若干层</td>
+<td>可尝试解冻更多层，让特征适应新领域</td>
+</tr>
+</tbody></table>
+<p>这是课件给出的经验起点，具体解冻范围与学习率仍应由验证集选择。</p>
+<p>以原先的 1000 类模型迁移到 10 类为例：</p>
+<ol>
+<li>保留预训练特征提取部分，把最终输出层替换为 10 类分类头。</li>
+<li>数据少时先冻结骨干，训练新分类头，得到可比较的基线。</li>
+<li>若验证表现需要进一步改善，再逐步解冻部分层，通常对预训练部分使用较小学习率。</li>
+<li>结合数据增强和验证指标选择训练长度，最后使用独立测试集评价。</li>
+</ol>
+<p><strong>冻结参数与切换训练/评估模式是不同操作。</strong> 冻结决定参数是否参与更新；Dropout 的随机性、BatchNorm 的运行统计还受模式控制。只把参数梯度关掉，不等于所有层的行为都已切换到推理状态。</p>
+<h2 id="7-本章计算与概念检查"><a href="#7-本章计算与概念检查" class="headerlink" title="7. 本章计算与概念检查"></a>7. 本章计算与概念检查</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>检查要点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>卷积核的深度是多少</td>
+<td>普通卷积中等于输入通道数</td>
+</tr>
+<tr>
+<td>输出有多少通道</td>
+<td>等于卷积核个数，不能遗漏通道维</td>
+</tr>
+<tr>
+<td>参数量要不要乘输出高宽</td>
+<td>不乘；权重在空间位置间共享</td>
+</tr>
+<tr>
+<td>1×1 卷积能不能提取特征</td>
+<td>可以混合、压缩或扩展通道</td>
+</tr>
+<tr>
+<td>池化会不会学习一个卷积核</td>
+<td>常规 Max / Average Pooling 没有这种可学习核</td>
+</tr>
+<tr>
+<td>网络加深后训练误差升高是否必然过拟合</td>
+<td>还要考虑优化退化</td>
+</tr>
+<tr>
+<td>Inception、ResNet、DenseNet 怎样合并分支</td>
+<td>分别主要使用通道拼接、逐元素相加、跨层通道拼接</td>
+</tr>
+</tbody></table>
+<p>课件演示：<a href="https://poloclub.github.io/cnn-explainer/">CNN Explainer</a>。可以用它观察卷积、激活、池化及分类层之间的数值流动。</p>
+<hr>
+<p><em>课程依据：于茜《lecture4-CNNs-20261022》，2026-10-22。卷积计算题、架构与迁移学习据课件整理；通用索引式、感受野递推及部分参数计算为帮助复习补充的推导。</em></p>
+<p><a href="/courses/deep-learning-foundations/">课程目录</a> · <a href="/courses/deep-learning-foundations/neural-networks/">上一章：神经网络与训练</a></p>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!--<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>--> <i class="iconfont icon-love"></i> <!--<a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>--> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
