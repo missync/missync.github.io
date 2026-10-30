@@ -316,7 +316,7 @@ w\leftarrow w-\eta\frac{\partial L}{\partial w}.
 </div>
 
 
-<p>隐藏层同时影响多个下游输出时，需要把各条路径的梯度贡献相加。对 Sigmoid 网络和平方误差，可把课件的逐权重推导压缩成：</p>
+<p>隐藏层同时影响多个下游输出时，需要把各条路径的梯度贡献相加。对 Sigmoid 网络和平方误差，各层梯度为：</p>
 
 <div class="course-math">
 \[
@@ -332,7 +332,7 @@ L=\frac12\sum_j(o_j-y_j)^2,\quad
 
 
 <p>这里 w 连接隐藏层与输出层，v 连接输入与隐藏层。先用同一组前向参数算出全部梯度，再更新，不能在求隐藏层梯度时混入已经更新的输出层权重。</p>
-<p>课件的两输入、两隐藏、两输出算例中，学习率为 0.5；一次权重更新后，总误差由约 <strong>0.2984 降至 0.2910</strong>。算例的重点是“输出层局部梯度 → 隐藏层多路径求和 → 负梯度更新”。</p>
+<p>反向传播的计算顺序是：<strong>输出层局部梯度 → 隐藏层多路径求和 → 负梯度更新</strong>。</p>
 <p>误差信号的符号要与更新公式一致：<code>y−prediction</code> 配合加法更新，与 <code>prediction−y</code> 配合减法更新可表示同一负梯度方向。</p>
 <h3 id="1-3-为什么加深网络"><a href="#1-3-为什么加深网络" class="headerlink" title="1.3 为什么加深网络"></a>1.3 为什么加深网络</h3><p>多层非线性变换组合出层级特征，比只增加单层宽度提供更多组合方式。数据、算力与训练算法共同支撑深层网络；增加层数也会放大梯度传播、优化和泛化的困难。</p>
 <h3 id="1-4-训练稳定性：激活、归一化与初始化"><a href="#1-4-训练稳定性：激活、归一化与初始化" class="headerlink" title="1.4 训练稳定性：激活、归一化与初始化"></a>1.4 训练稳定性：激活、归一化与初始化</h3><ul>
@@ -456,17 +456,14 @@ Q=XW_Q,\quad K=XW_K,\quad V=XW_V,
 <p><strong>生成约束与输出</strong>：因果掩码屏蔽未来位置，允许训练时并行预测各位置的下一个 token；输出线性层把隐藏向量映射成词表 logits，再通过概率与选择策略得到新 token。实际生成仍依赖此前输出，通常逐 token 进行。</p>
 <p>原始 Encoder-Decoder 的 Decoder 包含掩码自注意力及对 Encoder 输出的交叉注意力；<strong>不能把这种“双注意力”结构直接套到所有 Decoder-only 模型</strong>。</p>
 <p>关键超参数是层数、隐藏维度、头数、FFN 中间维度和词表大小。Attention、FFN、参数存储和长序列中间张量是主要系统开销来源。MoE、FlashAttention、SSM &#x2F; Mamba 分别从模型组织、IO 和序列计算等角度改进结构。MoE 用 Router 为每个 token 选择少量 Expert，增加总容量而控制每 token 激活计算，但也带来调度与通信问题。</p>
-<h2 id="5-MiniMind：把-Transformer-放到具体模型里"><a href="#5-MiniMind：把-Transformer-放到具体模型里" class="headerlink" title="5. MiniMind：把 Transformer 放到具体模型里"></a>5. MiniMind：把 Transformer 放到具体模型里</h2><p>以下是<strong>课件中的 MiniMind-3 Dense 示例配置</strong>：Decoder-only、64M 参数、8 层、隐藏维度 768；使用 GQA、Pre-Norm + RMSNorm、Q&#x2F;K 归一化、RoPE 和 SwiGLU，提及 YaRN 位置外推，默认不启用 Dropout。</p>
+<h2 id="5-MiniMind：把-Transformer-放到具体模型里"><a href="#5-MiniMind：把-Transformer-放到具体模型里" class="headerlink" title="5. MiniMind：把 Transformer 放到具体模型里"></a>5. MiniMind：把 Transformer 放到具体模型里</h2><p>以一组 <strong>MiniMind-3 Dense 配置</strong>为例：Decoder-only、64M 参数、8 层、隐藏维度 768；使用 GQA、Pre-Norm + RMSNorm、Q&#x2F;K 归一化、RoPE 和 SwiGLU，支持 YaRN 位置外推，默认不启用 Dropout。</p>
 <p>一次 Block 的主线为：<strong>归一化 → Q&#x2F;K&#x2F;V 投影与注意力 → 输出投影及残差 → 归一化 → SwiGLU FFN 及残差</strong>。</p>
 <p><strong>RMSNorm</strong>按均方根调整尺度，省去 LayerNorm 的减均值步骤，仍带有可学习缩放。<strong>GQA</strong>保留较多 Query 头，同时减少 KV 头数，从而减少 KV 存储；逻辑上重复 KV 以匹配 Query 头，不要求缓存物理复制同样的份数。</p>
 <p>输入为 <code>[1,29,768]</code> 时：29 个 token，每个 768 维；8 个 Query 头、每头 96 维，拼回输出仍为 <code>[1,29,768]</code>。RoPE 作用于 Q、K 来调整匹配关系，V 保留要汇总的内容。</p>
 <p>SwiGLU 将输入分为 Gate 和 Up 两条投影，Gate 经过 SiLU，与 Up 逐元素相乘，再通过 Down 投影并接残差。SiLU 为 <code>z·sigmoid(z)</code>。</p>
 <p>固定参数预算时，网络深度与隐藏维度共同决定容量。较深结构可增加特征变换层次，但隐藏维度过窄会限制表示能力。</p>
-<h3 id="5-1-训练资源与模型获取"><a href="#5-1-训练资源与模型获取" class="headerlink" title="5.1 训练资源与模型获取"></a>5.1 训练资源与模型获取</h3><p>Hugging Face 和 ModelScope 提供模型权重、配置、数据集与相关工具。课件用它们获取 MiniMind；下载权重时还要配套模型结构、Tokenizer 和配置，不能只凭参数文件恢复完整行为。</p>
+<h3 id="5-1-训练资源与模型获取"><a href="#5-1-训练资源与模型获取" class="headerlink" title="5.1 训练资源与模型获取"></a>5.1 训练资源与模型获取</h3><p>Hugging Face 和 ModelScope 提供模型权重、配置、数据集与相关工具。获取 MiniMind 等模型的权重时还要配套模型结构、Tokenizer 和配置，不能只凭参数文件恢复完整行为。</p>
 <p>训练数据路线为 <code>pretrain_t2t → sft_t2t → rlaif/agent_rl</code>，受限资源下用 mini 数据组合或已有权重做实验。</p>
-<blockquote>
-<p>课件对应：《第二讲：深度学习模型》3–104 页；《第三讲：大模型技术》15–33 页补充分词、位置编码与注意力。MiniMind 配置按课件示例理解。</p>
-</blockquote>
 <hr>
 <p><a href="/courses/deep-learning-systems/">课程目录</a> · <a href="/courses/deep-learning-systems/overview/">上一章：系统组成与执行流程</a> · <a href="/courses/deep-learning-systems/large-language-models/">下一章：大模型训练与推理</a></p>
 

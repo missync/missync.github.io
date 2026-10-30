@@ -271,7 +271,7 @@
                 
                 <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
 
-<h2 id="1-平台与调用路径"><a href="#1-平台与调用路径" class="headerlink" title="1. 平台与调用路径"></a>1. 平台与调用路径</h2><p>昇腾 NPU 是计算底座，Atlas 用模块、板卡、小站、服务器与集群覆盖端、边、云。课件举例包括 Atlas 200DK、200I A2、500 A2 和 800T A2；型号对应不同的开发、推理或训练场景。</p>
+<h2 id="1-平台与调用路径"><a href="#1-平台与调用路径" class="headerlink" title="1. 平台与调用路径"></a>1. 平台与调用路径</h2><p>昇腾 NPU 是计算底座，Atlas 用模块、板卡、小站、服务器与集群覆盖端、边、云。例如 Atlas 200DK、200I A2、500 A2 和 800T A2；型号对应不同的开发、推理或训练场景。</p>
 <p>模型任务的基本路径是 <strong>应用 → 框架与适配 → CANN → Runtime &#x2F; 驱动 → NPU</strong>。PyTorch 通过 torch_npu 适配昇腾，MindSpore 提供另一条框架路径。</p>
 <h3 id="1-1-CANN-内部承担什么"><a href="#1-1-CANN-内部承担什么" class="headerlink" title="1.1 CANN 内部承担什么"></a>1.1 CANN 内部承担什么</h3><ul>
 <li><strong>图与编译</strong>：处理计算图、优化与算子映射，生成适合设备执行的任务。</li>
@@ -325,7 +325,7 @@
 <p>ATC 负责转换，msame 用于推理验证，两者角色不同。</p>
 <h3 id="4-2-大模型服务与端侧应用"><a href="#4-2-大模型服务与端侧应用" class="headerlink" title="4.2 大模型服务与端侧应用"></a>4.2 大模型服务与端侧应用</h3><p>MindIE 路径关注模型加载、推理执行、请求接口、并发与资源配置。不能把所有大模型服务都等同于 ONNX &#x2F; OM 离线模型路径；应按目标模型和组件版本选择适配方式。</p>
 <p>云端侧重吞吐和多请求调度；端侧受内存、功耗与离线条件制约。部署后还需做版本管理、健康监测与质量检查，并用一致的输入 &#x2F; 输出长度统计服务指标。</p>
-<h2 id="5-课程实验如何串起全栈"><a href="#5-课程实验如何串起全栈" class="headerlink" title="5. 课程实验如何串起全栈"></a>5. 课程实验如何串起全栈</h2><p>课件把实践分为四个模块、十个实验：</p>
+<h2 id="5-课程实验如何串起全栈"><a href="#5-课程实验如何串起全栈" class="headerlink" title="5. 课程实验如何串起全栈"></a>5. 课程实验如何串起全栈</h2><p>实践可分为四个模块：</p>
 <ol>
 <li><strong>基础流水线（实验 1–3）</strong>：PyTorch 训练推理 → CANNLab 环境检查 → PyTorch + torch_npu 开发运行。</li>
 <li><strong>算子开发（实验 4–5）</strong>：Ascend C 典型算子 → MatMul Tiling 与 Double Buffer 优化。</li>
@@ -333,9 +333,6 @@
 <li><strong>推理部署（实验 8–10）</strong>：ONNX &#x2F; OM 转换部署 → MindIE &#x2F; AISBench 并发压测 → 端侧推理应用。</li>
 </ol>
 <p>每步保留可复现的源码、配置、正确性基线及性能结果，形成“模型能运行 → 能定位瓶颈 → 能验证优化”的实践链路。</p>
-<blockquote>
-<p>课件对应：《第一讲：课程概述》52–74 页；《V00-课程导学》26–48 页。工具定位按课件整理，版本配套与型号支持应在实际实验时核对。</p>
-</blockquote>
 <hr>
 <p><a href="/courses/deep-learning-systems/">课程目录</a> · <a href="/courses/deep-learning-systems/large-language-models/">上一章：大模型训练与推理</a> · <a href="/courses/deep-learning-systems/compute-systems/">下一章：算力系统与性能分析</a></p>
 

@@ -321,7 +321,7 @@
 <td>缓存输入、中间结果与累加结果，支撑复用</td>
 </tr>
 </tbody></table>
-<p>课件的 Cube 示意以 <strong>16×16 矩阵乘加</strong>说明分块硬件执行；实际指令支持的形状与数据类型需以目标型号为准。</p>
+<p>Cube 可通过 <strong>16×16 矩阵乘加</strong>执行分块计算；实际指令支持的形状与数据类型需以目标型号为准。</p>
 <p>矩阵可采用 A 按行、B 按列的分块存储，以及“大 Z 小 Z &#x2F; 大 Z 小 N &#x2F; 大 N 小 Z”等布局记号。<strong>逻辑矩阵形状相同，物理分块布局可以不同，布局要匹配计算单元的取数方式。</strong></p>
 <h3 id="2-2-Buffer-层次与-AIV-AIC-路径"><a href="#2-2-Buffer-层次与-AIV-AIC-路径" class="headerlink" title="2.2 Buffer 层次与 AIV &#x2F; AIC 路径"></a>2.2 Buffer 层次与 AIV &#x2F; AIC 路径</h3><p>以 910B2 为例，L0A &#x2F; L0B 各 64 KiB、L0C 128 KiB、UB 192 KiB、L1 512 KiB、L2 192 MiB，另有 BT 等特定用途 Buffer。数值是示例型号约束，实际开发需查目标平台。</p>
 <ul>
@@ -336,7 +336,7 @@
 <li><strong>Conv + BN + ReLU</strong>：推理时固定统计量的 BN 可折叠进卷积参数，再结合激活融合，减少中间读写与启动；具体能否自动融合取决于模式和实现。</li>
 <li><strong>FlashAttention</strong>：Cube 计算 QKᵀ、AV，Vector 做缩放 &#x2F; Softmax，Scalar 管理循环与同步，并通过分块重叠执行。</li>
 </ol>
-<h3 id="2-4-HBM、Tiling-与双缓冲"><a href="#2-4-HBM、Tiling-与双缓冲" class="headerlink" title="2.4 HBM、Tiling 与双缓冲"></a>2.4 HBM、Tiling 与双缓冲</h3><p>HBM 用 TSV、堆叠 DRAM 与近计算芯片的高密度封装提供宽接口。课件从 HBM2 到 HBM4 讨论带宽、容量、通道和能耗的演进；具体规格属于对应代际与产品的示例，<strong>带宽增长和算力增长不总匹配</strong>。</p>
+<h3 id="2-4-HBM、Tiling-与双缓冲"><a href="#2-4-HBM、Tiling-与双缓冲" class="headerlink" title="2.4 HBM、Tiling 与双缓冲"></a>2.4 HBM、Tiling 与双缓冲</h3><p>HBM 用 TSV、堆叠 DRAM 与近计算芯片的高密度封装提供宽接口。HBM 的代际演进围绕带宽、容量、通道和能耗展开，<strong>带宽增长和算力增长不总匹配</strong>。</p>
 <p>Tiling 将大矩阵切成能放入片上存储的小块，追求时间复用与空间复用；大 Tile 复用好但占空间，小 Tile 有利并行却可能增加搬运。边界与对齐还可能需要补零、转置、格式转换。</p>
 <p>Double Buffer 用两组缓冲交替工作：计算当前块时预取下一块，隐藏部分搬运时间。代价是占更多片上容量，还要确保队列和同步正确；异步搬运并不意味着等待一定能完全消失。</p>
 <p>GPU 的 Shared Memory 和昇腾的片上 Buffer 都涉及软件管理。普通 CUDA Shared Memory 在同一 thread block 的线程间共享；昇腾算子通过显式 Buffer、MTE 与事件同步组织数据流。</p>
@@ -435,9 +435,6 @@ E2E=TTFT+(N_{out}-1)TPOT.
 
 <h3 id="5-3-饱和与瓶颈定位"><a href="#5-3-饱和与瓶颈定位" class="headerlink" title="5.3 饱和与瓶颈定位"></a>5.3 饱和与瓶颈定位</h3><p><img src="/images/courses/deep-learning-systems/serving-saturation.png" srcset="/img/loading.gif" lazyload alt="并发增加后吞吐趋于平台，尾部延迟在饱和区显著上升"><br><em>更高并发不一定带来更高有效吞吐。</em></p>
 <p>排查时先判断是否饱和：<strong>TTFT 高</strong>看接入、排队、Prefill；<strong>TPOT 高</strong>看 Decode 执行与数据供给；<strong>OOM &#x2F; 显存持续增长</strong>看 KV 容量和调度；同时观察 TPS、RPS、P95&#x2F;P99、错误率和设备利用率。</p>
-<blockquote>
-<p>课件对应：《V01-第一章：算力系统演进》90–270 页。硬件容量、带宽与布局示例按课件所指型号理解；估算公式需保留各自假设。</p>
-</blockquote>
 <hr>
 <p><a href="/courses/deep-learning-systems/">课程目录</a> · <a href="/courses/deep-learning-systems/ascend-stack/">上一章：昇腾技术栈</a></p>
 

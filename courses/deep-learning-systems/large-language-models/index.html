@@ -281,7 +281,7 @@
 </ol>
 <p><strong>提示与任务定制</strong>属于输入组织：模板、少量示例、检索资料可以在推理时使用，不必更新权重。它与上面的训练阶段分开理解。</p>
 <p>预测下一个 token、预测遮挡内容等属于<strong>从数据自身构造监督信号的自监督学习</strong>。</p>
-<p>预处理包括清洗、去重、格式统一、敏感信息处理、分词与特殊标记。课件还列出词干化、停用词处理等传统 NLP 手段；是否使用应由任务和 Tokenizer 约定决定，不能作为所有 LLM 的固定清洗步骤。</p>
+<p>预处理包括清洗、去重、格式统一、敏感信息处理、分词与特殊标记。词干化、停用词处理属于传统 NLP 手段；是否使用应由任务和 Tokenizer 约定决定，不能作为所有 LLM 的固定清洗步骤。</p>
 <p>三种预训练目标要看清<strong>输入怎么排、损失算在哪里</strong>：</p>
 <ul>
 <li><strong>自回归语言建模</strong>：根据前文预测下一 token。</li>
@@ -393,7 +393,7 @@ W=W_0+BA,\qquad P_{trainable}=r(d_{in}+d_{out}).
 <li><strong>BRECQ</strong>：以残差块等基本块为单位重构，考虑块内跨层依赖，用二阶误差 &#x2F; Fisher 信息近似衡量重要性。</li>
 <li>**LLM.int8()**：用向量级缩放处理矩阵乘，并将异常特征维度拆出，走 FP16；其余部分走 INT8，减轻异常值对量化精度的破坏。</li>
 </ul>
-<p><strong>CPU INT4 是落地执行案例</strong>，涉及整条链路：先选择 GPTQ、AWQ、TEQ、SignRound 等算法及 channel-wise &#x2F; group-wise 粒度，再调整 group size、验证精度，最后交给适配的张量库和 INT4 Runtime。课件案例讨论 AVX2、AVX512、VNNI、AMX 等指令支持；低位宽收益取决于目标设备与具体 Kernel。</p>
+<p><strong>CPU INT4 是落地执行案例</strong>，涉及整条链路：先选择 GPTQ、AWQ、TEQ、SignRound 等算法及 channel-wise &#x2F; group-wise 粒度，再调整 group size、验证精度，最后交给适配的张量库和 INT4 Runtime。张量库可针对 AVX2、AVX512、VNNI、AMX 等指令优化；低位宽收益取决于目标设备与具体 Kernel。</p>
 <p>常见整数仿射量化可写为：</p>
 
 <div class="course-math">
@@ -456,16 +456,12 @@ q=\operatorname{clip}(\operatorname{round}(x/s)+z,q_{min},q_{max}),\qquad
 </tbody></table>
 <p>表中的数字是<strong>调度的 token 工作量</strong>，不能把 r3 的 8 个 Prefill token 误读为生成了 8 个输出 token。大模型还可按张量并行跨卡执行，KV 块由管理器按需分配和回收。</p>
 <h3 id="5-3-推理引擎与部署方式"><a href="#5-3-推理引擎与部署方式" class="headerlink" title="5.3 推理引擎与部署方式"></a>5.3 推理引擎与部署方式</h3><p><strong>vLLM</strong>关注模型执行、KV 管理和服务调度；<strong>MLC LLM</strong>通过编译与 MLCEngine 面向多种硬件部署，支持本地离线运行、定制与应用嵌入。</p>
-<p>课件也提到 <strong>Text Generation Inference（TGI）</strong>。注意第 105 页标题写 TGI，但示例代码实际导入 <code>vllm.LLM</code>，应归到 vLLM 用法，避免把两者的接口混用。</p>
 <h3 id="5-4-从可用到可靠"><a href="#5-4-从可用到可靠" class="headerlink" title="5.4 从可用到可靠"></a>5.4 从可用到可靠</h3><ul>
 <li><strong>任务能力</strong>：长任务的连续完成、工具协作，以及图文音视频的时序与跨模态理解。</li>
 <li><strong>运行效率</strong>：在长上下文、高并发下平衡质量、延迟、吞吐、显存与能耗。</li>
 <li><strong>安全与治理</strong>：权限边界、提示注入、幻觉、偏见和隐私风险，需要过程检查、失败恢复、持续评测与反馈纠错。</li>
 </ul>
 <p>服务瓶颈诊断与 TTFT、TPOT、P95&#x2F;P99 等指标见<a href="/courses/deep-learning-systems/compute-systems/">算力架构与性能分析</a>。</p>
-<blockquote>
-<p>课件对应：《第三讲：大模型技术》35–111 页；模型结构与发展脉络见<a href="/courses/deep-learning-systems/models/">第二章</a>。算法名称与服务工作流按课件版本整理。</p>
-</blockquote>
 <hr>
 <p><a href="/courses/deep-learning-systems/">课程目录</a> · <a href="/courses/deep-learning-systems/models/">上一章：神经网络与模型结构</a> · <a href="/courses/deep-learning-systems/ascend-stack/">下一章：昇腾技术栈</a></p>
 
