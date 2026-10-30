@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/system-stack.png">
 <meta property="article:published_time" content="2026-10-25T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T16:00:00.000Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="missing,博客,北航,BUAA">
 <meta name="twitter:card" content="summary_large_image">
@@ -260,52 +260,119 @@
           <article class="post-content mx-auto">
             <h1 id="seo-header">深度学习系统（一）：系统组成与执行流程</h1>
             
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年10月30日 凌晨
+                  
+                
+              </p>
+            
             
               <div class="markdown-body">
                 
                 <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
 
-<h2 id="1-深度学习系统的组成"><a href="#1-深度学习系统的组成" class="headerlink" title="1. 深度学习系统的组成"></a>1. 深度学习系统的组成</h2><p>深度学习系统是连接算法与硬件的软硬件基础设施，支持模型训练、推理和部署。系统设计同时考虑准确率、时延、吞吐、存储、通信与能耗。</p>
-<table>
+<h2 id="1-为什么需要深度学习系统"><a href="#1-为什么需要深度学习系统" class="headerlink" title="1. 为什么需要深度学习系统"></a>1. 为什么需要深度学习系统</h2><p>深度学习系统连接<strong>算法与硬件</strong>，承载模型训练、推理和部署。会描述一个模型，还需要让它在实际设备上算得动、跑得快、稳定提供服务。</p>
+<p>AI 产业的四个要素是<strong>数据、算法、算力、场景</strong>。模型和数据扩大后，系统要解决三类约束：显存容量能否容纳模型状态，存储带宽能否及时供数，多卡通信能否跟上计算。</p>
+<h3 id="1-1-智能计算系统的演进"><a href="#1-1-智能计算系统的演进" class="headerlink" title="1.1 智能计算系统的演进"></a>1.1 智能计算系统的演进</h3><p>课件引用陈云霁对智能计算系统的三代划分，作为理解发展方向的一种视角：</p>
+<ol>
+<li><strong>第一代：面向符号主义。</strong> 以 Lisp 机、Prolog 机为例，硬件支持符号处理和高层语言执行。</li>
+<li><strong>第二代：面向连接主义。</strong> 围绕神经网络的大规模数值计算，形成 CPU 与 GPU、NPU 等加速器协作的异构系统，也是本课程重点。</li>
+<li><strong>第三代：通用智能载体的展望。</strong> 探索在大规模虚拟环境中让智能主体通过交互学习，涉及计算架构、算法及跨学科协同。这是课件中的研究设想。</li>
+</ol>
+<p>深度学习的实际应用与产业需求推动专用计算；通用处理器性能增长放缓、模型开销扩大，则进一步推动软硬件协同设计。</p>
+<h3 id="1-2-从云到边、端"><a href="#1-2-从云到边、端" class="headerlink" title="1.2 从云到边、端"></a>1.2 从云到边、端</h3><ul>
+<li><strong>云端</strong>：数据中心与集群，侧重规模、吞吐和并发服务。</li>
+<li><strong>边缘</strong>：靠近数据源，强调低时延、网络条件和现场处理。</li>
+<li><strong>端侧</strong>：手机、嵌入式及 IoT 设备，受功耗、体积、存储和离线条件约束。</li>
+</ul>
+<p>部署位置会影响模型规模、压缩方式和运行时选择。课件还提到混合位宽量化、模型压缩、架构搜索、轻量运行时，以及在线学习和联邦学习等方向；这些方案分别对应资源适配或数据使用方式，不能互相替代。</p>
+<h2 id="2-全栈分层：每一层负责什么"><a href="#2-全栈分层：每一层负责什么" class="headerlink" title="2. 全栈分层：每一层负责什么"></a>2. 全栈分层：每一层负责什么</h2><table>
 <thead>
 <tr>
 <th>层次</th>
-<th>职责</th>
+<th>核心职责</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>应用与算法</td>
-<td>定义任务、模型、损失和优化目标</td>
+<td>算法</td>
+<td>定义任务、模型、损失与优化目标</td>
 </tr>
 <tr>
 <td>框架</td>
-<td>提供张量、网络层、自动微分和模型训练接口</td>
+<td>张量与网络表达、自动微分</td>
 </tr>
 <tr>
 <td>编译</td>
-<td>优化计算图、融合算子、选择实现并生成设备代码</td>
+<td>图优化、算子融合、设备代码生成</td>
 </tr>
 <tr>
 <td>运行时</td>
-<td>管理内存、任务队列、同步与通信</td>
+<td>内存、任务调度、同步与通信</td>
 </tr>
 <tr>
 <td>硬件</td>
-<td>提供计算单元、存储与互联</td>
-</tr>
-<tr>
-<td>部署服务</td>
-<td>加载模型、处理请求、调度执行并监测运行状态</td>
+<td>计算单元、存储层次、互联</td>
 </tr>
 </tbody></table>
+<p><strong>部署服务</strong>贯穿模型加载、请求处理、执行调度、版本管理与监测，建立在上述各层之上。</p>
 <p><img src="/images/courses/deep-learning-systems/system-stack.png" srcset="/img/loading.gif" lazyload alt="算法、框架、编译、运行时、硬件与部署之间的关系"></p>
-<h2 id="2-从模型到执行"><a href="#2-从模型到执行" class="headerlink" title="2. 从模型到执行"></a>2. 从模型到执行</h2><p>一项 AI 任务通常经历输入处理、建模、实现、运行和输出解码。模型层描述计算语义；框架将其展开为算子；编译器与算子库将算子映射为设备 Kernel。</p>
-<p><strong>一个算子不一定对应一个 Kernel。</strong> 多个算子可以融合为同一 Kernel，一个复杂算子也可能由多个 Kernel 完成。</p>
-<p>传统模式识别先提取人工特征再训练分类器；深度学习通过多层网络共同学习特征和预测映射。系统负责把这些计算组织到实际硬件上执行。</p>
-<h2 id="3-算法与系统的协同"><a href="#3-算法与系统的协同" class="headerlink" title="3. 算法与系统的协同"></a>3. 算法与系统的协同</h2><p>模型规模增长会增加计算、参数、激活和通信开销。更少的参数或 FLOPs 不一定意味着更短的实际运行时间，性能还取决于算子实现、数据布局、访存和调度。</p>
-<p>系统优化需要先识别瓶颈，再选择算子融合、数据复用、低精度、并行或模型结构调整。优化前后应在相同输入、精度、预热和计时边界下比较正确性与端到端性能。</p>
-<h2 id="4-云、边、端部署"><a href="#4-云、边、端部署" class="headerlink" title="4. 云、边、端部署"></a>4. 云、边、端部署</h2><p>云端通常面向较高并发和吞吐，边缘设备强调靠近数据与低时延，端侧设备还受体积、功耗、内存与离线条件约束。</p>
-<p>不同部署位置会影响模型规模、压缩方案、运行时与隐私边界。CPU、GPU、NPU、存储和网络共同构成异构计算平台。</p>
+<h3 id="2-1-从任务到可执行程序"><a href="#2-1-从任务到可执行程序" class="headerlink" title="2.1 从任务到可执行程序"></a>2.1 从任务到可执行程序</h3><p>课件以风格迁移串起五步：<strong>输入 → 建模 → 实现 → 运行 → 输出</strong>。先约定数据与目标，再选择网络，用框架表达计算，将模型映射到设备，最后把数值结果转成图像等任务输出。</p>
+<p>执行路径可进一步展开为 <strong>Layer → Operator → Kernel → 指令</strong>。框架表达“算什么”；编译器通过中间表示（IR）、图变换、布局选择和算子实现决定“怎样算”；运行时负责按依赖执行。</p>
+<p><strong>一个算子不一定对应一个 Kernel。</strong> 多个算子可以融合，一个复杂算子也可由多个 Kernel 完成。课件用 TVM 展示图优化、张量计算表达、调度优化、后端代码生成与轻量运行时之间的联系。</p>
+<h2 id="3-张量、算子与计算图"><a href="#3-张量、算子与计算图" class="headerlink" title="3. 张量、算子与计算图"></a>3. 张量、算子与计算图</h2><p><strong>张量要同时看 shape、维度语义、dtype 和内存布局。</strong> 图像常用 NCHW，自然语言表示常用批次×序列×特征；点云、图等还涉及稀疏张量。相同元素数，不代表相同语义或相同物理访问效率。</p>
+<p>计算图用节点表示算子、边表示张量依赖；自动微分构造反向计算。动态图边运行边建立依赖，便于调试；静态图先构建 &#x2F; 编译再执行，有更大的全局优化空间。现代框架通常兼具即时执行与图捕获：如 <code>torch.compile</code>、<code>tf.function</code>、MindSpore Graph &#x2F; PyNative、<code>jax.jit</code>、Paddle 动转静。</p>
+<p>分支和循环可由宿主语言、控制流原语或源码解析表达。展开后的单次执行可按依赖调度；包含循环的完整程序表达不能简单等同于一张固定 DAG。运行时根据就绪依赖组织执行，图捕获失败处可能出现 graph break。</p>
+<p>反向图从损失出发，调用各算子的梯度规则。它常需要前向中间量：ReLU 的反向需要判定输入是否大于零，卷积的权重梯度需要输入，输入梯度需要权重。<strong>保存激活及梯度等状态，是训练比纯推理更占显存的重要原因。</strong></p>
+<h2 id="4-训练：数据、损失、梯度与评估"><a href="#4-训练：数据、损失、梯度与评估" class="headerlink" title="4. 训练：数据、损失、梯度与评估"></a>4. 训练：数据、损失、梯度与评估</h2><h3 id="4-1-数据准备与划分"><a href="#4-1-数据准备与划分" class="headerlink" title="4.1 数据准备与划分"></a>4.1 数据准备与划分</h3><p>先解码、归一化并对齐 shape &#x2F; dtype，再按需要打乱训练样本、组成批次。记录随机种子、划分规则、数据版本及预处理配置，使实验可复现。</p>
+<table>
+<thead>
+<tr>
+<th>数据子集</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>训练集</td>
+<td>计算梯度并更新参数</td>
+</tr>
+<tr>
+<td>验证集</td>
+<td>选超参数、早停时机和 Checkpoint</td>
+</tr>
+<tr>
+<td>测试集</td>
+<td>训练与调参结束后的最终评估</td>
+</tr>
+</tbody></table>
+<p>验证和测试均不更新参数；反复根据测试结果改模型，会使测试集失去独立评估作用。</p>
+<h3 id="4-2-一次训练-step"><a href="#4-2-一次训练-step" class="headerlink" title="4.2 一次训练 step"></a>4.2 一次训练 step</h3><ol>
+<li><strong>前向</strong>：批次输入得到 logits，分类任务通常用交叉熵形成标量损失；需要时加入正则项。</li>
+<li><strong>反向</strong>：自动微分得到各可训练参数的梯度，梯度与对应参数形状一致。</li>
+<li><strong>更新</strong>：SGD 使用当前梯度；Momentum、Adam 结合历史状态决定更新量。</li>
+</ol>
+<p>一个 <strong>epoch</strong> 是遍历一轮训练数据，各批次分别执行 step。训练损失下降说明正在拟合训练数据，还须查看验证表现；验证损失回升可能提示过拟合，NaN &#x2F; Inf 则需要检查数据、学习率及数值稳定性。</p>
+<h3 id="4-3-MNIST：把全过程连起来"><a href="#4-3-MNIST：把全过程连起来" class="headerlink" title="4.3 MNIST：把全过程连起来"></a>4.3 MNIST：把全过程连起来</h3><p>课件的 MindSpore 示例使用 28×28 灰度图、10 个类别，原始数据含 60,000 张训练图和 10,000 张测试图。数据先按 <code>1/255</code> 缩放，再用均值 0.1307、标准差 0.3081 归一化，执行 HWC→CHW 和标签类型转换。</p>
+<ul>
+<li><strong>输入</strong>：批图像 <code>[64,1,28,28]</code> Float32，标签 <code>[64]</code> Int32。这是该示例的接口约定。</li>
+<li><strong>网络</strong>：Flatten → 784→512→512→10，隐藏层使用 ReLU，输出 logits 为 <code>[64,10]</code>。</li>
+<li><strong>参数</strong>：各全连接层含偏置，共 <code>401,920 + 262,656 + 5,130 = 669,706</code> 个。</li>
+<li><strong>训练与评估</strong>：示例用交叉熵及学习率 0.01 的 SGD；评估模式下累计损失、正确数，不更新参数。</li>
+<li><strong>保存与恢复</strong>：保存 Checkpoint，恢复同结构网络，检查参数匹配，再核对预测结果。</li>
+</ul>
+<p>单图推理保留批维 <code>[1,1,28,28]</code>。把 batch size 从 64 改成 32，输入、标签和 logits 的第一维会变，<strong>网络参数量不变</strong>。省略 HWC→CHW 可能破坏通道约定；应从数据形状与网络接口定位问题。</p>
+<h2 id="5-推理：从训练产物到任务结果"><a href="#5-推理：从训练产物到任务结果" class="headerlink" title="5. 推理：从训练产物到任务结果"></a>5. 推理：从训练产物到任务结果</h2><p><strong>模型加载 → 输入预处理 → 前向执行 → 输出解码。</strong> 加载时要对齐结构、参数键与 shape、dtype、设备、驱动和运行时；切到评估模式并按推理需要关闭梯度，随后预热，避免把首次编译与内存初始化混入稳定性能。</p>
+<p>训练与推理应使用一致的输入约定。分类输出取 argmax &#x2F; top-k；检测还要处理阈值与坐标，分割要恢复掩码，数值张量经过解码才成为任务结果。</p>
+<p>Checkpoint、MindIR 等产物各有加载路径。分布式 Checkpoint 可按进程保存并在支持时重分片；Safetensors 保存张量权重，模型结构与配置另行提供，文件本身也可能分片。<strong>文件能读、参数能装载、模型行为正确，是三层不同的检查。</strong></p>
+<p>模型版本还需与类别映射、Tokenizer 等配套。<code>eval</code> 改变 Dropout、BatchNorm 等模块的行为；关闭梯度则减少自动微分开销，两者职责不同。</p>
+<h2 id="6-性能评测与优化闭环"><a href="#6-性能评测与优化闭环" class="headerlink" title="6. 性能评测与优化闭环"></a>6. 性能评测与优化闭环</h2><p>模型参数或 FLOPs 更少，不一定实际更快。算子实现、布局、访存、启动、同步和通信都会影响结果。</p>
+<p>课件列出 <strong>MLPerf、BenchIP</strong> 等评测体系。比较结果前，应统一任务、模型质量要求、输入规模、数据精度、硬件软件版本和计时边界，再分别看时延、吞吐、显存与能耗。</p>
+<p>实践流程是 <strong>跑通正确性基线 → Profiling 定位瓶颈 → 分析算子与硬件约束 → 修改一项 → 端到端复测</strong>。架构分析同时关注运算单元、存储层次、指令集、编程框架与多处理器组织，课件举例包括 TPU、Eyeriss。</p>
+<p>具体的 Roofline、通信模型和在线服务指标见<a href="/courses/deep-learning-systems/compute-systems/">算力架构与性能分析</a>；平台开发与实验路线见<a href="/courses/deep-learning-systems/ascend-stack/">昇腾技术栈</a>。</p>
+<blockquote>
+<p>课件对应：《第一讲：课程概述》20–74 页；《V00-课程导学》5–24 页；《V01-第一章：算力系统演进》6–89 页。页码按 PDF 文件计，示例配置沿用课件。</p>
+</blockquote>
 <hr>
 <p><a href="/courses/deep-learning-systems/">课程目录</a> · <a href="/courses/deep-learning-systems/models/">下一章：深度学习模型</a></p>
 

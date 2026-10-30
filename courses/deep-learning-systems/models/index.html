@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/im2col.png">
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/attention.png">
 <meta property="article:published_time" content="2026-10-25T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T16:00:00.000Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="missing,博客,北航,BUAA">
 <meta name="twitter:card" content="summary_large_image">
@@ -261,6 +261,14 @@
           <article class="post-content mx-auto">
             <h1 id="seo-header">深度学习系统（二）：神经网络与模型结构</h1>
             
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年10月30日 凌晨
+                  
+                
+              </p>
+            
             
               <div class="markdown-body">
                 
@@ -291,6 +299,8 @@
 <td>沿图结构组织节点信息的计算</td>
 </tr>
 </tbody></table>
+<p>全连接层可写成 <code>Y=XW+b</code>：若 X 为 <code>B×D</code>、W 为 <code>D×D′</code>，输出为 <code>B×D′</code>。矩阵乘（GEMM）是 MLP 的主要计算来源。</p>
+<p>监督学习用标签构造目标；无监督学习发现结构，如 K-means、PCA；自监督学习从输入自身构造目标，如 BERT、MAE 的遮挡预测。这是<strong>训练信号的分类</strong>，与上面的网络结构分类不同。</p>
 <h3 id="1-2-反向传播求梯度，优化器更新参数"><a href="#1-2-反向传播求梯度，优化器更新参数" class="headerlink" title="1.2 反向传播求梯度，优化器更新参数"></a>1.2 反向传播求梯度，优化器更新参数</h3><p><strong>前向传播</strong>逐层计算预测及损失；<strong>反向传播</strong>从损失出发，沿反向依赖使用链式法则求各参数的梯度；<strong>优化器</strong>再根据梯度更新参数。</p>
 <p>设输出 o 由中间量 a 决定、a 依赖权重 w，Sigmoid 的值为 σ(z)：</p>
 
@@ -306,94 +316,38 @@ w\leftarrow w-\eta\frac{\partial L}{\partial w}.
 </div>
 
 
-<p>隐藏层同时影响多个下游输出时，需要把各条路径的梯度贡献相加。</p>
+<p>隐藏层同时影响多个下游输出时，需要把各条路径的梯度贡献相加。对 Sigmoid 网络和平方误差，可把课件的逐权重推导压缩成：</p>
+
+<div class="course-math">
+\[
+L=\frac12\sum_j(o_j-y_j)^2,\quad
+\delta_j=(o_j-y_j)o_j(1-o_j),\quad
+\frac{\partial L}{\partial w_{ij}}=h_i\delta_j,
+\]
+\[
+\delta_i=h_i(1-h_i)\sum_j w_{ij}\delta_j,\qquad
+\frac{\partial L}{\partial v_{ki}}=x_k\delta_i.
+\]
+</div>
+
+
+<p>这里 w 连接隐藏层与输出层，v 连接输入与隐藏层。先用同一组前向参数算出全部梯度，再更新，不能在求隐藏层梯度时混入已经更新的输出层权重。</p>
+<p>课件的两输入、两隐藏、两输出算例中，学习率为 0.5；一次权重更新后，总误差由约 <strong>0.2984 降至 0.2910</strong>。算例的重点是“输出层局部梯度 → 隐藏层多路径求和 → 负梯度更新”。</p>
 <p>误差信号的符号要与更新公式一致：<code>y−prediction</code> 配合加法更新，与 <code>prediction−y</code> 配合减法更新可表示同一负梯度方向。</p>
-<h3 id="1-3-深层网络的困难与对应技术"><a href="#1-3-深层网络的困难与对应技术" class="headerlink" title="1.3 深层网络的困难与对应技术"></a>1.3 深层网络的困难与对应技术</h3><table>
-<thead>
-<tr>
-<th>困难 &#x2F; 技术</th>
-<th>核心知识点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>梯度消失 &#x2F; 爆炸</td>
-<td>多层导数连乘可能过小或过大，前层难更新或训练不稳定</td>
-</tr>
-<tr>
-<td>Sigmoid &#x2F; Tanh</td>
-<td>有饱和区，反向梯度可能很小</td>
-</tr>
-<tr>
-<td>ReLU 及变体</td>
-<td><code>max(0,x)</code> 在正区间保持梯度，计算简单；Leaky ReLU、PReLU 为其变体</td>
-</tr>
-<tr>
-<td>BatchNorm &#x2F; LayerNorm</td>
-<td>前者按批次统计相应特征，后者按单个样本 &#x2F; token 的特征维度归一化，帮助稳定训练</td>
-</tr>
-<tr>
-<td>Dropout</td>
-<td>训练时随机关闭部分神经元，减少过度依赖</td>
-</tr>
-<tr>
-<td>L1 &#x2F; L2 正则</td>
-<td>在损失中加入权重绝对值 &#x2F; 平方惩罚，限制复杂度</td>
-</tr>
-<tr>
-<td>Early Stopping</td>
-<td>用验证误差决定何时停止，避免只追求训练误差</td>
-</tr>
-<tr>
-<td>Xavier &#x2F; He 初始化</td>
-<td>控制前后层信号尺度；He 的常见方差为 <code>2/fan_in</code></td>
-</tr>
-<tr>
-<td>Adam</td>
-<td>利用梯度的一阶、二阶矩自适应调整更新尺度；仍需要合适的学习率</td>
-</tr>
-</tbody></table>
-<p>学习率过小会慢，过大可能震荡或不收敛。累积 BP 按一组样本汇总误差 &#x2F; 梯度；评价过拟合需同时看训练与验证表现。</p>
+<h3 id="1-3-为什么加深网络"><a href="#1-3-为什么加深网络" class="headerlink" title="1.3 为什么加深网络"></a>1.3 为什么加深网络</h3><p>多层非线性变换组合出层级特征，比只增加单层宽度提供更多组合方式。数据、算力与训练算法共同支撑深层网络；增加层数也会放大梯度传播、优化和泛化的困难。</p>
+<h3 id="1-4-训练稳定性：激活、归一化与初始化"><a href="#1-4-训练稳定性：激活、归一化与初始化" class="headerlink" title="1.4 训练稳定性：激活、归一化与初始化"></a>1.4 训练稳定性：激活、归一化与初始化</h3><ul>
+<li><strong>梯度消失 &#x2F; 爆炸</strong>：多层导数连乘过小或过大，前层难更新或训练不稳定。</li>
+<li><strong>激活函数</strong>：Sigmoid、Tanh 有饱和区；ReLU 为 <code>max(0,x)</code>，正区间梯度为 1；Leaky ReLU、PReLU 为负区间保留斜率。</li>
+<li><strong>归一化</strong>：BatchNorm 使用批次相关统计；LayerNorm 对单个样本 &#x2F; token 的特征维归一化，帮助控制特征尺度。</li>
+<li><strong>初始化</strong>：Xavier、He 控制前后层信号尺度，He 常见方差为 <code>2/fan_in</code>。</li>
+<li><strong>优化器与学习率</strong>：Adam 利用梯度的一阶、二阶矩调节更新尺度；学习率过小收敛慢，过大可能震荡。</li>
+</ul>
+<h3 id="1-5-泛化：约束拟合程度"><a href="#1-5-泛化：约束拟合程度" class="headerlink" title="1.5 泛化：约束拟合程度"></a>1.5 泛化：约束拟合程度</h3><p><strong>Dropout</strong>在训练时随机丢弃部分激活，减少对特定单元的依赖；<strong>L1 &#x2F; L2</strong>分别对权重绝对值 &#x2F; 平方加惩罚；<strong>Early Stopping</strong>根据验证表现停止训练。它们与解决梯度传播问题的技术属于不同侧重点。</p>
+<p>累积 BP 按一组样本汇总梯度。判断过拟合要同时观察训练与验证曲线，数据划分和完整训练流程见<a href="/courses/deep-learning-systems/overview/">第一章</a>。</p>
 <h2 id="2-CNN：局部连接、形状推导与矩阵加速"><a href="#2-CNN：局部连接、形状推导与矩阵加速" class="headerlink" title="2. CNN：局部连接、形状推导与矩阵加速"></a>2. CNN：局部连接、形状推导与矩阵加速</h2><h3 id="2-1-卷积、激活、池化与全连接"><a href="#2-1-卷积、激活、池化与全连接" class="headerlink" title="2.1 卷积、激活、池化与全连接"></a>2.1 卷积、激活、池化与全连接</h3><p>卷积核只看局部区域，并在不同空间位置共享权重；逐层形成从边缘、纹理到高层语义的表示。一次输出是局部输入与核权重逐元素乘后求和，再加偏置。</p>
-<table>
-<thead>
-<tr>
-<th>参数 &#x2F; 层</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Kernel 高宽</td>
-<td>一次处理的空间范围</td>
-</tr>
-<tr>
-<td>输入通道 &#x2F; filter 深度</td>
-<td>标准卷积的每个 filter 覆盖所有输入通道</td>
-</tr>
-<tr>
-<td>filter 数目</td>
-<td>输出通道数</td>
-</tr>
-<tr>
-<td>Padding</td>
-<td>在输入边界补值，例如补零</td>
-</tr>
-<tr>
-<td>Stride</td>
-<td>卷积核每次移动的距离</td>
-</tr>
-<tr>
-<td>Activation</td>
-<td>逐元素加入非线性</td>
-</tr>
-<tr>
-<td>Pooling</td>
-<td>局部最大值 &#x2F; 平均值聚合，实现下采样、减少后续开销并扩大后续感受范围</td>
-</tr>
-<tr>
-<td>FC</td>
-<td>将提取到的特征映射为最终类别分数</td>
-</tr>
-</tbody></table>
+<p><strong>卷积的形状参数</strong>：Kernel 高宽决定局部范围；标准卷积的每个 filter 覆盖全部输入通道；filter 数决定输出通道数；Padding 指边界补值，Stride 指滑动步长。</p>
+<p><strong>CNN 中其他层的分工</strong>：激活层逐元素加入非线性；最大 &#x2F; 平均池化做局部聚合和空间下采样；全连接层将特征映射到类别分数。连续线性层仍可合成线性变换，因此需要非线性激活。</p>
+<p>分类输出整图类别，检测输出目标类别及位置，分割输出像素类别。共享视觉特征可以服务不同任务头。</p>
 <p>不考虑 dilation，核为 Kₕ×K𝑤、输入高宽 H×W、填充 P、步长 S 时：</p>
 
 <div class="course-math">
@@ -444,38 +398,13 @@ H_{out}=\left\lfloor\frac{H+2P-K_h}{S}\right\rfloor+1,
 <p><code>im2col</code> 将各滑动窗口展开为列，将卷积核展平为行，再执行高效矩阵乘：若输入通道为 C、核为 R×S、输出空间为 E×F、输出通道为 M，则矩阵形状为 **<code>(M×CRS) · (CRS×EF) = M×EF</code>**，之后 reshape 为特征图。</p>
 <p><img src="/images/courses/deep-learning-systems/im2col.png" srcset="/img/loading.gif" lazyload alt="滑动窗口展开为列，卷积核展开为行，再计算矩阵乘法"><br><em>显式展开会重复存储窗口重叠部分，Implicit GEMM 可避免显式物化整个窗口展开矩阵。</em></p>
 <p>关键系统取舍是：利用成熟 GEMM 的吞吐与数据复用，同时控制显式展开带来的内存和搬运成本。</p>
-<h2 id="3-语言模型、规模化与其他生成模型"><a href="#3-语言模型、规模化与其他生成模型" class="headerlink" title="3. 语言模型、规模化与其他生成模型"></a>3. 语言模型、规模化与其他生成模型</h2><table>
-<thead>
-<tr>
-<th>阶段 &#x2F; 模型</th>
-<th>核心思路与局限</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>N-gram</td>
-<td>根据最近 n−1 个词估计下一个词，简单可解释；固定窗口、组合爆炸与数据稀疏限制能力</td>
-</tr>
-<tr>
-<td>Word2Vec &#x2F; Embedding</td>
-<td>将离散词映射为连续向量，用上下文学习语义关系</td>
-</tr>
-<tr>
-<td>RNN &#x2F; LSTM</td>
-<td>通过隐藏状态或门控传递历史信息；长距离依赖和逐步计算限制并行</td>
-</tr>
-<tr>
-<td>Transformer</td>
-<td>用 Attention 直接建立 token 间依赖，训练中的序列位置可并行处理</td>
-</tr>
-<tr>
-<td>预训练语言模型</td>
-<td>大规模预训练学习通用表示，再适配下游任务</td>
-</tr>
-<tr>
-<td>大语言模型</td>
-<td>扩展参数、数据和训练计算，支持更通用的理解、生成与任务求解</td>
-</tr>
-</tbody></table>
+<h2 id="3-语言模型、规模化与其他生成模型"><a href="#3-语言模型、规模化与其他生成模型" class="headerlink" title="3. 语言模型、规模化与其他生成模型"></a>3. 语言模型、规模化与其他生成模型</h2><p>语言模型为词元序列建立概率分布，通过上下文预测后续词元。其发展可以按四个阶段理解：</p>
+<ol>
+<li><strong>统计语言模型</strong>：N-gram 只看最近 n−1 个词，用频次估计概率；受固定窗口、组合爆炸和数据稀疏限制。</li>
+<li><strong>神经语言模型</strong>：Embedding &#x2F; Word2Vec 把离散词映射为连续向量；RNN 用 <code>h_t=f(x_t,h_&#123;t−1&#125;)</code> 传递历史，LSTM 用门控改善记忆。逐步依赖仍限制并行和长程信息传递。</li>
+<li><strong>预训练语言模型</strong>：先在大规模数据上学习表示，再适配下游任务；Transformer 用 Attention 建立 token 间联系，训练中各位置可以并行处理。</li>
+<li><strong>大语言模型</strong>：扩展参数、数据和计算，通过提示、指令微调及偏好对齐支持多任务。预训练的“续写能力”与“遵循指令”需要区分。</li>
+</ol>
 <p><strong>Scaling Law 是性能与规模之间的经验规律。</strong> “涌现”描述某些任务表现随规模出现明显非线性提升的现象，参数增大并不保证所有任务同步改善。</p>
 <table>
 <thead>
@@ -523,77 +452,21 @@ Q=XW_Q,\quad K=XW_K,\quad V=XW_V,
 <p>单头忽略 batch 时，Q、K 的形状为 <code>L×d_k</code>，V 为 <code>L×d_v</code>，注意力分数与权重为 <code>L×L</code>，输出为 <code>L×d_v</code>。L 是序列长度，M 是可选掩码；除以 √dₖ 控制点积尺度，Softmax 按可关注位置归一化。</p>
 <p><img src="/images/courses/deep-learning-systems/attention.png" srcset="/img/loading.gif" lazyload alt="输入分别投影为Q、K、V，计算注意力分数、归一化权重，再加权汇总V"><br><em>投影、QKᵀ 与 AV 都涉及矩阵乘法。</em></p>
 <p><strong>多头注意力</strong>在不同子空间学习关系，再拼接并投影输出。头可以关注不同信息，但“每个头恰好负责一种固定语义”只是帮助理解的示意。</p>
-<h3 id="4-3-Block-的其他部分"><a href="#4-3-Block-的其他部分" class="headerlink" title="4.3 Block 的其他部分"></a>4.3 Block 的其他部分</h3><table>
-<thead>
-<tr>
-<th>模块</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>FFN</td>
-<td>对每个 token 独立进行特征变换，常由升维、非线性、降维组成</td>
-</tr>
-<tr>
-<td>残差</td>
-<td><code>x+F(x)</code>，保留原始信息、改善梯度传播</td>
-</tr>
-<tr>
-<td>LayerNorm &#x2F; RMSNorm</td>
-<td>调整特征尺度，帮助训练稳定</td>
-</tr>
-<tr>
-<td>因果掩码</td>
-<td>训练预测当前位置后续 token 时，禁止看到未来信息</td>
-</tr>
-<tr>
-<td>输出线性层</td>
-<td>将隐藏向量映射到词表大小的 logits</td>
-</tr>
-<tr>
-<td>Softmax 与选择策略</td>
-<td>得到候选 token 概率，并选出下一项</td>
-</tr>
-</tbody></table>
+<h3 id="4-3-Block-的其他部分"><a href="#4-3-Block-的其他部分" class="headerlink" title="4.3 Block 的其他部分"></a>4.3 Block 的其他部分</h3><p><strong>特征变换与训练稳定性</strong>：FFN 对每个 token 独立执行升维、非线性和降维；残差 <code>x+F(x)</code> 保留直接信息与梯度通路；LayerNorm &#x2F; RMSNorm 调整特征尺度。</p>
+<p><strong>生成约束与输出</strong>：因果掩码屏蔽未来位置，允许训练时并行预测各位置的下一个 token；输出线性层把隐藏向量映射成词表 logits，再通过概率与选择策略得到新 token。实际生成仍依赖此前输出，通常逐 token 进行。</p>
 <p>原始 Encoder-Decoder 的 Decoder 包含掩码自注意力及对 Encoder 输出的交叉注意力；<strong>不能把这种“双注意力”结构直接套到所有 Decoder-only 模型</strong>。</p>
 <p>关键超参数是层数、隐藏维度、头数、FFN 中间维度和词表大小。Attention、FFN、参数存储和长序列中间张量是主要系统开销来源。MoE、FlashAttention、SSM &#x2F; Mamba 分别从模型组织、IO 和序列计算等角度改进结构。MoE 用 Router 为每个 token 选择少量 Expert，增加总容量而控制每 token 激活计算，但也带来调度与通信问题。</p>
-<h2 id="5-MiniMind：把-Transformer-放到具体模型里"><a href="#5-MiniMind：把-Transformer-放到具体模型里" class="headerlink" title="5. MiniMind：把 Transformer 放到具体模型里"></a>5. MiniMind：把 Transformer 放到具体模型里</h2><table>
-<thead>
-<tr>
-<th>部分</th>
-<th>设计</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>整体</td>
-<td>Decoder-only，小模型覆盖预训练、微调与强化学习链路</td>
-</tr>
-<tr>
-<td>示例规模</td>
-<td>64M 参数、8 层、隐藏维度 768</td>
-</tr>
-<tr>
-<td>注意力</td>
-<td>GQA，多个 Query 头共享较少的 KV 头</td>
-</tr>
-<tr>
-<td>归一化</td>
-<td>Pre-Norm + RMSNorm，对 Q&#x2F;K 进行归一化</td>
-</tr>
-<tr>
-<td>位置信息</td>
-<td>RoPE；提及 YaRN 位置外推</td>
-</tr>
-<tr>
-<td>FFN</td>
-<td>SwiGLU，该配置默认不使用 Dropout</td>
-</tr>
-</tbody></table>
+<h2 id="5-MiniMind：把-Transformer-放到具体模型里"><a href="#5-MiniMind：把-Transformer-放到具体模型里" class="headerlink" title="5. MiniMind：把 Transformer 放到具体模型里"></a>5. MiniMind：把 Transformer 放到具体模型里</h2><p>以下是<strong>课件中的 MiniMind-3 Dense 示例配置</strong>：Decoder-only、64M 参数、8 层、隐藏维度 768；使用 GQA、Pre-Norm + RMSNorm、Q&#x2F;K 归一化、RoPE 和 SwiGLU，提及 YaRN 位置外推，默认不启用 Dropout。</p>
+<p>一次 Block 的主线为：<strong>归一化 → Q&#x2F;K&#x2F;V 投影与注意力 → 输出投影及残差 → 归一化 → SwiGLU FFN 及残差</strong>。</p>
 <p><strong>RMSNorm</strong>按均方根调整尺度，省去 LayerNorm 的减均值步骤，仍带有可学习缩放。<strong>GQA</strong>保留较多 Query 头，同时减少 KV 头数，从而减少 KV 存储；逻辑上重复 KV 以匹配 Query 头，不要求缓存物理复制同样的份数。</p>
 <p>输入为 <code>[1,29,768]</code> 时：29 个 token，每个 768 维；8 个 Query 头、每头 96 维，拼回输出仍为 <code>[1,29,768]</code>。RoPE 作用于 Q、K 来调整匹配关系，V 保留要汇总的内容。</p>
 <p>SwiGLU 将输入分为 Gate 和 Up 两条投影，Gate 经过 SiLU，与 Up 逐元素相乘，再通过 Down 投影并接残差。SiLU 为 <code>z·sigmoid(z)</code>。</p>
 <p>固定参数预算时，网络深度与隐藏维度共同决定容量。较深结构可增加特征变换层次，但隐藏维度过窄会限制表示能力。</p>
+<h3 id="5-1-训练资源与模型获取"><a href="#5-1-训练资源与模型获取" class="headerlink" title="5.1 训练资源与模型获取"></a>5.1 训练资源与模型获取</h3><p>Hugging Face 和 ModelScope 提供模型权重、配置、数据集与相关工具。课件用它们获取 MiniMind；下载权重时还要配套模型结构、Tokenizer 和配置，不能只凭参数文件恢复完整行为。</p>
 <p>训练数据路线为 <code>pretrain_t2t → sft_t2t → rlaif/agent_rl</code>，受限资源下用 mini 数据组合或已有权重做实验。</p>
+<blockquote>
+<p>课件对应：《第二讲：深度学习模型》3–104 页；《第三讲：大模型技术》15–33 页补充分词、位置编码与注意力。MiniMind 配置按课件示例理解。</p>
+</blockquote>
 <hr>
 <p><a href="/courses/deep-learning-systems/">课程目录</a> · <a href="/courses/deep-learning-systems/overview/">上一章：系统组成与执行流程</a> · <a href="/courses/deep-learning-systems/large-language-models/">下一章：大模型训练与推理</a></p>
 

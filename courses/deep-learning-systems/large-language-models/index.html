@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/prefill-decode.png">
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-systems/paged-attention.png">
 <meta property="article:published_time" content="2026-10-25T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T16:00:00.000Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="missing,博客,北航,BUAA">
 <meta name="twitter:card" content="summary_large_image">
@@ -261,37 +261,34 @@
           <article class="post-content mx-auto">
             <h1 id="seo-header">深度学习系统（三）：大模型训练、推理与服务</h1>
             
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年10月30日 凌晨
+                  
+                
+              </p>
+            
             
               <div class="markdown-body">
                 
                 <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
 
-<h2 id="1-预训练、微调与人类对齐"><a href="#1-预训练、微调与人类对齐" class="headerlink" title="1. 预训练、微调与人类对齐"></a>1. 预训练、微调与人类对齐</h2><h3 id="1-1-各阶段在学什么"><a href="#1-1-各阶段在学什么" class="headerlink" title="1.1 各阶段在学什么"></a>1.1 各阶段在学什么</h3><table>
-<thead>
-<tr>
-<th>阶段</th>
-<th>数据与目标</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>预训练</td>
-<td>网页、书籍、对话等通用数据，以及代码、科学、多语等专用数据；学习通用语言与知识表示</td>
-</tr>
-<tr>
-<td>SFT &#x2F; 指令微调</td>
-<td>人工或半自动构造的“指令—回答”示例，学习按要求完成任务</td>
-</tr>
-<tr>
-<td>人类对齐 &#x2F; RLHF</td>
-<td>利用偏好反馈进一步调整回答行为；通常包含初始训练、收集反馈、强化学习并迭代</td>
-</tr>
-<tr>
-<td>提示与任务定制</td>
-<td>用模板、示例和领域信息组织任务输入，不一定更新模型权重</td>
-</tr>
-</tbody></table>
+<h2 id="1-预训练、微调与人类对齐"><a href="#1-预训练、微调与人类对齐" class="headerlink" title="1. 预训练、微调与人类对齐"></a>1. 预训练、微调与人类对齐</h2><h3 id="1-1-各阶段在学什么"><a href="#1-1-各阶段在学什么" class="headerlink" title="1.1 各阶段在学什么"></a>1.1 各阶段在学什么</h3><ol>
+<li><strong>预训练</strong>：使用网页、书籍、对话，以及代码、科学、多语等数据，学习通用表示与语言规律。</li>
+<li><strong>SFT &#x2F; 指令微调</strong>：用“指令—回答”样例做监督训练；样例可由人工添加任务描述，也可半自动生成后筛选。</li>
+<li><strong>人类对齐 &#x2F; RLHF</strong>：收集偏好反馈，构建训练信号并通过强化学习调整回答行为，形成反馈与更新循环。</li>
+</ol>
+<p><strong>提示与任务定制</strong>属于输入组织：模板、少量示例、检索资料可以在推理时使用，不必更新权重。它与上面的训练阶段分开理解。</p>
 <p>预测下一个 token、预测遮挡内容等属于<strong>从数据自身构造监督信号的自监督学习</strong>。</p>
-<p>预处理要考虑清洗、去重、格式统一与敏感信息处理。常见预训练目标包括：<strong>自回归语言建模、只对后缀计损失的前缀语言建模、中间填充 FIM</strong>；模型学习什么，与损失计算覆盖哪些位置有关。</p>
+<p>预处理包括清洗、去重、格式统一、敏感信息处理、分词与特殊标记。课件还列出词干化、停用词处理等传统 NLP 手段；是否使用应由任务和 Tokenizer 约定决定，不能作为所有 LLM 的固定清洗步骤。</p>
+<p>三种预训练目标要看清<strong>输入怎么排、损失算在哪里</strong>：</p>
+<ul>
+<li><strong>自回归语言建模</strong>：根据前文预测下一 token。</li>
+<li><strong>前缀语言建模</strong>：前缀作为条件，只对后缀位置计算预测损失。</li>
+<li><strong>中间填充 FIM</strong>：重排前缀、后缀与中间片段，让模型学习根据两端补全缺失内容。</li>
+</ul>
+<p>遮挡预测则根据可见上下文恢复被遮挡内容，常用于双向表示学习。</p>
 <h3 id="1-2-参数高效微调"><a href="#1-2-参数高效微调" class="headerlink" title="1.2 参数高效微调"></a>1.2 参数高效微调</h3><table>
 <thead>
 <tr>
@@ -349,18 +346,14 @@ W=W_0+BA,\qquad P_{trainable}=r(d_{in}+d_{out}).
 <td>按层或阶段切模型</td>
 <td>传激活与反向梯度；负载不均和流水气泡</td>
 </tr>
-<tr>
-<td>3D 混合并行</td>
-<td>组合 DP、TP、PP</td>
-<td>需要同时考虑负载、显存和拓扑</td>
-</tr>
 </tbody></table>
+<p><strong>3D 混合并行</strong>组合 DP、TP、PP，需要同时匹配负载、显存容量与互联拓扑。</p>
 <p><strong>进程、Rank、Device、通信域</strong>不能混为一谈：常见映射是一进程一设备；Rank 是某通信组中的成员编号；通信域规定哪些成员一起做集合通信。逻辑上相邻的 Rank，不一定物理相邻。</p>
 <p>模型装不下、每秒吞吐不足、总训练时间太长，是扩展多卡的不同动机。一般先利用机内高速互联，再考虑跨机网络；高频 TP 通信应尽量放在高速互联域内。</p>
 <h3 id="2-2-减少内存的手段"><a href="#2-2-减少内存的手段" class="headerlink" title="2.2 减少内存的手段"></a>2.2 减少内存的手段</h3><ul>
 <li><strong>Gradient Checkpointing &#x2F; 重计算</strong>：少存部分激活，在反向时重算，用计算换显存。</li>
 <li><strong>混合精度</strong>：减少部分张量的字节数，同时关注数值稳定。</li>
-<li><strong>ZeRO</strong>：逐阶段分片优化器状态、梯度、参数，减少普通 DP 的重复保存。</li>
+<li><strong>ZeRO</strong>：Stage 1 分片优化器状态，Stage 2 再分片梯度，Stage 3 进一步分片参数，减少普通 DP 中模型状态的重复保存。</li>
 <li><strong>Offload</strong>：把部分状态卸载到 CPU &#x2F; 主机内存等，换来额外传输；如 ZeRO-Offload、ZeRO-Infinity。</li>
 </ul>
 <p>DeepSpeed 提供相关内存优化和并行能力；Megatron-LM 侧重张量切分等大模型并行。选择方案时，既要看装得下，也要看通信与重计算是否拖慢训练。</p>
@@ -385,61 +378,33 @@ W=W_0+BA,\qquad P_{trainable}=r(d_{in}+d_{out}).
 </tr>
 </tbody></table>
 <p>KV Cache 缓存的是各层历史 <strong>K、V</strong>。它减少重复投影与历史部分的重复计算，代价是随序列与并发增长占用显存；每轮新 Query 仍需要和可见的历史信息做注意力计算。</p>
-<h3 id="3-2-从-logits-选-token"><a href="#3-2-从-logits-选-token" class="headerlink" title="3.2 从 logits 选 token"></a>3.2 从 logits 选 token</h3><table>
-<thead>
-<tr>
-<th>策略</th>
-<th>做法与取舍</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Greedy</td>
-<td>取最高分 &#x2F; 最高概率 token，快，但可能单调或重复</td>
-</tr>
-<tr>
-<td>Temperature</td>
-<td>改变分布集中程度；温度越高，通常越分散</td>
-</tr>
-<tr>
-<td>Top-k</td>
-<td>只在最高概率的 k 个候选中，按重新归一化后的概率采样</td>
-</tr>
-<tr>
-<td>Top-p</td>
-<td>按累计概率阈值保留候选，再采样</td>
-</tr>
-<tr>
-<td>Beam Search</td>
-<td>维护多个高分候选序列，逐步扩展；比贪婪搜索覆盖更多路径，但成本更高</td>
-</tr>
-</tbody></table>
+<h3 id="3-2-从-logits-选-token"><a href="#3-2-从-logits-选-token" class="headerlink" title="3.2 从 logits 选 token"></a>3.2 从 logits 选 token</h3><ul>
+<li><strong>Greedy</strong>：每步取最高分 token，只保留一条路径，快速但可能错过整体更好的序列。</li>
+<li><strong>Top-k 采样</strong>：仅保留最高概率的 k 个候选，重新归一化后采样。</li>
+<li><strong>Beam Search</strong>：保留多个高分候选序列，再扩展与筛选；计算和状态开销更大。</li>
+</ul>
+<p>另外，<strong>Temperature</strong>调节概率分布的集中程度，<strong>Top-p</strong>按累计概率阈值选择候选集合；它们可与采样流程结合。</p>
 <p>Top-k 是限制候选集合，不是要求在 k 个词中均匀随机抽取。自回归生成把选出的 token 加回上下文，再继续下一步。</p>
 <h2 id="4-推理优化：每种方法在节省什么"><a href="#4-推理优化：每种方法在节省什么" class="headerlink" title="4. 推理优化：每种方法在节省什么"></a>4. 推理优化：每种方法在节省什么</h2><h3 id="4-1-量化与低精度"><a href="#4-1-量化与低精度" class="headerlink" title="4.1 量化与低精度"></a>4.1 量化与低精度</h3><p>量化用更低位宽表示权重或激活，减少存储与数据搬运，并在硬件、Kernel 支持时加速。<strong>QAT</strong>在训练中考虑量化影响，<strong>PTQ</strong>在训练后通过校准等方式完成量化。</p>
 <p>对称量化常把实数零对应到整数零；非对称量化还使用零点偏移来适配区间。量化公式中的 scale、zero point 与通道 &#x2F; 分组粒度都会影响误差与执行成本。</p>
-<table>
-<thead>
-<tr>
-<th>方法</th>
-<th>重点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>AdaQuant</td>
-<td>逐层校准，减少量化层与全精度层输出的差异</td>
-</tr>
-<tr>
-<td>BRECQ</td>
-<td>按网络块重构，考虑跨层依赖，并利用二阶误差 &#x2F; Fisher 信息近似评价重要性</td>
-</tr>
-<tr>
-<td>LLM.int8()</td>
-<td>向量级量化；异常特征维度走较高精度，其余走 INT8 的混合精度分解</td>
-</tr>
-<tr>
-<td>CPU INT4 推理</td>
-<td>量化算法、粒度、group size 与 INT4 Kernel &#x2F; Runtime 协同；可结合 GPTQ、AWQ 等量化方法与 AVX、VNNI、AMX 等指令支持</td>
-</tr>
-</tbody></table>
+<p><strong>量化误差优化的三个例子</strong>：</p>
+<ul>
+<li><strong>AdaQuant</strong>：逐层校准，重点最小化量化层与全精度层的输出差异。</li>
+<li><strong>BRECQ</strong>：以残差块等基本块为单位重构，考虑块内跨层依赖，用二阶误差 &#x2F; Fisher 信息近似衡量重要性。</li>
+<li>**LLM.int8()**：用向量级缩放处理矩阵乘，并将异常特征维度拆出，走 FP16；其余部分走 INT8，减轻异常值对量化精度的破坏。</li>
+</ul>
+<p><strong>CPU INT4 是落地执行案例</strong>，涉及整条链路：先选择 GPTQ、AWQ、TEQ、SignRound 等算法及 channel-wise &#x2F; group-wise 粒度，再调整 group size、验证精度，最后交给适配的张量库和 INT4 Runtime。课件案例讨论 AVX2、AVX512、VNNI、AMX 等指令支持；低位宽收益取决于目标设备与具体 Kernel。</p>
+<p>常见整数仿射量化可写为：</p>
+
+<div class="course-math">
+\[
+q=\operatorname{clip}(\operatorname{round}(x/s)+z,q_{min},q_{max}),\qquad
+\hat{x}=s(q-z).
+\]
+</div>
+
+
+<p>s 是缩放因子，z 是整数零点；舍入与截断带来误差。正负分布明显不对称时，对称区间可能浪费部分表示范围。量化后需同时验证任务质量、存储和实际时延。</p>
 <h3 id="4-2-Orca：把调度粒度降到每次迭代"><a href="#4-2-Orca：把调度粒度降到每次迭代" class="headerlink" title="4.2 Orca：把调度粒度降到每次迭代"></a>4.2 Orca：把调度粒度降到每次迭代</h3><p>静态批处理要求同批请求相互等待：短请求结束后占位，新请求也难插入。Orca 在<strong>迭代级</strong>重新组批，已结束请求退出，新请求进入，提高资源利用与响应效率。</p>
 <p>Linear 等操作可合并 batch 与序列维度；Attention 则按请求组织各自的历史上下文，再合并结果。不同请求长度和阶段不同，不能简单当成完全相同的张量。</p>
 <h3 id="4-3-PagedAttention：减少-KV-内存浪费"><a href="#4-3-PagedAttention：减少-KV-内存浪费" class="headerlink" title="4.3 PagedAttention：减少 KV 内存浪费"></a>4.3 PagedAttention：减少 KV 内存浪费</h3><p><img src="/images/courses/deep-learning-systems/paged-attention.png" srcset="/img/loading.gif" lazyload alt="通过映射表把各请求的逻辑KV块对应到不连续的物理显存块"><br><em>借鉴操作系统分页思想，物理块无需连续分配。</em></p>
@@ -450,26 +415,13 @@ W=W_0+BA,\qquad P_{trainable}=r(d_{in}+d_{out}).
 <p>StreamingLLM 组合初始 sink token 的 KV、最近窗口的 rolling KV，以及当前 token，并处理窗口位置与位置编码的对应。例如，可保留 4 个初始位置。<strong>能持续接收流式输入，不代表模型能检索已从窗口删除的任意遥远内容。</strong></p>
 <h3 id="4-5-推测解码：小模型起草，大模型验证"><a href="#4-5-推测解码：小模型起草，大模型验证" class="headerlink" title="4.5 推测解码：小模型起草，大模型验证"></a>4.5 推测解码：小模型起草，大模型验证</h3><p>草稿模型 q 连续提出 γ 个 token，主模型 p 并行核验；接受前缀，遇到第一个拒绝位置时按修正分布重新采样。一次主模型调用可输出 1 到 γ+1 个新 token。</p>
 <p>为了保持主模型的采样分布，候选 x 按 <code>min(1,p(x)/q(x))</code> 接受；拒绝后从归一化的 <code>max(0,p−q)</code> 分布补采样。接受部分贡献 <code>min(p,q)</code>，补偿部分贡献 <code>p−min(p,q)</code>，合起来仍是 p。<strong>保持分布依赖正确的接受与补偿规则，不能简单把大模型认为“不够好”的词随意替换。</strong></p>
-<h2 id="5-从模型推理到完整服务"><a href="#5-从模型推理到完整服务" class="headerlink" title="5. 从模型推理到完整服务"></a>5. 从模型推理到完整服务</h2><h3 id="5-1-应用系统的三个模块"><a href="#5-1-应用系统的三个模块" class="headerlink" title="5.1 应用系统的三个模块"></a>5.1 应用系统的三个模块</h3><table>
-<thead>
-<tr>
-<th>模块</th>
-<th>组成与职责</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据预处理 &#x2F; Embedding</td>
-<td>采集、加载、解析数据，生成向量并保存到向量库</td>
-</tr>
-<tr>
-<td>Prompt 构建 &#x2F; 检索</td>
-<td>组合模板、少量示例、外部 API 信息和检索文档</td>
-</tr>
-<tr>
-<td>Prompt 执行 &#x2F; 推理</td>
-<td>调用模型，附加缓存、日志、验证和应用托管</td>
-</tr>
-</tbody></table>
+<h3 id="4-6-FlashAttention：优化-IO，而非减少注意力语义"><a href="#4-6-FlashAttention：优化-IO，而非减少注意力语义" class="headerlink" title="4.6 FlashAttention：优化 IO，而非减少注意力语义"></a>4.6 FlashAttention：优化 IO，而非减少注意力语义</h3><p>朴素实现把完整 <code>L×L</code> 注意力分数及概率矩阵写入 HBM。FlashAttention 对 Q&#x2F;K&#x2F;V 分块，结合在线 Softmax 和输出累加，在片上完成中间处理，减少 HBM 访问。</p>
+<p>它与 PagedAttention 的侧重点不同：前者优化<strong>注意力计算的数据流和中间读写</strong>，后者优化<strong>服务中的 KV 分配和寻址</strong>。对精确密集 Attention，不能把减少中间存储误写成算术复杂度从 O(L²) 变为 O(L)。</p>
+<h2 id="5-从模型推理到完整服务"><a href="#5-从模型推理到完整服务" class="headerlink" title="5. 从模型推理到完整服务"></a>5. 从模型推理到完整服务</h2><h3 id="5-1-应用系统的三个模块"><a href="#5-1-应用系统的三个模块" class="headerlink" title="5.1 应用系统的三个模块"></a>5.1 应用系统的三个模块</h3><ol>
+<li><strong>数据准备</strong>：加载、解析与切分文档，用 Embedding 模型生成向量，写入向量数据库。</li>
+<li><strong>Prompt 构建</strong>：检索相关文档，结合模板、少量示例及外部 API 信息形成模型输入。</li>
+<li><strong>执行与应用托管</strong>：调用本地模型、云服务或模型 API，处理缓存、日志、验证和响应；应用页面与业务逻辑的托管又是服务的另一部分。</li>
+</ol>
 <p>这里的检索增强是在推理输入中加入相关资料，不等于把资料重新训练进权重。LLM Cache 与 KV Cache 也不同：前者可缓存应用请求 &#x2F; 回答，后者保存模型内部注意力历史。</p>
 <h3 id="5-2-vLLM：Scheduler、KV-管理器与模型执行器"><a href="#5-2-vLLM：Scheduler、KV-管理器与模型执行器" class="headerlink" title="5.2 vLLM：Scheduler、KV 管理器与模型执行器"></a>5.2 vLLM：Scheduler、KV 管理器与模型执行器</h3><p>vLLM V1 的执行流程为：加载模型并估算 KV 容量，初始化 Scheduler &#x2F; KV Manager &#x2F; ModelExecutor，按每轮 <strong>token 预算</strong>组织执行。运行中和等待中的请求、分块 Prefill、Decode 可以在调度中共同出现；资源不足时可能等待或抢占。</p>
 <p>例如，3 个 prompt 长度为 3、5、12，每轮 token 预算为 10：</p>
@@ -503,8 +455,17 @@ W=W_0+BA,\qquad P_{trainable}=r(d_{in}+d_{out}).
 </tr>
 </tbody></table>
 <p>表中的数字是<strong>调度的 token 工作量</strong>，不能把 r3 的 8 个 Prefill token 误读为生成了 8 个输出 token。大模型还可按张量并行跨卡执行，KV 块由管理器按需分配和回收。</p>
-<h3 id="5-3-MLC-LLM-与可靠服务"><a href="#5-3-MLC-LLM-与可靠服务" class="headerlink" title="5.3 MLC LLM 与可靠服务"></a>5.3 MLC LLM 与可靠服务</h3><p>MLC LLM 通过编译与 MLCEngine 面向多平台部署，本地运行支持离线使用、定制与应用嵌入。</p>
-<p>服务的可靠性还涉及长任务推理与协作、多模态与动态场景、高效推理与规模服务、智能体权限和提示注入、幻觉偏见隐私，以及持续评测与治理。可靠性要靠过程检查、失败恢复、权限控制、监测和反馈闭环共同实现。</p>
+<h3 id="5-3-推理引擎与部署方式"><a href="#5-3-推理引擎与部署方式" class="headerlink" title="5.3 推理引擎与部署方式"></a>5.3 推理引擎与部署方式</h3><p><strong>vLLM</strong>关注模型执行、KV 管理和服务调度；<strong>MLC LLM</strong>通过编译与 MLCEngine 面向多种硬件部署，支持本地离线运行、定制与应用嵌入。</p>
+<p>课件也提到 <strong>Text Generation Inference（TGI）</strong>。注意第 105 页标题写 TGI，但示例代码实际导入 <code>vllm.LLM</code>，应归到 vLLM 用法，避免把两者的接口混用。</p>
+<h3 id="5-4-从可用到可靠"><a href="#5-4-从可用到可靠" class="headerlink" title="5.4 从可用到可靠"></a>5.4 从可用到可靠</h3><ul>
+<li><strong>任务能力</strong>：长任务的连续完成、工具协作，以及图文音视频的时序与跨模态理解。</li>
+<li><strong>运行效率</strong>：在长上下文、高并发下平衡质量、延迟、吞吐、显存与能耗。</li>
+<li><strong>安全与治理</strong>：权限边界、提示注入、幻觉、偏见和隐私风险，需要过程检查、失败恢复、持续评测与反馈纠错。</li>
+</ul>
+<p>服务瓶颈诊断与 TTFT、TPOT、P95&#x2F;P99 等指标见<a href="/courses/deep-learning-systems/compute-systems/">算力架构与性能分析</a>。</p>
+<blockquote>
+<p>课件对应：《第三讲：大模型技术》35–111 页；模型结构与发展脉络见<a href="/courses/deep-learning-systems/models/">第二章</a>。算法名称与服务工作流按课件版本整理。</p>
+</blockquote>
 <hr>
 <p><a href="/courses/deep-learning-systems/">课程目录</a> · <a href="/courses/deep-learning-systems/models/">上一章：神经网络与模型结构</a> · <a href="/courses/deep-learning-systems/ascend-stack/">下一章：昇腾技术栈</a></p>
 

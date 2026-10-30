@@ -27,7 +27,7 @@
 <meta property="og:description" content="昇腾 NPU、CANN、Ascend C、HCCL、算子开发和模型部署路径。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-10-25T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T16:00:00.000Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="missing,博客,北航,BUAA">
 <meta name="twitter:card" content="summary_large_image">
@@ -258,73 +258,84 @@
           <article class="post-content mx-auto">
             <h1 id="seo-header">深度学习系统：昇腾技术栈</h1>
             
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年10月30日 凌晨
+                  
+                
+              </p>
+            
             
               <div class="markdown-body">
                 
                 <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
 
-<h2 id="1-昇腾计算与软件栈"><a href="#1-昇腾计算与软件栈" class="headerlink" title="1. 昇腾计算与软件栈"></a>1. 昇腾计算与软件栈</h2><p>昇腾 NPU 提供神经网络计算能力。框架通过适配层和 CANN 调用设备，算子开发与推理部署分别面向不同的接口层次。</p>
-<table>
+<h2 id="1-平台与调用路径"><a href="#1-平台与调用路径" class="headerlink" title="1. 平台与调用路径"></a>1. 平台与调用路径</h2><p>昇腾 NPU 是计算底座，Atlas 用模块、板卡、小站、服务器与集群覆盖端、边、云。课件举例包括 Atlas 200DK、200I A2、500 A2 和 800T A2；型号对应不同的开发、推理或训练场景。</p>
+<p>模型任务的基本路径是 <strong>应用 → 框架与适配 → CANN → Runtime &#x2F; 驱动 → NPU</strong>。PyTorch 通过 torch_npu 适配昇腾，MindSpore 提供另一条框架路径。</p>
+<h3 id="1-1-CANN-内部承担什么"><a href="#1-1-CANN-内部承担什么" class="headerlink" title="1.1 CANN 内部承担什么"></a>1.1 CANN 内部承担什么</h3><ul>
+<li><strong>图与编译</strong>：处理计算图、优化与算子映射，生成适合设备执行的任务。</li>
+<li><strong>算子实现</strong>：由算子库或自定义算子提供计算，Ascend C 用于 AI Core 算子开发。</li>
+<li><strong>运行管理</strong>：设备内存、任务下发、流与同步，让计算按依赖完成。</li>
+<li><strong>集合通信</strong>：HCCL 提供 AllReduce、Broadcast 等通信原语。</li>
+</ul>
+<p><strong>HCCS 是硬件互联，HCCL 是通信库</strong>。框架定义模型和梯度，编译与算子层实现计算，运行时安排实际资源，不能把这些职责都归给模型代码。</p>
+<h3 id="1-2-开发、训练和推理工具"><a href="#1-2-开发、训练和推理工具" class="headerlink" title="1.2 开发、训练和推理工具"></a>1.2 开发、训练和推理工具</h3><table>
 <thead>
 <tr>
-<th>组件</th>
-<th>功能</th>
+<th>工具</th>
+<th>主要用途</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>PyTorch + torch_npu、MindSpore</td>
-<td>模型定义、自动微分、训练与框架适配</td>
-</tr>
-<tr>
-<td>CANN</td>
-<td>图编译、算子、通信、运行与设备调用的基础软件栈</td>
-</tr>
-<tr>
-<td>Ascend C</td>
-<td>编写运行在 AI Core 上的算子</td>
-</tr>
-<tr>
 <td>MindStudio</td>
-<td>开发、编译、调试和性能分析</td>
+<td>工程开发、编译调试与性能剖析</td>
 </tr>
 <tr>
 <td>MindSpeed</td>
-<td>分布式训练、内存、通信和计算优化</td>
+<td>大模型训练的计算、内存、通信及并行优化</td>
 </tr>
 <tr>
 <td>MindIE</td>
 <td>模型推理执行与服务</td>
 </tr>
-</tbody></table>
-<p>框架提供可组合的计算抽象；编译层把抽象计算映射到硬件；运行时安排资源、内存、同步与通信。模型开发与底层算子开发处于不同抽象层。</p>
-<h2 id="2-Cube、Vector-与-Scalar"><a href="#2-Cube、Vector-与-Scalar" class="headerlink" title="2. Cube、Vector 与 Scalar"></a>2. Cube、Vector 与 Scalar</h2><table>
-<thead>
 <tr>
-<th>单元</th>
-<th>计算类型</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Cube</td>
-<td>矩阵乘加和卷积的主体计算</td>
+<td>ATC</td>
+<td>模型转换与离线编译</td>
 </tr>
 <tr>
-<td>Vector</td>
-<td>逐元素运算、激活、归一化等</td>
-</tr>
-<tr>
-<td>Scalar</td>
-<td>标量计算、寻址、分支与循环控制</td>
+<td>AscendCL</td>
+<td>应用侧设备、内存与模型执行接口</td>
 </tr>
 </tbody></table>
-<p>计算需要先把数据从外部存储搬入片上存储，再将结果写回。数据复用与搬运效率决定计算单元能否持续得到数据。</p>
-<h2 id="3-多卡互联与训练"><a href="#3-多卡互联与训练" class="headerlink" title="3. 多卡互联与训练"></a>3. 多卡互联与训练</h2><p>HCCS 提供硬件互联，HCCL 提供 AllReduce、Broadcast 等集合通信操作。数据并行、张量并行和流水线并行分别切分样本、层内张量和网络阶段，可以组合使用。</p>
-<p>框架构建前向与反向计算，在梯度同步后驱动优化器更新。内存管理、算子调度与并行通信共同影响训练效率。</p>
-<h2 id="4-算子开发与优化"><a href="#4-算子开发与优化" class="headerlink" title="4. 算子开发与优化"></a>4. 算子开发与优化</h2><p>Ascend C 算子一般按 <strong>CopyIn → Compute → CopyOut</strong> 组织。Tiling 将数据切成适配片上存储的块；双缓冲使当前块计算与下一块搬运重叠。</p>
-<p>性能分析需要确认计算、访存、同步或通信中的主导瓶颈。优化收益应通过相同负载下的正确性检查和端到端复测确认。</p>
-<h2 id="5-模型适配与部署"><a href="#5-模型适配与部署" class="headerlink" title="5. 模型适配与部署"></a>5. 模型适配与部署</h2><p>LoRA 冻结原始权重，只训练低秩增量；量化降低权重或激活的位宽，减少存储和搬运。二者分别作用于适配成本与数值表示。</p>
-<p>离线推理可采用 <strong>ONNX → ATC → OM → AscendCL</strong> 路径，ATC 完成图优化和算子映射，msame 可用于离线模型验证。大模型服务可采用框架与 MindIE 的推理路径，两种部署方式的模型格式和运行接口不同。</p>
-<p>云、边、端设备的容量、功耗和并发目标不同，需要匹配模型规模、低精度格式与推理配置。</p>
+<p>这些组件并非必须依次经过的一条流水线；训练、离线推理与服务部署按实际路径组合。</p>
+<h2 id="2-从模型运行到算子开发"><a href="#2-从模型运行到算子开发" class="headerlink" title="2. 从模型运行到算子开发"></a>2. 从模型运行到算子开发</h2><h3 id="2-1-先跑通框架侧"><a href="#2-1-先跑通框架侧" class="headerlink" title="2.1 先跑通框架侧"></a>2.1 先跑通框架侧</h3><p>先确认驱动、CANN、框架和适配层配套，再核对设备可见性、张量 shape &#x2F; dtype 与前后处理。框架构建前向和反向计算，分布式训练还要在梯度同步后执行优化器更新。</p>
+<h3 id="2-2-Ascend-C-算子的执行主线"><a href="#2-2-Ascend-C-算子的执行主线" class="headerlink" title="2.2 Ascend C 算子的执行主线"></a>2.2 Ascend C 算子的执行主线</h3><p>一个典型分块算子按 <strong>CopyIn → Compute → CopyOut</strong> 组织：搬入输入，执行计算，写回输出。Cube 主要做矩阵乘加，Vector 处理逐元素操作，Scalar 组织地址与控制。</p>
+<p><strong>Tiling</strong>把输入划分成适配片上存储的块，还要考虑核间分配、边界与对齐。<strong>Double Buffer</strong>用两组缓冲轮换，让当前块计算与下一块搬运重叠，需要额外容量及正确同步。</p>
+<p>更详细的 AI Core、Buffer 与事件同步见<a href="/courses/deep-learning-systems/compute-systems/">算力架构与性能分析</a>。</p>
+<h3 id="2-3-性能优化闭环"><a href="#2-3-性能优化闭环" class="headerlink" title="2.3 性能优化闭环"></a>2.3 性能优化闭环</h3><p>MindStudio 的流程可概括为 <strong>创建工程 → 编译链接 → 运行调试 → Profiler 剖析</strong>。从时间线和算子数据确定主导瓶颈，再调整 Tiling、双缓冲或融合，最后用相同负载复测数值结果与端到端时间。</p>
+<h2 id="3-大模型训练与适配"><a href="#3-大模型训练与适配" class="headerlink" title="3. 大模型训练与适配"></a>3. 大模型训练与适配</h2><p>DP 切样本，TP 切层内张量，PP 切网络阶段，三者可以组合。MindSpeed 从计算、内存、通信和并行组织等方面优化训练；收益取决于模型结构、显存与互联拓扑。</p>
+<p><strong>LoRA</strong>冻结基础权重，只训练低秩增量，主要降低微调状态开销；<strong>量化</strong>减少权重或激活的位宽，主要影响存储、搬运和支持低精度的计算。二者作用不同，原理见<a href="/courses/deep-learning-systems/large-language-models/">大模型训练、推理与服务</a>。</p>
+<h2 id="4-模型转换与推理部署"><a href="#4-模型转换与推理部署" class="headerlink" title="4. 模型转换与推理部署"></a>4. 模型转换与推理部署</h2><h3 id="4-1-ONNX-→-ATC-→-OM-→-AscendCL"><a href="#4-1-ONNX-→-ATC-→-OM-→-AscendCL" class="headerlink" title="4.1 ONNX → ATC → OM → AscendCL"></a>4.1 ONNX → ATC → OM → AscendCL</h3><ol>
+<li><strong>导出</strong>：从训练框架导出模型，明确输入名称、shape、dtype 与预处理约定。</li>
+<li><strong>转换</strong>：ATC 完成图优化与算子映射，生成与目标平台匹配的 OM 离线模型。</li>
+<li><strong>验证</strong>：用 msame 等工具加载 OM，执行离线推理；将结果与原框架对照，定位转换、输入或数值差异。</li>
+<li><strong>集成</strong>：通过 AscendCL 管理设备、内存、模型加载、执行与资源释放，接入业务前后处理。</li>
+</ol>
+<p>ATC 负责转换，msame 用于推理验证，两者角色不同。</p>
+<h3 id="4-2-大模型服务与端侧应用"><a href="#4-2-大模型服务与端侧应用" class="headerlink" title="4.2 大模型服务与端侧应用"></a>4.2 大模型服务与端侧应用</h3><p>MindIE 路径关注模型加载、推理执行、请求接口、并发与资源配置。不能把所有大模型服务都等同于 ONNX &#x2F; OM 离线模型路径；应按目标模型和组件版本选择适配方式。</p>
+<p>云端侧重吞吐和多请求调度；端侧受内存、功耗与离线条件制约。部署后还需做版本管理、健康监测与质量检查，并用一致的输入 &#x2F; 输出长度统计服务指标。</p>
+<h2 id="5-课程实验如何串起全栈"><a href="#5-课程实验如何串起全栈" class="headerlink" title="5. 课程实验如何串起全栈"></a>5. 课程实验如何串起全栈</h2><p>课件把实践分为四个模块、十个实验：</p>
+<ol>
+<li><strong>基础流水线（实验 1–3）</strong>：PyTorch 训练推理 → CANNLab 环境检查 → PyTorch + torch_npu 开发运行。</li>
+<li><strong>算子开发（实验 4–5）</strong>：Ascend C 典型算子 → MatMul Tiling 与 Double Buffer 优化。</li>
+<li><strong>大模型训练（实验 6–7）</strong>：集群混合并行 → LoRA 参数高效微调。</li>
+<li><strong>推理部署（实验 8–10）</strong>：ONNX &#x2F; OM 转换部署 → MindIE &#x2F; AISBench 并发压测 → 端侧推理应用。</li>
+</ol>
+<p>每步保留可复现的源码、配置、正确性基线及性能结果，形成“模型能运行 → 能定位瓶颈 → 能验证优化”的实践链路。</p>
+<blockquote>
+<p>课件对应：《第一讲：课程概述》52–74 页；《V00-课程导学》26–48 页。工具定位按课件整理，版本配套与型号支持应在实际实验时核对。</p>
+</blockquote>
 <hr>
 <p><a href="/courses/deep-learning-systems/">课程目录</a> · <a href="/courses/deep-learning-systems/large-language-models/">上一章：大模型训练与推理</a> · <a href="/courses/deep-learning-systems/compute-systems/">下一章：算力系统与性能分析</a></p>
 
