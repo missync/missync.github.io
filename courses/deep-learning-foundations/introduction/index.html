@@ -19,18 +19,20 @@
   <meta name="author" content="missing">
   <meta name="keywords" content="missing,博客,北航,BUAA">
   
-    <meta name="description" content="AI、机器学习、学习范式、特征与表征学习、视觉任务和泛化评价。">
+    <meta name="description" content="AI、ML、DL 的关系，学习方式、表征学习、发展条件与典型任务。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="深度学习基础与应用（一）：机器学习基础">
 <meta property="og:url" content="https://missync.github.io/courses/deep-learning-foundations/introduction/index.html">
 <meta property="og:site_name" content="missing&#39;s blog">
-<meta property="og:description" content="AI、机器学习、学习范式、特征与表征学习、视觉任务和泛化评价。">
+<meta property="og:description" content="AI、ML、DL 的关系，学习方式、表征学习、发展条件与典型任务。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/ai-ml-dl.png">
 <meta property="article:published_time" content="2026-10-25T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T16:00:00.000Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="missing,博客,北航,BUAA">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://missync.github.io/images/courses/deep-learning-foundations/ai-ml-dl.png">
   
   
   
@@ -258,99 +260,125 @@
           <article class="post-content mx-auto">
             <h1 id="seo-header">深度学习基础与应用（一）：机器学习基础</h1>
             
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年10月30日 凌晨
+                  
+                
+              </p>
+            
             
               <div class="markdown-body">
                 
-                <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
-
-<h2 id="1-AI、机器学习与深度学习"><a href="#1-AI、机器学习与深度学习" class="headerlink" title="1. AI、机器学习与深度学习"></a>1. AI、机器学习与深度学习</h2><p><strong>人工智能（AI）</strong>研究如何让机器完成学习、推理、决策等智能任务。<strong>机器学习（ML）</strong>利用数据和经验改进任务表现。<strong>深度学习（DL）</strong>使用多层神经网络学习数据表示。三者的包含关系为 AI ⊃ ML ⊃ DL。</p>
-<p>符号主义通过规则、符号与逻辑表示知识；连接主义通过神经网络及连接权重学习知识；行为主义强调智能体与环境的交互。</p>
-<h2 id="2-机器学习的三个要素"><a href="#2-机器学习的三个要素" class="headerlink" title="2. 机器学习的三个要素"></a>2. 机器学习的三个要素</h2><table>
+                <h2 id="1-AI、ML-与-DL"><a href="#1-AI、ML-与-DL" class="headerlink" title="1. AI、ML 与 DL"></a>1. AI、ML 与 DL</h2><ul>
+<li><strong>人工智能（AI）</strong>：让机器具备学习、理解、推理、决策、创造和自主行动等能力。</li>
+<li><strong>机器学习（ML）</strong>：通过数据和经验改善任务表现，是实现 AI 的一类方法。</li>
+<li><strong>深度学习（DL）</strong>：基于多层人工神经网络进行表征学习，是机器学习的一类方法。</li>
+</ul>
+<p>三者的包含关系是 <strong>AI ⊃ ML ⊃ DL</strong>。神经网络受生物神经系统启发；“深度”指通过多层变换逐步构造表示。</p>
+<p><img src="/images/courses/deep-learning-foundations/ai-ml-dl.png" srcset="/img/loading.gif" lazyload alt="AI、机器学习和深度学习的包含关系"></p>
+<h3 id="1-1-人工智能的三种思路"><a href="#1-1-人工智能的三种思路" class="headerlink" title="1.1 人工智能的三种思路"></a>1.1 人工智能的三种思路</h3><ul>
+<li><strong>符号主义</strong>：用符号、规则和逻辑推理表达与处理知识。</li>
+<li><strong>连接主义</strong>：用相互连接的人工神经元及其连接权重表示和学习知识。</li>
+<li><strong>行为主义</strong>：强调智能体与环境交互，以及感知、行动和反馈。</li>
+</ul>
+<h3 id="1-2-发展脉络"><a href="#1-2-发展脉络" class="headerlink" title="1.2 发展脉络"></a>1.2 发展脉络</h3><p>人工神经元模型、Hebb 学习和感知机奠定了早期基础；1956 年达特茅斯会议提出人工智能研究方向。随后，反向传播推动多层网络训练，深层网络与大规模数据、计算资源结合，AlexNet 等模型推动深度学习在视觉识别中的应用。</p>
+<h2 id="2-机器学习学的是什么"><a href="#2-机器学习学的是什么" class="headerlink" title="2. 机器学习学的是什么"></a>2. 机器学习学的是什么</h2><p>机器学习从经验 <strong>E</strong> 中学习，使任务 <strong>T</strong> 上以指标 <strong>P</strong> 衡量的表现得到改善。</p>
+<p>以垃圾邮件过滤为例：<strong>T</strong> 是区分垃圾邮件与正常邮件，<strong>E</strong> 是用户标注的历史邮件，<strong>P</strong> 可以是分类正确率。任务、数据和评价指标各有职责。</p>
+<p>从函数角度看，机器学习是在寻找 <strong>输入 → 输出</strong> 的映射。例如，语音识别把声音映射为文字，图像识别把图像映射为类别。</p>
+<ul>
+<li><strong>训练（Training）</strong>：利用训练数据确定模型参数。</li>
+<li><strong>推理（Inference）</strong>：使用训练好的模型处理新输入。</li>
+</ul>
+<h2 id="3-四种学习方式"><a href="#3-四种学习方式" class="headerlink" title="3. 四种学习方式"></a>3. 四种学习方式</h2><table>
 <thead>
 <tr>
-<th>要素</th>
-<th>含义</th>
-<th>垃圾邮件分类示例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>任务 T</td>
-<td>要解决的问题</td>
-<td>判断邮件是否为垃圾邮件</td>
-</tr>
-<tr>
-<td>表现 P</td>
-<td>衡量任务完成程度的指标</td>
-<td>分类正确率</td>
-</tr>
-<tr>
-<td>经验 E</td>
-<td>用于改进模型的数据与反馈</td>
-<td>已标注的历史邮件</td>
-</tr>
-</tbody></table>
-<p>机器学习寻找输入到输出的函数：从一组候选模型出发，用数据确定参数，再评价模型对新样本的预测能力。</p>
-<h2 id="3-学习方式"><a href="#3-学习方式" class="headerlink" title="3. 学习方式"></a>3. 学习方式</h2><table>
-<thead>
-<tr>
-<th>方式</th>
-<th>训练信息</th>
-<th>典型目标</th>
+<th>学习方式</th>
+<th>主要学习信号</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>监督学习</td>
-<td>样本及其标签</td>
-<td>分类、回归</td>
+<td>带标签的样本，学习输入与目标输出的对应关系</td>
 </tr>
 <tr>
 <td>无监督学习</td>
-<td>无人工标签的数据</td>
-<td>发现分组、低维结构或数据表示</td>
+<td>无标签数据，发现数据中的结构或表示</td>
 </tr>
 <tr>
 <td>半监督学习</td>
-<td>少量有标签样本与大量无标签样本</td>
-<td>利用未标注数据改善预测</td>
+<td>少量有标签数据与大量无标签数据共同参与学习</td>
 </tr>
 <tr>
 <td>强化学习</td>
-<td>与环境交互得到的奖励</td>
-<td>学习使长期回报更高的行动策略</td>
+<td>智能体与环境交互，根据奖励学习行动策略</td>
 </tr>
 </tbody></table>
-<h2 id="4-特征与表征学习"><a href="#4-特征与表征学习" class="headerlink" title="4. 特征与表征学习"></a>4. 特征与表征学习</h2><p><strong>特征</strong>是有助于预测的信息，例如图像中的边缘、纹理和形状。传统方法先由人设计特征，再训练分类器；表征学习直接从数据中学习适合任务的特征。</p>
-<p>深度神经网络通过多层变换组合特征：浅层表示局部模式，后续层逐渐组合出更抽象的表示。特征提取与预测可以在同一模型中共同训练。模型效果依赖数据、网络结构、优化方法与计算资源。</p>
-<h2 id="5-视觉任务的输出形式"><a href="#5-视觉任务的输出形式" class="headerlink" title="5. 视觉任务的输出形式"></a>5. 视觉任务的输出形式</h2><table>
+<p>监督学习中，<strong>分类</strong>预测离散类别，<strong>回归</strong>预测连续数值。无监督学习可以发现分组或低维结构；强化学习关注行动带来的累积回报。</p>
+<h2 id="4-特征、特征提取与表征学习"><a href="#4-特征、特征提取与表征学习" class="headerlink" title="4. 特征、特征提取与表征学习"></a>4. 特征、特征提取与表征学习</h2><p><strong>特征</strong>是用于描述输入、支持任务判断的信息，例如图像的边缘、纹理、形状。<strong>特征提取</strong>是把原始输入变换为这类表示。</p>
+<p>传统方法的流程是：<strong>输入 → 人工设计的特征 → 分类或其他任务模型</strong>。人工特征依赖经验，难以穷尽复杂场景中的变化；相似的外观特征也可能属于不同类别。</p>
+<p>表征学习的流程是：<strong>输入 → 学到的特征 → 任务输出</strong>。特征提取与任务预测可以放进统一模型中共同训练。</p>
+<p>深度网络通过多层变换组合特征：从较局部、简单的模式，逐步得到更抽象的表示。<strong>学习表示</strong>是深度学习的关键，单纯增加计算步骤并不等于获得有效表示。</p>
+<h2 id="5-深度学习发展的条件"><a href="#5-深度学习发展的条件" class="headerlink" title="5. 深度学习发展的条件"></a>5. 深度学习发展的条件</h2><ul>
+<li><strong>数据</strong>：更大的数据集，以及更便利的数据采集和存储。</li>
+<li><strong>硬件</strong>：GPU、深度学习专用处理器提供训练所需的计算能力。</li>
+<li><strong>软件</strong>：PyTorch、TensorFlow、PaddlePaddle 等框架支持模型构建与训练。</li>
+</ul>
+<p><strong>ImageNet</strong> 是大规模视觉数据集；完整数据集与 <strong>ILSVRC 图像分类子集</strong>要区分。完整 ImageNet 包含超过 1400 万张图像、约 2 万个类别；常用 ILSVRC 分类任务采用 1000 类、约 128 万张训练图像。大规模标注数据使复杂模型的训练和统一评价成为可能。</p>
+<h2 id="6-深度学习的典型任务"><a href="#6-深度学习的典型任务" class="headerlink" title="6. 深度学习的典型任务"></a>6. 深度学习的典型任务</h2><h3 id="6-1-视觉理解：识别内容、位置与关系"><a href="#6-1-视觉理解：识别内容、位置与关系" class="headerlink" title="6.1 视觉理解：识别内容、位置与关系"></a>6.1 视觉理解：识别内容、位置与关系</h3><table>
 <thead>
 <tr>
 <th>任务</th>
-<th>输出</th>
+<th>要预测的结果</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>图像分类</td>
-<td>整张图像的类别</td>
+<td>图像分类／识别</td>
+<td>图像中的对象类别或身份</td>
 </tr>
 <tr>
 <td>目标检测</td>
-<td>各目标的类别与位置，如边界框</td>
+<td>每个目标的类别与边界框</td>
 </tr>
 <tr>
 <td>语义分割</td>
-<td>每个像素的类别</td>
+<td>每个像素所属的类别</td>
+</tr>
+<tr>
+<td>实例分割</td>
+<td>每个目标实例的像素区域，区分同类的不同个体</td>
 </tr>
 <tr>
 <td>目标跟踪</td>
-<td>目标在连续帧中的位置与关联</td>
+<td>目标在连续帧中的位置及身份关联</td>
 </tr>
 <tr>
 <td>图像检索</td>
-<td>与查询图片相似的图片</td>
+<td>与查询图像相似的图像</td>
+</tr>
+<tr>
+<td>生成内容辨别</td>
+<td>真实采集或人工生成的判断结果</td>
 </tr>
 </tbody></table>
-<h2 id="6-模型能力的评价"><a href="#6-模型能力的评价" class="headerlink" title="6. 模型能力的评价"></a>6. 模型能力的评价</h2><p>训练表现、独立测试表现与实际部署表现分别对应不同的数据条件。某一基准得分高，只能说明模型在相应任务分布和评分规则下表现较好。</p>
-<p>答对结果与给出严谨证明、完成短任务与完成长程连续任务，衡量的是不同能力。评估需要与任务目标匹配，并关注分布变化下的泛化表现。</p>
+<h3 id="6-2-视觉生成：合成或转换内容"><a href="#6-2-视觉生成：合成或转换内容" class="headerlink" title="6.2 视觉生成：合成或转换内容"></a>6.2 视觉生成：合成或转换内容</h3><ul>
+<li><strong>风格迁移</strong>：保留内容图像的主要结构，结合风格图像的外观特征。</li>
+<li><strong>图像翻译</strong>：把一种图像表示或外观转换为另一种，例如不同图像域之间的转换。</li>
+<li><strong>图像合成</strong>：根据随机向量或其他条件生成图像；StyleGAN 是生成式模型的例子。</li>
+<li><strong>视频合成</strong>：生成随时间变化的图像序列，需要兼顾画面内容与时间上的连贯性。</li>
+</ul>
+<h3 id="6-3-语言、机器人与科学任务"><a href="#6-3-语言、机器人与科学任务" class="headerlink" title="6.3 语言、机器人与科学任务"></a>6.3 语言、机器人与科学任务</h3><ul>
+<li><strong>自然语言处理（NLP）</strong>：机器翻译、对话与文本生成；大语言模型用于处理和生成语言。</li>
+<li><strong>机器人</strong>：把感知结果与行动决策结合，在环境中执行任务。</li>
+<li><strong>蛋白质结构预测</strong>：根据生物分子信息预测结构，AlphaFold 是代表性应用。</li>
+</ul>
+<h2 id="7-怎样理解模型能力"><a href="#7-怎样理解模型能力" class="headerlink" title="7. 怎样理解模型能力"></a>7. 怎样理解模型能力</h2><p><strong>基准成绩不等于真实场景能力。</strong> 应把模型放到与目标用途一致的数据和评价标准下考察。</p>
+<ul>
+<li><strong>不同能力分别评价</strong>：答对一道题不等于能给出严谨证明；一般视觉问答表现好，也不保证时钟读取、日期推理等细粒度任务可靠。</li>
+<li><strong>任务长度与环境影响表现</strong>：受控环境中的短任务成功，不代表能稳定完成真实环境中的长程任务。</li>
+<li><strong>关注泛化</strong>：训练表现好不保证新数据表现好，独立测试与实际部署中的分布变化都需要考虑。</li>
+</ul>
 <hr>
 <p><a href="/courses/deep-learning-foundations/">课程目录</a> · <a href="/courses/deep-learning-foundations/image-classification/">下一章：图像分类</a></p>
 

@@ -30,8 +30,9 @@
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/linear-classifier.png">
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/softmax-loss.png">
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/mlp.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/neuron-model.png">
 <meta property="article:published_time" content="2026-10-25T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-10-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T16:00:00.000Z">
 <meta property="article:author" content="missing">
 <meta property="article:tag" content="missing,博客,北航,BUAA">
 <meta name="twitter:card" content="summary_large_image">
@@ -263,40 +264,26 @@
           <article class="post-content mx-auto">
             <h1 id="seo-header">深度学习基础与应用（二）：图像分类</h1>
             
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2026年10月30日 凌晨
+                  
+                
+              </p>
+            
             
               <div class="markdown-body">
-<style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
+                
+                <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
 
-<h2 id="1-一次机器学习任务的完整流程"><a href="#1-一次机器学习任务的完整流程" class="headerlink" title="1. 一次机器学习任务的完整流程"></a>1. 一次机器学习任务的完整流程</h2><h3 id="1-1-模型、损失、优化"><a href="#1-1-模型、损失、优化" class="headerlink" title="1.1 模型、损失、优化"></a>1.1 模型、损失、优化</h3><p>以房价预测为例：输入面积和房龄，预测售价。</p>
-<table>
-<thead>
-<tr>
-<th>步骤</th>
-<th>要解决的问题</th>
-<th>例子</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>选择模型</td>
-<td>用怎样的一组函数表示任务</td>
-<td>用线性函数表示面积、房龄与房价之间的关系</td>
-</tr>
-<tr>
-<td>定义损失</td>
-<td>怎样判断当前函数好不好</td>
-<td>比较预测房价与真实售价的差距</td>
-</tr>
-<tr>
-<td>优化参数</td>
-<td>怎样从函数族中挑选较好的函数</td>
-<td>通过梯度下降更新权重与偏置</td>
-</tr>
-<tr>
-<td>推理与评价</td>
-<td>学到的函数能否处理新样本</td>
-<td>输入一套新房子的特征，得到预测并评估误差</td>
-</tr>
-</tbody></table>
+<h2 id="1-一次机器学习任务的完整流程"><a href="#1-一次机器学习任务的完整流程" class="headerlink" title="1. 一次机器学习任务的完整流程"></a>1. 一次机器学习任务的完整流程</h2><h3 id="1-1-模型、损失、优化"><a href="#1-1-模型、损失、优化" class="headerlink" title="1.1 模型、损失、优化"></a>1.1 模型、损失、优化</h3><p>训练的三个环节是：<strong>确定模型 → 定义损失 → 优化参数</strong>。训练完成后，再用模型推理，并在独立数据上评价。</p>
+<ul>
+<li><strong>模型</strong>规定候选函数的形式，例如线性函数。</li>
+<li><strong>损失函数</strong>把预测误差变成可比较、可优化的数值。</li>
+<li><strong>优化算法</strong>搜索使训练损失较小的参数。</li>
+</ul>
+<p>以房价预测为例：面积、房龄是输入<strong>特征 x</strong>，实际房价是<strong>标签 y</strong>，模型输出是<strong>预测值 ŷ</strong>，权重 w 和偏置 b 是需要学习的<strong>参数</strong>。</p>
 <p>设每个样本的特征为向量 x，参数为权重 w、偏置 b，预测值为 ŷ，真实标签为 y。线性回归可使用带 1&#x2F;2 系数的平方损失：</p>
 
 <div class="course-math">
@@ -320,36 +307,45 @@
 
 <p>一维时，导数为正就减小参数，导数为负就增大参数。多个参数需要组成梯度向量，在同一次迭代的参数位置上计算偏导并更新。</p>
 <p>一般非凸优化可能受初始化影响并停在局部低点。线性回归的平方损失对参数是凸函数，不存在比全局最优更差的局部最小值。</p>
-<h3 id="1-3-GD、SGD、Mini-batch-SGD"><a href="#1-3-GD、SGD、Mini-batch-SGD" class="headerlink" title="1.3 GD、SGD、Mini-batch SGD"></a>1.3 GD、SGD、Mini-batch SGD</h3><table>
+<h3 id="1-3-批量大小与参数更新"><a href="#1-3-批量大小与参数更新" class="headerlink" title="1.3 批量大小与参数更新"></a>1.3 批量大小与参数更新</h3><table>
 <thead>
 <tr>
 <th>方法</th>
-<th>一次更新使用的数据</th>
-<th>更新方式</th>
+<th>每次更新使用的样本</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>全批量梯度下降 GD</td>
 <td>全部训练样本</td>
-<td>对完整训练目标求梯度</td>
 </tr>
 <tr>
 <td>随机梯度下降 SGD</td>
 <td>一个随机样本</td>
-<td>用单样本估计更新方向</td>
 </tr>
 <tr>
 <td>小批量随机梯度下降</td>
-<td>一个批次</td>
-<td>对批内损失取平均，再更新参数</td>
+<td>一批样本</td>
 </tr>
 </tbody></table>
-<p><strong>学习率</strong>控制步长，<strong>Batch Size</strong>控制一次更新用多少样本。这两个是训练配置，不能和训练得到的权重、偏置混淆。</p>
-<h2 id="2-图像分类：从像素到语义"><a href="#2-图像分类：从像素到语义" class="headerlink" title="2. 图像分类：从像素到语义"></a>2. 图像分类：从像素到语义</h2><p>图片在计算机中是数值张量。RGB 图片有高、宽、颜色通道三个维度，常见 8 位像素的取值范围为 0–255。分类任务要把这种数值表示映射为“猫”“车”等语义标签。</p>
+<p>对线性回归，设批次为 B、批内样本数为 |B|，按批内平均损失更新：</p>
+
+<div class="course-math">
+\[
+ w\leftarrow w-\frac{\eta}{|B|}\sum_{i\in B}x^{(i)}\bigl(w^{\mathsf T}x^{(i)}+b-y^{(i)}\bigr),
+\]
+\[
+ b\leftarrow b-\frac{\eta}{|B|}\sum_{i\in B}\bigl(w^{\mathsf T}x^{(i)}+b-y^{(i)}\bigr).
+\]
+</div>
+
+
+<p>两个梯度都使用更新前的 w、b。<strong>学习率 η</strong>控制一步走多远，<strong>Batch Size</strong>控制一步用多少样本；小批量方法用批内梯度估计全数据梯度。</p>
+<h2 id="2-图像分类：从像素到语义"><a href="#2-图像分类：从像素到语义" class="headerlink" title="2. 图像分类：从像素到语义"></a>2. 图像分类：从像素到语义</h2><p><strong>位图／栅格图像</strong>由规则排列的像素构成，在计算机中表示为数值张量。RGB 图片有高、宽、颜色通道三个维度，常见 8 位像素的取值范围为 0–255。分类任务要把这种数值表示映射为“猫”“车”等语义标签，这种数值与语义之间的差异称为<strong>语义鸿沟</strong>。</p>
 <p><img src="/images/courses/deep-learning-foundations/classification-challenges.png" srcset="/img/loading.gif" lazyload alt="视角、光照、形变、遮挡、背景杂乱和类内变化给图像分类带来的困难"><br><em>相同类别可以有不同外观，同一目标也会随拍摄条件改变。</em></p>
 <p>主要困难包括：<strong>视角、光照、形变、遮挡、背景杂乱、类内变化</strong>。这也解释了为什么简单的像素相似，不一定意味着语义相似。</p>
 <p>早期方法尝试先提取边缘、角点以及 SIFT、HOG 等人工特征。数据驱动方法则遵循：<strong>收集图片与标签，训练分类器，在新图片上评价。</strong></p>
 <h2 id="3-最近邻-NN-与-K-近邻-KNN"><a href="#3-最近邻-NN-与-K-近邻-KNN" class="headerlink" title="3. 最近邻 NN 与 K 近邻 KNN"></a>3. 最近邻 NN 与 K 近邻 KNN</h2><h3 id="3-1-怎样分类"><a href="#3-1-怎样分类" class="headerlink" title="3.1 怎样分类"></a>3.1 怎样分类</h3><p><strong>最近邻（Nearest Neighbor，NN）</strong>保存训练图片及标签。对测试图片找到距离最近的训练图片，直接使用它的类别。<strong>K 近邻（K-Nearest Neighbors，KNN）</strong>寻找 K 个最近样本，再根据这些邻居的类别投票。</p>
+<p><strong>K&#x3D;1 就是最近邻。</strong> K 较小时更容易受单个样本或噪声影响，增大 K 通常使分类边界更平滑；K 并非越大越好，需要验证集选择。</p>
 <p>这是<strong>非参数方法</strong>：不先把训练集压缩成一组固定规模的分类权重，预测时仍需利用保存的训练样本。</p>
 <h3 id="3-2-L1-与-L2-距离"><a href="#3-2-L1-与-L2-距离" class="headerlink" title="3.2 L1 与 L2 距离"></a>3.2 L1 与 L2 距离</h3><p>将两张图片的特征展开为向量 x、z，p 表示其中一个位置：</p>
 
@@ -361,41 +357,37 @@ d_2(x,z)=\sqrt{\sum_p(x_p-z_p)^2}.
 </div>
 
 
-<p>L1 累加绝对差，L2 衡量欧氏距离。计算距离前通常需要对特征做适当归一化，避免某一数值尺度主导距离。</p>
+<p>L1（曼哈顿距离）累加各维绝对差；L2（欧氏距离）先求平方和再开方，较大的单维差异在平方和中占比更大。计算距离前通常需要对特征做适当归一化，避免某一数值尺度主导距离。</p>
 <h3 id="3-3-为什么原始像素-KNN-效果有限"><a href="#3-3-为什么原始像素-KNN-效果有限" class="headerlink" title="3.3 为什么原始像素 KNN 效果有限"></a>3.3 为什么原始像素 KNN 效果有限</h3><ul>
-<li><strong>预测慢</strong>：每个测试样本都要和大量训练图片比较，而实际应用通常希望预测快。</li>
+<li><strong>预测慢、存储多</strong>：需保存 N 个 D 维训练样本；直接搜索一个测试样本需要约 O(ND) 的距离计算，存储量也随 N 增长。训练阶段主要是保存数据，实际应用却更希望推理快。</li>
 <li><strong>像素距离语义不足</strong>：图像平移、变暗或局部遮挡可能产生类似距离，却有不同的感知影响。</li>
-<li><strong>高维空间难覆盖</strong>：维度升高后，需要更多样本覆盖空间，即维度灾难。</li>
+<li><strong>高维空间难覆盖</strong>：维度升高后，需要更多样本覆盖空间，即维度灾难。例如每维取 4 个位置，D 维网格就有 4ᴰ 个点。</li>
 <li><strong>准确率有限</strong>：视觉相似的近邻可能属于不同语义类别。</li>
 </ul>
 <h2 id="4-超参数、泛化与模型选择"><a href="#4-超参数、泛化与模型选择" class="headerlink" title="4. 超参数、泛化与模型选择"></a>4. 超参数、泛化与模型选择</h2><p><strong>参数</strong>通过训练数据学习得到，例如权重与偏置；<strong>超参数</strong>规定模型或训练配置，例如邻居数 K、距离度量、学习率和 Batch Size。</p>
 <h3 id="4-1-三种数据划分的职责"><a href="#4-1-三种数据划分的职责" class="headerlink" title="4.1 三种数据划分的职责"></a>4.1 三种数据划分的职责</h3><table>
 <thead>
 <tr>
-<th>数据</th>
-<th>用途</th>
-<th>使用范围</th>
+<th>数据划分</th>
+<th>核心职责</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>训练集</td>
-<td>学习模型参数；KNN 中保存样本</td>
-<td>训练误差低不保证新数据误差低</td>
+<td>学习参数；KNN 中用于保存训练样本</td>
 </tr>
 <tr>
 <td>验证集</td>
-<td>选择 K、距离度量及其他超参数</td>
-<td>用于模型选择，不作为最终独立测试结果</td>
+<td>比较候选模型、选择超参数</td>
 </tr>
 <tr>
 <td>测试集</td>
-<td>模型与配置选定后评价泛化表现</td>
-<td>不反复根据测试结果调整模型</td>
+<td>配置确定后，独立评价最终表现</td>
 </tr>
 </tbody></table>
-<p><strong>泛化误差</strong>是模型在未见数据上的误差。训练集上表现最好的模型，不一定在现实数据上最好。</p>
+<p><strong>泛化误差</strong>是模型在未见数据上的误差。训练误差最低的模型，不一定泛化最好；根据测试结果反复调参，会使测试集失去独立评价的作用。</p>
 <h3 id="4-2-K-折交叉验证"><a href="#4-2-K-折交叉验证" class="headerlink" title="4.2 K 折交叉验证"></a>4.2 K 折交叉验证</h3><p>将可用于训练和验证的数据分成 K 份，轮流用一份验证、其余训练；对某一候选配置平均 K 次验证误差，再与其他配置比较。测试集继续独立保留。</p>
-<p>例如在 3 折交叉验证中，三个模型的平均验证误差分别是 <strong>0.4、0.2、0.6</strong>，因此选择第二个，而不是挑某一次分折成绩最好看的结果。</p>
+<p><strong>留一法</strong>是折数等于样本数 N 的特殊情况：每次留一个样本验证，其余 N−1 个样本训练，共轮换 N 次。</p>
 <p>KNN 的邻居数 K 决定投票邻居数量，交叉验证的折数 K 决定数据轮流留出的份数。</p>
 <h2 id="5-线性分类器：用参数表示类别"><a href="#5-线性分类器：用参数表示类别" class="headerlink" title="5. 线性分类器：用参数表示类别"></a>5. 线性分类器：用参数表示类别</h2><h3 id="5-1-输入、参数与输出形状"><a href="#5-1-输入、参数与输出形状" class="headerlink" title="5.1 输入、参数与输出形状"></a>5.1 输入、参数与输出形状</h3><p>将图像展开为 D 维向量 x，设类别数为 C，线性分类器输出 C 个分数：</p>
 
@@ -411,29 +403,14 @@ b,s\in\mathbb R^{C}.
 
 <p>CIFAR-10 图像有 <code>32×32×3=3072</code> 个输入数、10 个类别，因此 W 的形状是 <code>10×3072</code>，b 与输出分数都是 <code>10×1</code>。</p>
 <p><img src="/images/courses/deep-learning-foundations/linear-classifier.png" srcset="/img/loading.gif" lazyload alt="将四个像素展开为向量，再通过三行权重分别计算猫、汽车、青蛙的类别分数"><br><em>每行权重对应一个类别的评分函数；分数本身还不是概率。</em></p>
-<h3 id="5-2-三种理解视角"><a href="#5-2-三种理解视角" class="headerlink" title="5.2 三种理解视角"></a>5.2 三种理解视角</h3><table>
-<thead>
-<tr>
-<th>视角</th>
-<th>线性分类器在做什么</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>代数</td>
-<td>计算一次矩阵乘加 Wx+b</td>
-</tr>
-<tr>
-<td>视觉</td>
-<td>每个类别学习一个模板，与输入作匹配</td>
-</tr>
-<tr>
-<td>几何</td>
-<td>使用线性评分与超平面划分特征空间</td>
-</tr>
-</tbody></table>
-<p>线性回归通常输出要预测的连续量，线性分类器输出类别分数。它比保存并搜索全部训练集更适合快速预测，但每类一个线性模板的表达能力有限。</p>
+<h3 id="5-2-三种理解视角"><a href="#5-2-三种理解视角" class="headerlink" title="5.2 三种理解视角"></a>5.2 三种理解视角</h3><ul>
+<li><strong>代数视角</strong>：第 j 类分数是第 j 行权重与输入的内积，再加对应偏置。</li>
+<li><strong>视觉视角</strong>：每一行权重可还原成一张图像模板；每个类别只对应一个模板，难以同时表达同类目标的多种外观。</li>
+<li><strong>几何视角</strong>：类别之间的分界满足两个类别分数相等，是特征空间中的超平面；偏置可以移动分界位置。</li>
+</ul>
+<p>线性回归直接预测连续数值；线性分类器输出类别分数，再选得分最高的类别。作为<strong>参数模型</strong>，训练后主要保存 W、b，推理时无需逐一搜索训练样本。</p>
 <h3 id="5-3-为什么还需要损失函数"><a href="#5-3-为什么还需要损失函数" class="headerlink" title="5.3 为什么还需要损失函数"></a>5.3 为什么还需要损失函数</h3><p>“正确类别分数最高”只是预测规则，训练还需要一个可优化的数值目标。数据集损失是各样本分类损失的平均，用它来衡量当前 W、b 的整体表现。</p>
-<h2 id="6-Softmax、交叉熵与最大似然"><a href="#6-Softmax、交叉熵与最大似然" class="headerlink" title="6. Softmax、交叉熵与最大似然"></a>6. Softmax、交叉熵与最大似然</h2><h3 id="6-1-从分数得到概率"><a href="#6-1-从分数得到概率" class="headerlink" title="6.1 从分数得到概率"></a>6.1 从分数得到概率</h3><p>Softmax 先对各类别分数取指数，使其为正，再除以总和，使所有类别的概率加起来等于 1。设第 j 类得分为 sⱼ：</p>
+<h2 id="6-Softmax、交叉熵与最大似然"><a href="#6-Softmax、交叉熵与最大似然" class="headerlink" title="6. Softmax、交叉熵与最大似然"></a>6. Softmax、交叉熵与最大似然</h2><h3 id="6-1-从分数得到概率"><a href="#6-1-从分数得到概率" class="headerlink" title="6.1 从分数得到概率"></a>6.1 从分数得到概率</h3><p>原始类别分数称为 <strong>logits</strong>，可以为任意实数，也可理解为未归一化的对数概率。Softmax 先取指数得到正数，再归一化，使各类别概率之和为 1。设第 j 类得分为 sⱼ：</p>
 
 <div class="course-math">
 \[
@@ -444,7 +421,7 @@ p_j=\frac{e^{s_j}}{\sum_{k=1}^{C}e^{s_k}},\qquad
 
 
 <p>Softmax 不改变分数的大小次序，因此只求最高分类别时，直接对分数取 argmax 即可。</p>
-<h3 id="6-2-交叉熵只看正确类别分到了多少概率"><a href="#6-2-交叉熵只看正确类别分到了多少概率" class="headerlink" title="6.2 交叉熵只看正确类别分到了多少概率"></a>6.2 交叉熵只看正确类别分到了多少概率</h3><p>设标签 y 是 one-hot 向量，p 是预测类别分布，正确类别的索引为 c：</p>
+<h3 id="6-2-One-hot-标签与交叉熵"><a href="#6-2-One-hot-标签与交叉熵" class="headerlink" title="6.2 One-hot 标签与交叉熵"></a>6.2 One-hot 标签与交叉熵</h3><p><strong>One-hot 标签</strong>在正确类别的位置取 1，其余位置取 0。设 y 为标签向量，p 为预测分布，正确类别索引为 c：</p>
 
 <div class="course-math">
 \[
@@ -457,7 +434,7 @@ p_j=\frac{e^{s_j}}{\sum_{k=1}^{C}e^{s_k}},\qquad
 <p>例如，类别分数为 <code>(3.2, 5.1, −1.7)</code>，归一化约为 <code>(0.13, 0.869, 0.001)</code>。真实类别是猫时，损失约为 <code>−log(0.13)=2.04</code>。</p>
 <h3 id="6-3-为什么等价于最大似然"><a href="#6-3-为什么等价于最大似然" class="headerlink" title="6.3 为什么等价于最大似然"></a>6.3 为什么等价于最大似然</h3><p>假设样本条件独立，整个训练集的条件似然是各样本正确标签概率的乘积；取负对数后，乘积变为各样本负对数概率之和。这正是 one-hot 标签下的交叉熵总损失。</p>
 <p>因此，<strong>最大化训练数据的条件似然，等价于最小化对应的交叉熵。</strong> 平均损失与总损失只差固定样本数的比例。</p>
-<h3 id="6-4-交叉熵的范围与初始值"><a href="#6-4-交叉熵的范围与初始值" class="headerlink" title="6.4 交叉熵的范围与初始值"></a>6.4 交叉熵的范围与初始值</h3><p><strong>损失范围：</strong> 正确类别概率趋近 1，损失趋近 0；趋近 0，损失无上界。有限 logits 的 Softmax 概率严格大于 0、通常也小于 1，因此“最小为 0”更精确地说是下确界为 0。</p>
+<h3 id="6-4-交叉熵的范围与初始值"><a href="#6-4-交叉熵的范围与初始值" class="headerlink" title="6.4 交叉熵的范围与初始值"></a>6.4 交叉熵的范围与初始值</h3><p><strong>损失范围：</strong> 正确类别概率趋近 1，损失趋近 0；概率趋近 0，损失趋向正无穷。</p>
 <p><strong>初始损失：</strong> 各类别概率约为 <code>1/C</code>，于是损失约为 <code>log C</code>。10 分类时约为 <strong>2.30</strong>。</p>
 <h2 id="7-多层感知机：非线性必须放在哪里"><a href="#7-多层感知机：非线性必须放在哪里" class="headerlink" title="7. 多层感知机：非线性必须放在哪里"></a>7. 多层感知机：非线性必须放在哪里</h2><h3 id="7-1-多层线性仍然可以合并"><a href="#7-1-多层线性仍然可以合并" class="headerlink" title="7.1 多层线性仍然可以合并"></a>7.1 多层线性仍然可以合并</h3><p>如果只把线性层接在一起：</p>
 
@@ -482,7 +459,10 @@ h=\phi(W_1x+b_1),\qquad s=W_2h+b_2,
 
 <p>D 是输入维度，H 是隐藏层宽度，C 是类别数，φ 是非线性激活函数。Sigmoid <code>σ(z)=1/(1+e^(−z))</code> 是一种非线性激活函数。</p>
 <p><img src="/images/courses/deep-learning-foundations/mlp.png" srcset="/img/loading.gif" lazyload alt="一个隐藏层与两个隐藏层的全连接网络对比"><br><em>每一层的神经元与下一层全部连接。</em></p>
-<h3 id="7-3-网络结构的术语"><a href="#7-3-网络结构的术语" class="headerlink" title="7.3 网络结构的术语"></a>7.3 网络结构的术语</h3><ul>
+<h3 id="7-3-人工神经元与生物启发"><a href="#7-3-人工神经元与生物启发" class="headerlink" title="7.3 人工神经元与生物启发"></a>7.3 人工神经元与生物启发</h3><p>人工神经元执行 <strong>加权求和 → 加偏置 → 激活函数</strong>，即 a&#x3D;φ(Σᵢwᵢxᵢ+b)。</p>
+<p>生物神经元中，<strong>树突</strong>接收信号，<strong>胞体</strong>整合信号，<strong>轴突</strong>向外传递信号，<strong>突触</strong>连接神经元。人工模型用连接权重表示输入影响，用激活函数产生输出，是对生物机制的简化。生物神经网络的连接复杂，人工网络常组织为规则层以便计算。</p>
+<p><img src="/images/courses/deep-learning-foundations/neuron-model.png" srcset="/img/loading.gif" lazyload alt="生物神经元的信息传递与人工神经元的加权求和、激活过程"></p>
+<h3 id="7-4-网络结构的术语"><a href="#7-4-网络结构的术语" class="headerlink" title="7.4 网络结构的术语"></a>7.4 网络结构的术语</h3><ul>
 <li><strong>输入层、隐藏层、输出层</strong>：隐藏层处于输入与最终输出之间。</li>
 <li><strong>全连接 FC</strong>：上一层每个神经元都连接下一层的所有神经元。</li>
 <li><strong>MLP</strong>：多层感知机，一类全连接前馈网络。</li>
