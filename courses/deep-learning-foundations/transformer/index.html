@@ -1,0 +1,1138 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/index.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="missing">
+  <meta name="keywords" content="missing,博客,北航,BUAA">
+  
+    <meta name="description" content="序列到序列、自注意力与 QKV、多头注意力、残差与 LayerNorm、掩码与交叉注意力、位置编码、BERT 与 GPT、KV Cache。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="深度学习基础与应用（七）：自注意力与 Transformer">
+<meta property="og:url" content="https://missync.github.io/courses/deep-learning-foundations/transformer/index.html">
+<meta property="og:site_name" content="missing&#39;s blog">
+<meta property="og:description" content="序列到序列、自注意力与 QKV、多头注意力、残差与 LayerNorm、掩码与交叉注意力、位置编码、BERT 与 GPT、KV Cache。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/transformer-architecture.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/attention-map.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/attention-scaling.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/multihead-shapes.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/attention-masks.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/positional-encoding.png">
+<meta property="article:published_time" content="2026-11-05T04:20:00.000Z">
+<meta property="article:modified_time" content="2026-11-05T04:20:00.000Z">
+<meta property="article:author" content="missing">
+<meta property="article:tag" content="missing,博客,北航,BUAA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://missync.github.io/images/courses/deep-learning-foundations/transformer-architecture.png">
+  
+  
+  
+  <title>深度学习基础与应用（七）：自注意力与 Transformer - missing&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>missing&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/courses/" target="_self">
+                <i class="iconfont icon-list"></i>
+                <span>课程</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="深度学习基础与应用（七）：自注意力与 Transformer"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">深度学习基础与应用（七）：自注意力与 Transformer</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
+
+<h2 id="1-序列到序列：输出长度由模型决定"><a href="#1-序列到序列：输出长度由模型决定" class="headerlink" title="1. 序列到序列：输出长度由模型决定"></a>1. 序列到序列：输出长度由模型决定</h2>
+<p>很多任务的输入和输出都是序列，而且<strong>输出长度不能事先确定</strong>，需要模型自己决定：</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>输入</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>语音识别</td>
+<td>长度 T 的语音帧</td>
+<td>长度 N 的文字</td>
+</tr>
+<tr>
+<td>机器翻译</td>
+<td>长度 N 的中文“深度学习”</td>
+<td>长度 N′ 的英文“Deep Learning”</td>
+</tr>
+<tr>
+<td>语音翻译</td>
+<td>英文语音</td>
+<td>中文文字（也适用于没有文字的语言）</td>
+</tr>
+</tbody>
+</table>
+<p>这类任务称为<strong>序列到序列（Sequence-to-Sequence，Seq2seq）</strong>。</p>
+<h3 id="1-1-编码器-解码器"><a href="#1-1-编码器-解码器" class="headerlink" title="1.1 编码器-解码器"></a>1.1 编码器-解码器</h3>
+<p>用 RNN 做 Seq2seq，可以拼接上一章的两种形态：<strong>多对一 + 一对多</strong>。</p>
+<ul>
+<li><strong>编码器（多对一）</strong>：逐步读入整个输入序列，把它压缩成一个向量；</li>
+<li><strong>解码器（一对多）</strong>：从这个向量出发，逐个生成输出序列。</li>
+</ul>
+<p>解码时先输入特殊词元 START，输出第一个字“深”的概率分布并取最大者；再把“深”作为下一步的输入，依次得到“度”“学”“习”，直到输出 END 为止。<strong>每一步的输出会成为下一步的输入</strong>，这种生成方式称为<strong>自回归</strong>。</p>
+<p>RNN 编码器-解码器有两个硬伤：整个输入只能挤进一个定长向量，长句信息容易丢失；而且必须逐步计算，无法在时间维上并行。Transformer 用注意力机制同时解决了这两个问题。</p>
+<h2 id="2-Transformer-总览"><a href="#2-Transformer-总览" class="headerlink" title="2. Transformer 总览"></a>2. Transformer 总览</h2>
+<p>Transformer 是 2017 年在论文 <em>Attention Is All You Need</em>（NeurIPS 2017）中提出的网络架构，最初用于机器翻译，如今是 ChatGPT、Gemini、Llama 等大语言模型的共同基础。</p>
+<p><img src="/images/courses/deep-learning-foundations/transformer-architecture.png" srcset="/img/loading.gif" lazyload alt="Transformer 编码器与解码器结构"><br><em>左侧编码器由 N 个相同的块堆叠，每块包含多头自注意力和前馈网络；右侧解码器多了带掩码的自注意力和交叉注意力，后者从编码器输出中读取 K、V。</em></p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分词 Tokenization、嵌入 Embedding</td>
+<td>把文本变成向量序列</td>
+</tr>
+<tr>
+<td>位置编码 Positional Encoding</td>
+<td>补充词元的顺序信息</td>
+</tr>
+<tr>
+<td>自注意力 Self-attention</td>
+<td>让每个词元从整个序列中收集相关信息</td>
+</tr>
+<tr>
+<td>交叉注意力 Cross-attention</td>
+<td>解码器从编码器的输出中读取信息</td>
+</tr>
+<tr>
+<td>前馈网络 MLP / FFN</td>
+<td>对每个词元的特征单独做非线性变换</td>
+</tr>
+<tr>
+<td>Add &amp; Norm</td>
+<td>残差连接加层归一化，稳定深层训练</td>
+</tr>
+<tr>
+<td>Linear + Softmax</td>
+<td>把解码器输出变成下一个词元的概率</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-1-输入嵌入"><a href="#2-1-输入嵌入" class="headerlink" title="2.1 输入嵌入"></a>2.1 输入嵌入</h3>
+<p>以“我是一名学生”为例，得到最终输入嵌入需要四步：</p>
+<ol>
+<li><strong>分词</strong>：我 / 是 / 一 / 名 / 学 / 生；</li>
+<li><strong>获得词元嵌入</strong>：按 ID（如 3145、8123、6919 …）从嵌入矩阵中查出向量；</li>
+<li><strong>补充位置信息</strong>：为位置 0、1、2 … 各生成一个位置编码；</li>
+<li><strong>相加</strong>：词元嵌入 + 位置编码 = 最终输入嵌入。</li>
+</ol>
+<h2 id="3-自注意力-Self-attention"><a href="#3-自注意力-Self-attention" class="headerlink" title="3. 自注意力 Self-attention"></a>3. 自注意力 Self-attention</h2>
+<h3 id="3-1-从注意力到自注意力"><a href="#3-1-从注意力到自注意力" class="headerlink" title="3.1 从注意力到自注意力"></a>3.1 从注意力到自注意力</h3>
+<p>注意力并不是 Transformer 首创。在图像描述任务中，模型生成 “bird” 时把注意力集中在鸟所在的区域，生成 “water” 时转向水面，这是<strong>输出对输入的注意力</strong>。</p>
+<p><strong>自注意力</strong>考虑的是<strong>同一序列内部各元素之间的关系</strong>。例如：</p>
+<blockquote>
+<p>我<strong>花</strong>了一下午的时间浇<strong>花</strong>。</p>
+</blockquote>
+<p>第一个“花”是动词“花费”，线索是后面表示时长的“一下午的时间”；第二个“花”是名词“花朵”，线索是动词“浇”。<strong>一个词的含义取决于句子中其他词</strong>，自注意力就是让每个词元都能“看”遍整个序列，按相关程度汇总信息。</p>
+<h3 id="3-2-每个输出都看到全部输入"><a href="#3-2-每个输出都看到全部输入" class="headerlink" title="3.2 每个输出都看到全部输入"></a>3.2 每个输出都看到全部输入</h3>
+<p>自注意力层输入一组向量 a¹, …, aⁿ（可以是嵌入，也可以是上一层的隐藏表示），输出同样数量的向量 b¹, …, bⁿ。<strong>每个 bⁱ 都是综合考虑所有 aʲ 之后得到的。</strong>计算 b¹ 时，先要回答：序列中哪些向量与 a¹ 相关、相关程度 α 有多大？</p>
+<h3 id="3-3-Query、Key、Value"><a href="#3-3-Query、Key、Value" class="headerlink" title="3.3 Query、Key、Value"></a>3.3 Query、Key、Value</h3>
+<p>可以用搜索引擎类比：</p>
+<ul>
+<li><strong>Query（查询）</strong>：你在搜索框里输入的内容，例如“北航”；</li>
+<li><strong>Key（键）</strong>：每个网页的标题或标签，用来和 Query 比较相似度；</li>
+<li><strong>Value（值）</strong>：网页的实际内容，按相似度加权后返回。</li>
+</ul>
+<p>自注意力中，每个词元同时扮演三种角色：用自己的 Query 去和所有词元的 Key 比相似度，再按相似度对所有词元的 Value 加权求和。三种角色由三个不同的可学习线性变换得到。</p>
+<h3 id="3-4-计算步骤"><a href="#3-4-计算步骤" class="headerlink" title="3.4 计算步骤"></a>3.4 计算步骤</h3>
+<p>把 n 个词元的输入按行堆成矩阵 X（n × d_model）：</p>
+<div class="course-math">
+\[
+Q=XW^{Q},\qquad K=XW^{K},\qquad V=XW^{V},
+\qquad W^{Q},W^{K}\in\mathbb R^{d_{\mathrm{model}}\times d_k},\ W^{V}\in\mathbb R^{d_{\mathrm{model}}\times d_v}.
+\]
+</div>
+
+<p>以“我是北航的学生”7 个字、d_model = 5、d_k = d_v = 3 为例，Q、K、V 都是 7×3。</p>
+<ol>
+<li><strong>算相似度</strong>：S = QKᵀ，形状 7×7。第 i 行第 j 列是第 i 个词元的 Query 与第 j 个词元的 Key 的点积；</li>
+<li><strong>缩放</strong>：除以 √dₖ；</li>
+<li><strong>按行 softmax</strong>：得到注意力矩阵 A，每行非负且和为 1，表示该词元把注意力怎样分配给全句；</li>
+<li><strong>加权求和</strong>：Z = AV，形状 7×3，每行是一个词元的新表示。</li>
+</ol>
+<p>合起来就是缩放点积注意力（Scaled Dot-Product Attention）：</p>
+<div class="course-math">
+\[
+\operatorname{Attention}(Q,K,V)=\operatorname{softmax}\!\left(\frac{QK^{\mathsf T}}{\sqrt{d_k}}\right)V,
+\qquad
+\operatorname{softmax}(x)_i=\frac{e^{x_i}}{\sum_j e^{x_j}} .
+\]
+</div>
+
+<p><img src="/images/courses/deep-learning-foundations/attention-map.png" srcset="/img/loading.gif" lazyload alt="“我是北航的学生”的相似度矩阵、注意力矩阵与带掩码的注意力矩阵"><br><em>“北”和“航”互相关注、“学”和“生”互相关注，因为它们组成一个词。注意力矩阵常被称为 Attention Map 或 Attention Filter，第三幅图是解码器中使用的因果掩码版本。</em></p>
+<p>需要学习的参数只有 W^Q、W^K、W^V 三个矩阵；注意力权重 A 是根据输入<strong>动态计算</strong>出来的，而不是固定的参数。这一点与全连接层、卷积层都不同。</p>
+<h3 id="3-5-为什么要除以-√dₖ"><a href="#3-5-为什么要除以-√dₖ" class="headerlink" title="3.5 为什么要除以 √dₖ"></a>3.5 为什么要除以 √dₖ</h3>
+<p>设 q、k 的各分量独立、均值 0、方差 1，则点积 q·k = Σᵢ qᵢkᵢ 的方差为 dₖ，标准差为 √dₖ。维度越高，点积的数值越大，softmax 就越接近 one-hot：几乎全部权重集中在一个位置，其余位置的梯度趋近于 0，训练困难。除以 √dₖ 把点积的方差拉回 1，让 softmax 保持在梯度合适的区间。</p>
+<p><img src="/images/courses/deep-learning-foundations/attention-scaling.png" srcset="/img/loading.gif" lazyload alt="点积标准差随维度增长，以及缩放前后 softmax 最大权重的对比"><br><em>左：实测点积标准差与 √dₖ 重合。右：16 个 key 时，不缩放的 softmax 在 dₖ=1024 时平均最大权重接近 0.96，几乎是 one-hot；缩放后与维度基本无关。</em></p>
+<h3 id="3-6-形状与计算量"><a href="#3-6-形状与计算量" class="headerlink" title="3.6 形状与计算量"></a>3.6 形状与计算量</h3>
+<table>
+<thead>
+<tr>
+<th>矩阵</th>
+<th>形状</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q、K</td>
+<td>n × dₖ</td>
+<td>查询与键</td>
+</tr>
+<tr>
+<td>V</td>
+<td>n × dᵥ</td>
+<td>值</td>
+</tr>
+<tr>
+<td>A = softmax(QKᵀ/√dₖ)</td>
+<td>n × n</td>
+<td>注意力权重</td>
+</tr>
+<tr>
+<td>AV</td>
+<td>n × dᵥ</td>
+<td>每个词元一行输出</td>
+</tr>
+</tbody>
+</table>
+<p>多个头拼接后为 n × (h·dᵥ)，经输出投影变为 n × d_model。</p>
+<p>注意力矩阵是 n×n 的，<strong>计算量和显存都随序列长度平方增长，即 O(n²)</strong>，这是长文本建模的主要瓶颈。另一方面，所有位置的计算可以一次矩阵乘法完成，不像 RNN 那样必须逐步进行，非常适合 GPU 并行。任意两个位置之间也只隔一步，不存在 RNN 那种长距离梯度要穿过很多时间步的问题。</p>
+<h2 id="4-多头自注意力"><a href="#4-多头自注意力" class="headerlink" title="4. 多头自注意力"></a>4. 多头自注意力</h2>
+<p>一组 W^Q、W^K、W^V 只能刻画一种“相关”的标准，而词之间的关系有很多种：语法搭配、指代、语义相近……<strong>多头注意力让多组参数并行计算注意力</strong>，每个头学习一种关系：</p>
+<div class="course-math">
+\[
+\mathrm{head}_i=\operatorname{Attention}\!\left(XW_i^{Q},XW_i^{K},XW_i^{V}\right),
+\qquad
+\operatorname{MultiHead}(X)=\operatorname{Concat}(\mathrm{head}_1,\ldots,\mathrm{head}_h)\,W^{O}.
+\]
+</div>
+
+<p>继续前面的例子，3 个头各自得到 7×3 的 Z₁、Z₂、Z₃：</p>
+<ol>
+<li><strong>沿特征维拼接</strong>：得到 Z（7 × 9）；</li>
+<li><strong>输出投影</strong>：乘以 W^O（9 × 5），得到 7 × 5 的输出，与输入形状相同，便于残差相加和堆叠多层。同一个投影作用于全部 7 个位置。</li>
+</ol>
+<p><img src="/images/courses/deep-learning-foundations/multihead-shapes.png" srcset="/img/loading.gif" lazyload alt="多头自注意力的张量形状变化"><br><em>每个头有独立的 Q、K、V 投影和注意力矩阵；拼接后再用 W^O 混合各头的信息。</em></p>
+<p>实际模型中常取 dₖ = dᵥ = d_model / h，此时多头注意力的总计算量与单个全维度头相近。原始 Transformer 中 d_model = 512、h = 8、dₖ = 64。</p>
+<h2 id="5-残差连接、层归一化与前馈网络"><a href="#5-残差连接、层归一化与前馈网络" class="headerlink" title="5. 残差连接、层归一化与前馈网络"></a>5. 残差连接、层归一化与前馈网络</h2>
+<h3 id="5-1-Add-Norm"><a href="#5-1-Add-Norm" class="headerlink" title="5.1 Add &amp; Norm"></a>5.1 Add &amp; Norm</h3>
+<p>每个子层（注意力或 FFN）外面都包了一层 Add &amp; Norm：</p>
+<div class="course-math">
+\[
+X'=\operatorname{LayerNorm}\!\left(X+\operatorname{MultiHead}(X)\right),
+\qquad
+Y=\operatorname{LayerNorm}\!\left(X'+\operatorname{FFN}(X')\right).
+\]
+</div>
+
+<p><strong>残差连接（Add）</strong>的作用：</p>
+<ol>
+<li><strong>保留已有知识</strong>：子层只需学习在输入基础上的修改量，原始信息不会被覆盖；</li>
+<li><strong>缓解梯度消失</strong>：恒等路径让梯度可以直接传回浅层，与 ResNet 的捷径相同。</li>
+</ol>
+<p><strong>层归一化（Norm）</strong>对<strong>每个词元的特征向量单独</strong>做归一化，再乘以 γ、加上 β。例如某个词元特征的均值为 0.67、标准差为 0.44，其中值为 0.98 的分量被归一化为：</p>
+<div class="course-math">
+\[
+\hat x=\frac{0.98-0.67}{\sqrt{0.44^2+0.0001}}\approx0.70 .
+\]
+</div>
+
+<p>序列长度可变、推理时 batch 可能为 1，用 Batch Norm 的统计量不方便，所以 Transformer 选择 Layer Norm。原始论文把归一化放在残差相加之后（Post-LN）；现代大模型多改为子层之前（Pre-LN），训练更稳定。</p>
+<h3 id="5-2-逐位置前馈网络"><a href="#5-2-逐位置前馈网络" class="headerlink" title="5.2 逐位置前馈网络"></a>5.2 逐位置前馈网络</h3>
+<div class="course-math">
+\[
+\operatorname{FFN}(x)=\operatorname{ReLU}(xW_1+b_1)\,W_2+b_2 .
+\]
+</div>
+
+<ul>
+<li><strong>每个词元经过同一个网络</strong>，各位置之间互不交流；</li>
+<li>原始 Transformer 中维度变化为 512 → 2048 → 512，先升维再降维；</li>
+<li><strong>注意力负责在词元之间混合信息，FFN 负责变换每个词元自身的特征</strong>，二者分工明确。模型的大部分参数其实在 FFN 中。</li>
+</ul>
+<h2 id="6-解码器：掩码与交叉注意力"><a href="#6-解码器：掩码与交叉注意力" class="headerlink" title="6. 解码器：掩码与交叉注意力"></a>6. 解码器：掩码与交叉注意力</h2>
+<h3 id="6-1-带掩码的自注意力"><a href="#6-1-带掩码的自注意力" class="headerlink" title="6.1 带掩码的自注意力"></a>6.1 带掩码的自注意力</h3>
+<p>解码器逐个生成词元。生成第 t 个词元时，后面的词元还不存在，<strong>训练时也不能让模型偷看答案</strong>。做法是在 softmax 之前把注意力分数矩阵的上三角（未来位置）设为 −∞：</p>
+<div class="course-math">
+\[
+A=\operatorname{softmax}\!\left(\frac{QK^{\mathsf T}}{\sqrt{d_k}}+M\right),
+\qquad
+M_{ij}=\begin{cases}0,&j\le i\\-\infty,&j\gt i\end{cases}.
+\]
+</div>
+
+<p>e^(−∞) = 0，被屏蔽的位置权重恰好为 0，每个位置只能关注自己和之前的位置。这称为<strong>因果掩码（causal mask）</strong>。</p>
+<h3 id="6-2-交叉注意力"><a href="#6-2-交叉注意力" class="headerlink" title="6.2 交叉注意力"></a>6.2 交叉注意力</h3>
+<p>解码器中间的注意力子层：<strong>Query 来自解码器，Key 和 Value 来自编码器最后一层的输出</strong>。生成每个目标词时，解码器据此决定应该关注源句的哪些部分，取代了 RNN 编码器-解码器中那个单一的定长向量。</p>
+<h3 id="6-3-三种注意力与掩码"><a href="#6-3-三种注意力与掩码" class="headerlink" title="6.3 三种注意力与掩码"></a>6.3 三种注意力与掩码</h3>
+<table>
+<thead>
+<tr>
+<th>注意力</th>
+<th>Query 来源</th>
+<th>Key / Value 来源</th>
+<th>掩码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编码器自注意力</td>
+<td>编码器状态</td>
+<td>同一组编码器状态</td>
+<td>padding</td>
+</tr>
+<tr>
+<td>解码器自注意力</td>
+<td>解码器状态</td>
+<td>同一组解码器状态</td>
+<td>因果 + padding</td>
+</tr>
+<tr>
+<td>交叉注意力</td>
+<td>解码器状态</td>
+<td>编码器最终输出</td>
+<td>源序列 padding</td>
+</tr>
+</tbody>
+</table>
+<p>M 中允许关注的位置为 0，屏蔽的位置为 −∞。</p>
+<p><img src="/images/courses/deep-learning-foundations/attention-masks.png" srcset="/img/loading.gif" lazyload alt="编码器自注意力、解码器自注意力和交叉注意力的掩码"><br><em>绿色表示允许关注，× 表示被屏蔽。PAD 只用于把 batch 内的序列补齐，任何位置都不应关注它。</em></p>
+<h3 id="6-4-训练与推理"><a href="#6-4-训练与推理" class="headerlink" title="6.4 训练与推理"></a>6.4 训练与推理</h3>
+<p><strong>推理</strong>是自回归的：编码器先把“我是北航的学生”编码成 K、V；解码器从 START 开始，每步预测一个词，把预测结果接到输入末尾，再预测下一个，直到输出 END，得到 “I am a student of Beihang”。</p>
+<p><strong>训练</strong>时则使用 <strong>Teacher Forcing</strong>：解码器的输入直接用真实答案右移一位（START, I, am, …），每个位置预测下一个词，与真实目标计算交叉熵损失。因为有因果掩码，所有位置可以<strong>一次并行计算</strong>，而不必像推理那样逐步展开。如果某一步预测错了（比如把 “I” 预测成 “You”），下一步的输入仍是正确的 “I”，错误不会在训练中累积。</p>
+<h2 id="7-位置编码"><a href="#7-位置编码" class="headerlink" title="7. 位置编码"></a>7. 位置编码</h2>
+<h3 id="7-1-顺序很重要"><a href="#7-1-顺序很重要" class="headerlink" title="7.1 顺序很重要"></a>7.1 顺序很重要</h3>
+<blockquote>
+<p>虽然我<strong>不</strong>喜欢吃苦瓜，但是我今天吃了。
+虽然我喜欢吃苦瓜，但是我今天<strong>不</strong>吃了。</p>
+</blockquote>
+<p>两句话用字几乎相同，意思却完全不同。自注意力本身<strong>对位置不敏感</strong>：把输入词元打乱，每个词元得到的输出只是跟着换位，数值不变。因此必须显式地把位置信息加入输入：第 i 个词元的输入为 eᵢ + pᵢ。</p>
+<h3 id="7-2-两种朴素做法的问题"><a href="#7-2-两种朴素做法的问题" class="headerlink" title="7.2 两种朴素做法的问题"></a>7.2 两种朴素做法的问题</h3>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>pᵢ 的取值</th>
+<th>问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>直接用下标</td>
+<td>0, 1, 2, 3, …</td>
+<td>数值无界，长序列后部的位置值远大于嵌入本身，淹没语义信息</td>
+</tr>
+<tr>
+<td>归一化下标</td>
+<td>i/(N−1)，如 N=4 时为 0, 0.33, 0.66, 1</td>
+<td>同一位置在不同长度的句子中编码不同，相邻位置的间隔也随长度改变</td>
+</tr>
+</tbody>
+</table>
+<h3 id="7-3-正弦位置编码"><a href="#7-3-正弦位置编码" class="headerlink" title="7.3 正弦位置编码"></a>7.3 正弦位置编码</h3>
+<p>原始 Transformer 采用一组频率不同的正弦和余弦函数：</p>
+<div class="course-math">
+\[
+PE_{(pos,\,2i)}=\sin\!\left(\frac{pos}{10000^{2i/d_{\mathrm{model}}}}\right),
+\qquad
+PE_{(pos,\,2i+1)}=\cos\!\left(\frac{pos}{10000^{2i/d_{\mathrm{model}}}}\right).
+\]
+</div>
+
+<p>pos 是位置下标，i 是嵌入维度下标，d_model 是嵌入维度。偶数维用正弦，奇数维用余弦。</p>
+<ul>
+<li><strong>低维频率高、变化快，高维频率低、变化慢</strong>，就像钟表上转速不同的指针，组合起来能唯一确定位置；</li>
+<li>只看一个频率时，不同位置可能取到相同的值（例如 p₀ 与 p₆ 在某一维上相等），但多个频率合在一起就不会重复；</li>
+<li>每个分量都在 [−1, 1] 之间，与序列长度无关；</li>
+<li>对任意固定偏移 k，PE_{pos+k} 都可以写成 PE_{pos} 的线性变换（由三角函数和角公式得到），便于模型学习相对位置。</li>
+</ul>
+<p><img src="/images/courses/deep-learning-foundations/positional-encoding.png" srcset="/img/loading.gif" lazyload alt="正弦位置编码矩阵与不同维度上的曲线"><br><em>左：每一行是一个位置的编码向量，左侧维度条纹密集，右侧维度几乎不变；右：第 0、8、24 维随位置变化的曲线，圆点为整数位置上的取值。</em></p>
+<p>位置编码也可以作为参数直接学习，BERT 和早期 GPT 就使用可学习的位置嵌入；现代大模型多使用 RoPE 等相对位置编码。</p>
+<h2 id="8-三种架构与大语言模型"><a href="#8-三种架构与大语言模型" class="headerlink" title="8. 三种架构与大语言模型"></a>8. 三种架构与大语言模型</h2>
+<h3 id="8-1-编码器、解码器与二者组合"><a href="#8-1-编码器、解码器与二者组合" class="headerlink" title="8.1 编码器、解码器与二者组合"></a>8.1 编码器、解码器与二者组合</h3>
+<table>
+<thead>
+<tr>
+<th>架构</th>
+<th>信息流</th>
+<th>代表与用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>仅编码器 Encoder-only</td>
+<td>双向自注意力</td>
+<td>BERT；分类、序列标注、检索</td>
+</tr>
+<tr>
+<td>编码器-解码器 Encoder–decoder</td>
+<td>源序列编码器 + 因果解码器，由交叉注意力连接</td>
+<td>原始 Transformer、T5；翻译等 Seq2seq 任务</td>
+</tr>
+<tr>
+<td>仅解码器 Decoder-only</td>
+<td>因果自注意力，没有单独的编码器</td>
+<td>GPT、Llama、DeepSeek；文本生成</td>
+</tr>
+</tbody>
+</table>
+<p><strong>注意力模式决定了每个词元能使用哪些信息。</strong>近年来大语言模型几乎都采用仅解码器结构，开源（Llama、DeepSeek 等）和闭源模型都是如此。</p>
+<h3 id="8-2-BERT-与-GPT-的预训练目标"><a href="#8-2-BERT-与-GPT-的预训练目标" class="headerlink" title="8.2 BERT 与 GPT 的预训练目标"></a>8.2 BERT 与 GPT 的预训练目标</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>BERT：掩码语言模型</th>
+<th>GPT：下一个词元预测</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入</td>
+<td>The [MASK] sat on the mat.</td>
+<td>The cat sat on the</td>
+</tr>
+<tr>
+<td>预测</td>
+<td>cat</td>
+<td>mat</td>
+</tr>
+<tr>
+<td>可用上下文</td>
+<td>左右两侧</td>
+<td>只有前缀</td>
+</tr>
+<tr>
+<td>实现方式</td>
+<td>在输入中遮住部分词元</td>
+<td>用因果掩码阻止关注未来词元</td>
+</tr>
+</tbody>
+</table>
+<h3 id="8-3-BERT：双向编码器"><a href="#8-3-BERT：双向编码器" class="headerlink" title="8.3 BERT：双向编码器"></a>8.3 BERT：双向编码器</h3>
+<p>BERT = Bidirectional Encoder Representations from Transformers（Devlin et al., 2019）。</p>
+<ul>
+<li>每层包含自注意力和 FFN；</li>
+<li>每个位置都能同时使用左右两侧的上下文；</li>
+<li>没有因果掩码，但 padding 位置仍需屏蔽。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>层数</th>
+<th>隐藏维度</th>
+<th>FFN 维度</th>
+<th>头数</th>
+<th>dₖ = dᵥ</th>
+<th>参数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BERT-Base</td>
+<td>12</td>
+<td>768</td>
+<td>3072</td>
+<td>12</td>
+<td>64</td>
+<td>110M</td>
+</tr>
+<tr>
+<td>BERT-Large</td>
+<td>24</td>
+<td>1024</td>
+<td>4096</td>
+<td>16</td>
+<td>64</td>
+<td>340M</td>
+</tr>
+</tbody>
+</table>
+<p><strong>预训练</strong>使用两个任务：掩码语言模型（MLM），以及判断两句话是否相邻的下一句预测（NSP）。<strong>微调</strong>时用有标签的任务数据，在顶部接上任务相关的输出层。</p>
+<p><strong>输入嵌入</strong> = 词元嵌入 + 段嵌入（区分句子 A / B）+ 可学习的位置嵌入。序列开头放 [CLS]，其最终表示常用于分类；句子之间用 [SEP] 分隔。</p>
+<p>BERT-Base 与 2018 年的初代 GPT 规模相近（110M vs 117M 参数），区别在于预训练数据和目标：GPT 只用 BooksCorpus（8 亿词），BERT 还加入了英文维基百科（25 亿词）。</p>
+<h3 id="8-4-预训练、微调与上下文学习"><a href="#8-4-预训练、微调与上下文学习" class="headerlink" title="8.4 预训练、微调与上下文学习"></a>8.4 预训练、微调与上下文学习</h3>
+<table>
+<thead>
+<tr>
+<th>阶段 / 方法</th>
+<th>模型接收什么</th>
+<th>是否更新参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>预训练 Pretraining</td>
+<td>大规模文本，自监督目标</td>
+<td>是</td>
+</tr>
+<tr>
+<td>微调 Fine-tuning</td>
+<td>任务或指令示例</td>
+<td>是，全部或部分参数</td>
+</tr>
+<tr>
+<td>上下文学习 In-context learning</td>
+<td>提示中的指令或示例</td>
+<td>推理时不更新</td>
+</tr>
+</tbody>
+</table>
+<p>上下文学习的例子：在提示里给出 “Loved it!” → Positive，“Terrible.” → Negative，再问 “Very enjoyable.” → ?。模型无需任何梯度更新，仅凭提示中的示例就能输出 Positive。</p>
+<h3 id="8-5-自回归生成与-KV-Cache"><a href="#8-5-自回归生成与-KV-Cache" class="headerlink" title="8.5 自回归生成与 KV Cache"></a>8.5 自回归生成与 KV Cache</h3>
+<p>仅解码器模型每步只预测一个新词元，然后把它接到输入末尾。若每步都把整个前缀重新算一遍，大量计算是重复的。由于因果掩码的存在，<strong>已经生成的词元的 K、V 不会因为后面的新词元而改变</strong>，可以缓存起来复用：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>计算</th>
+<th>KV Cache</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>预填充 Prefill</td>
+<td>用因果掩码并行处理整个提示</td>
+<td>为每一层保存提示的 K、V</td>
+</tr>
+<tr>
+<td>解码 Decode</td>
+<td>只处理新生成的一个词元</td>
+<td>追加新的 K、V，并与缓存中的 K、V 一起计算注意力</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>每一步仍只预测一个词元；</li>
+<li>缓存大小随上下文长度线性增长，约为 2 × 层数 × 序列长度 × d_model × 每个数的字节数；</li>
+<li>注意力仍需读取全部历史 K、V，所以缓存省去的是重复的投影计算，并不能把长上下文变成免费的。</li>
+</ul>
+<h2 id="9-小结与易错点"><a href="#9-小结与易错点" class="headerlink" title="9. 小结与易错点"></a>9. 小结与易错点</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自注意力中可学习的参数是什么</td>
+<td>W^Q、W^K、W^V（多头时还有 W^O）；注意力权重是动态计算的</td>
+</tr>
+<tr>
+<td>为什么除以 √dₖ</td>
+<td>点积方差随 dₖ 增长，不缩放时 softmax 过于尖锐、梯度很小</td>
+</tr>
+<tr>
+<td>注意力矩阵的形状</td>
+<td>n × n，计算量与序列长度平方成正比</td>
+</tr>
+<tr>
+<td>多头注意力的输出形状</td>
+<td>拼接为 n × (h·dᵥ)，经 W^O 投影回 n × d_model</td>
+</tr>
+<tr>
+<td>注意力与 FFN 的分工</td>
+<td>注意力在词元之间混合信息，FFN 逐词元变换特征</td>
+</tr>
+<tr>
+<td>为什么用 Layer Norm</td>
+<td>按词元归一化，不依赖 batch 和序列长度</td>
+</tr>
+<tr>
+<td>因果掩码怎样实现</td>
+<td>softmax 前把未来位置的分数设为 −∞</td>
+</tr>
+<tr>
+<td>交叉注意力的 Q、K、V 从哪来</td>
+<td>Q 来自解码器，K、V 来自编码器最终输出</td>
+</tr>
+<tr>
+<td>为什么需要位置编码</td>
+<td>自注意力对输入顺序不敏感</td>
+</tr>
+<tr>
+<td>训练时解码器为什么能并行</td>
+<td>Teacher Forcing 加因果掩码，所有位置一次算完</td>
+</tr>
+<tr>
+<td>BERT 与 GPT 的根本区别</td>
+<td>BERT 双向、预测被遮住的词；GPT 因果、预测下一个词</td>
+</tr>
+<tr>
+<td>KV Cache 缓存的是什么</td>
+<td>每一层历史词元的 Key 和 Value</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="/courses/deep-learning-foundations/">课程目录</a> · <a href="/courses/deep-learning-foundations/recurrent-neural-networks/">上一章：循环神经网络</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!--<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>--> <i class="iconfont icon-love"></i> <!--<a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>--> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
