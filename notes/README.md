@@ -8,3 +8,8 @@
 
 - [第三章：神经网络与训练](deep-learning-foundations/neural-networks.md)
 - [第四章：卷积神经网络](deep-learning-foundations/convolutional-neural-networks.md)
+- [第五章：网络训练技巧](deep-learning-foundations/network-training.md)
+- [第六章：循环神经网络](deep-learning-foundations/recurrent-neural-networks.md)
+- [第七章：自注意力与 Transformer](deep-learning-foundations/transformer.md)
+
+第五至七章的示意图由 `deep-learning-foundations/figures/` 中的 matplotlib 脚本生成（`lstm-cell.png` 除外），运行对应脚本即可重新输出到 `images/courses/deep-learning-foundations/`。

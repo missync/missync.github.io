@@ -1,0 +1,1392 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/index.jpg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="missing">
+  <meta name="keywords" content="missing,博客,北航,BUAA">
+  
+    <meta name="description" content="权重初始化、批归一化与归一化家族、从 SGD 到 Adam 的优化器、学习率调度。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="深度学习基础与应用（五）：网络训练技巧">
+<meta property="og:url" content="https://missync.github.io/courses/deep-learning-foundations/network-training/index.html">
+<meta property="og:site_name" content="missing&#39;s blog">
+<meta property="og:description" content="权重初始化、批归一化与归一化家族、从 SGD 到 Adam 的优化器、学习率调度。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/init-activation-scale.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/normalization-landscape.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/normalization-family.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/optimizer-trajectories.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/lr-schedules.png">
+<meta property="article:published_time" content="2026-11-05T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-11-05T04:00:00.000Z">
+<meta property="article:author" content="missing">
+<meta property="article:tag" content="missing,博客,北航,BUAA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://missync.github.io/images/courses/deep-learning-foundations/init-activation-scale.png">
+  
+  
+  
+  <title>深度学习基础与应用（五）：网络训练技巧 - missing&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"missync.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":"s3ClAGbswlHSYWaqKQIp4JPt-gzGzoHsz","app_key":"NJFCJKffLC7cNPXJOaOMOb97","server_url":null,"path":"window.location.pathname","ignore_local":true},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>missing&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/courses/" target="_self">
+                <i class="iconfont icon-list"></i>
+                <span>课程</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="深度学习基础与应用（五）：网络训练技巧"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">深度学习基础与应用（五）：网络训练技巧</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
+
+<h2 id="1-训练前要先定下的四件事"><a href="#1-训练前要先定下的四件事" class="headerlink" title="1. 训练前要先定下的四件事"></a>1. 训练前要先定下的四件事</h2>
+<p>前面已经说明了网络怎样前向计算、怎样用反向传播求梯度。真正动手训练时，还要回答几个看似“工程细节”、实则决定能否训练成功的问题：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>对应技术</th>
+<th>主要作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>参数从哪里出发</td>
+<td>权重初始化 Weight Initialization</td>
+<td>打破对称性，让信号与梯度在各层保持合理尺度</td>
+</tr>
+<tr>
+<td>中间层分布乱飘怎么办</td>
+<td>批归一化 Batch Normalization 及其变体</td>
+<td>稳定每层输入的分布，使损失面更平滑</td>
+</tr>
+<tr>
+<td>拿到梯度后怎么走</td>
+<td>优化器 Optimizer</td>
+<td>决定更新方向和每个参数的步长</td>
+</tr>
+<tr>
+<td>步长要不要随时间变</td>
+<td>学习率调度 LR Scheduler</td>
+<td>前期快速下降、后期精细收敛</td>
+</tr>
+</tbody>
+</table>
+<p>四者互相影响：好的初始化与归一化让更大的学习率成为可能；自适应优化器降低了对学习率的敏感度，但仍需配合调度。</p>
+<h2 id="2-权重初始化"><a href="#2-权重初始化" class="headerlink" title="2. 权重初始化"></a>2. 权重初始化</h2>
+<h3 id="2-1-初始化决定了训练的起点"><a href="#2-1-初始化决定了训练的起点" class="headerlink" title="2.1 初始化决定了训练的起点"></a>2.1 初始化决定了训练的起点</h3>
+<p>训练开始前，要给每个可训练的权重 W 和偏置 b 赋初值。以全连接层为例：</p>
+<div class="course-math">
+\[
+h^{(l)}=f\!\left(W^{(l)}h^{(l-1)}+b^{(l)}\right),
+\qquad
+W_{t+1}=W_t-\eta\,\nabla_W\mathcal L .
+\]
+</div>
+
+<p>梯度下降只负责“从当前位置往下走”，起点由初始化决定。起点会影响三件事：<strong>梯度能否顺利流动、训练是否稳定以及收敛速度、最终模型的质量</strong>。因此初始化的设计目标可以概括为一句话：<strong>让各层的激活值和梯度都保持在合理的尺度上。</strong></p>
+<h3 id="2-2-全零初始化：对称性无法打破"><a href="#2-2-全零初始化：对称性无法打破" class="headerlink" title="2.2 全零初始化：对称性无法打破"></a>2.2 全零初始化：对称性无法打破</h3>
+<p>假设两个隐藏单元接收同一输入 x：</p>
+<div class="course-math">
+\[
+h_1=f(w_1^{\mathsf T}x+b_1),\qquad h_2=f(w_2^{\mathsf T}x+b_2),
+\qquad w_1=w_2=0,\ b_1=b_2=0 .
+\]
+</div>
+
+<p>两单元的输出相同，反向传播得到的梯度也相同，更新后参数依旧相同。无论训练多久，它们都在学<strong>同一个特征</strong>，宽度为 H 的隐藏层实际只相当于一个单元。只要所有权重取同一个常数，这种对称性就会保留。</p>
+<p><strong>解决办法是随机初始化权重；偏置通常可以初始化为 0</strong>，因为权重已经足以打破对称。</p>
+<h3 id="2-3-梯度消失与梯度爆炸"><a href="#2-3-梯度消失与梯度爆炸" class="headerlink" title="2.3 梯度消失与梯度爆炸"></a>2.3 梯度消失与梯度爆炸</h3>
+<p>对 z⁽ˡ⁾ = W⁽ˡ⁾h⁽ˡ⁻¹⁾ + b⁽ˡ⁾、h⁽ˡ⁾ = f(z⁽ˡ⁾)，相邻两层之间的局部导数为：</p>
+<div class="course-math">
+\[
+\frac{\partial h_i^{(l)}}{\partial h_j^{(l-1)}}=f'\!\left(z_i^{(l)}\right)W_{ij}^{(l)},
+\qquad
+\frac{\partial\mathcal L}{\partial h^{(l)}}
+=\left(\frac{\partial h^{(l+1)}}{\partial h^{(l)}}\right)^{\!\mathsf T}
+\left(\frac{\partial h^{(l+2)}}{\partial h^{(l+1)}}\right)^{\!\mathsf T}
+\cdots
+\left(\frac{\partial h^{(L)}}{\partial h^{(L-1)}}\right)^{\!\mathsf T}
+\frac{\partial\mathcal L}{\partial h^{(L)}} .
+\]
+</div>
+
+<p>梯度要经过一长串雅可比矩阵的连乘。用一个玩具模型体会量级：假设每过一层梯度尺度都乘同一个因子，</p>
+<ul>
+<li>每层 ×0.5，8 层后剩 0.5⁸ ≈ <strong>0.004</strong>：前几层几乎收不到梯度，即<strong>梯度消失</strong>；</li>
+<li>每层 ×1.5，8 层后变成 1.5⁸ ≈ <strong>25.6</strong>：更新步长失控，即<strong>梯度爆炸</strong>；</li>
+<li>只有因子接近 1，信号才能稳定地传过很多层。</li>
+</ul>
+<p>权重的尺度直接决定了这个因子。权重过大时，sigmoid / tanh 的输入落到饱和区，导数接近 0，反而造成梯度消失；权重过小时，信号每过一层都缩小一点，前向的激活和反向的梯度一起衰减。</p>
+<p><img src="/images/courses/deep-learning-foundations/init-activation-scale.png" srcset="/img/loading.gif" lazyload alt="不同初始化下激活值标准差随层数的变化与各层激活分布"><br><em>在 10 层、每层 512 单元的随机网络上实测：tanh 配 σ=0.01 时激活值逐层指数衰减；σ=1 时激活值全部挤到 ±1 的饱和区；Xavier 配 tanh、He 配 ReLU 时，各层分布基本保持稳定。ReLU 配 Xavier 则会逐层缩小。</em></p>
+<h3 id="2-4-简单随机初始化"><a href="#2-4-简单随机初始化" class="headerlink" title="2.4 简单随机初始化"></a>2.4 简单随机初始化</h3>
+<p>最直接的做法是从某个分布独立采样每个权重：</p>
+<div class="course-math">
+\[
+W_{ij}\sim\mathcal N(0,\sigma^2)
+\qquad\text{或}\qquad
+W_{ij}\sim\mathcal U(-a,a),\quad \operatorname{Var}(W)=\frac{a^2}{3}.
+\]
+</div>
+
+<p>它<strong>能打破对称性</strong>，但<strong>没有回答 σ 或 a 取多大</strong>。尺度选得不好，前向信号或反向梯度仍会逐层缩小或放大。下面两种方法都是在回答“方差该取多少”。</p>
+<h3 id="2-5-Xavier（Glorot）初始化"><a href="#2-5-Xavier（Glorot）初始化" class="headerlink" title="2.5 Xavier（Glorot）初始化"></a>2.5 Xavier（Glorot）初始化</h3>
+<p>Xavier 初始化面向 tanh 或近似线性的激活函数，目标是<strong>让信号方差在层间保持不变</strong>。考虑一个输出单元：</p>
+<div class="course-math">
+\[
+z_j=\sum_{i=1}^{n_{\mathrm{in}}}W_{ji}x_i .
+\]
+</div>
+
+<p>假设权重与输入相互独立、均值都为 0，各项方差可以直接相加：</p>
+<div class="course-math">
+\[
+\operatorname{Var}(z_j)=n_{\mathrm{in}}\operatorname{Var}(W)\operatorname{Var}(x).
+\]
+</div>
+
+<p>想让 Var(z) = Var(x)，就需要 Var(W) ≈ 1/n_in。对反向传播做同样的分析，梯度方差保持不变要求 Var(W) ≈ 1/n_out。</p>
+<ul>
+<li><strong>fan-in</strong>：每个单元接收的输入个数；</li>
+<li><strong>fan-out</strong>：每个单元连向的输出个数。</li>
+</ul>
+<p>两个条件一般不能同时满足，Xavier 取二者的调和折中：</p>
+<div class="course-math">
+\[
+\operatorname{Var}(W)=\frac{2}{n_{\mathrm{in}}+n_{\mathrm{out}}},
+\qquad
+W_{ij}\sim\mathcal N\!\left(0,\frac{2}{n_{\mathrm{in}}+n_{\mathrm{out}}}\right)
+\quad\text{或}\quad
+W_{ij}\sim\mathcal U\!\left(-\sqrt{\tfrac{6}{n_{\mathrm{in}}+n_{\mathrm{out}}}},\ \sqrt{\tfrac{6}{n_{\mathrm{in}}+n_{\mathrm{out}}}}\right).
+\]
+</div>
+
+<p>均匀分布的边界由 a²/3 = 2/(n_in+n_out) 解出 a = √(6/(n_in+n_out))，两种形式的方差相同。</p>
+<h3 id="2-6-He（Kaiming）初始化"><a href="#2-6-He（Kaiming）初始化" class="headerlink" title="2.6 He（Kaiming）初始化"></a>2.6 He（Kaiming）初始化</h3>
+<p>ReLU f(x)=max(0,x) 会把一半输入直接置零，Xavier 的推导没有考虑这一点，所以 ReLU 网络用 Xavier 时信号会逐层减弱。He 初始化显式补偿了这部分损失。</p>
+<p>若预激活 z 关于 0 对称，ReLU 只保留正半轴，于是：</p>
+<div class="course-math">
+\[
+\mathbb E\!\left[\operatorname{ReLU}(z)^2\right]=\frac12\,\mathbb E\!\left[z^2\right].
+\]
+</div>
+
+<p>被减半的是<strong>二阶矩</strong>，而下一层方差递推真正用到的正是它（ReLU 输出均值不为 0，方差本身不一定恰好减半）。把权重方差加倍即可补偿：</p>
+<div class="course-math">
+\[
+\operatorname{Var}(W)=\frac{2}{n_{\mathrm{in}}},
+\qquad
+W_{ij}\sim\mathcal N\!\left(0,\frac{2}{n_{\mathrm{in}}}\right)
+\quad\text{或}\quad
+W_{ij}\sim\mathcal U\!\left(-\sqrt{\tfrac{6}{n_{\mathrm{in}}}},\ \sqrt{\tfrac{6}{n_{\mathrm{in}}}}\right).
+\]
+</div>
+
+<p>以 256→256 的全连接层为例：Xavier 的标准差为 √(2/512) = <strong>0.0625</strong>，He 的标准差为 √(2/256) ≈ <strong>0.0884</strong>，后者更大，正是为了抵消 ReLU 的“砍半”。PyTorch 中两种写法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span></pre></td><td class="code"><pre><span class="line">import torch.nn as nn</span><br><span class="line"></span><br><span class="line"># Xavier normal：适合 tanh 等近似线性的激活</span><br><span class="line">layer = nn.Linear(256, 256)</span><br><span class="line">nn.init.xavier_normal_(layer.weight)</span><br><span class="line"></span><br><span class="line"># He normal：适合 ReLU 层</span><br><span class="line">layer = nn.Linear(256, 256)</span><br><span class="line">nn.init.kaiming_normal_(layer.weight, mode=&quot;fan_in&quot;, nonlinearity=&quot;relu&quot;)</span></pre></td></tr></table></figure>
+<h3 id="2-7-fan-in-与-fan-out-怎样数"><a href="#2-7-fan-in-与-fan-out-怎样数" class="headerlink" title="2.7 fan-in 与 fan-out 怎样数"></a>2.7 fan-in 与 fan-out 怎样数</h3>
+<p>Xavier 和 He 使用相同的 fan-in / fan-out 定义，区别只在于怎样把它们换算成方差。二者都<strong>只由权重张量的形状决定</strong>，不包括偏置、batch 大小和特征图的高宽。</p>
+<table>
+<thead>
+<tr>
+<th>层类型</th>
+<th>权重形状</th>
+<th>fan-in</th>
+<th>fan-out</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全连接</td>
+<td>N_out × N_in</td>
+<td>N_in</td>
+<td>N_out</td>
+</tr>
+<tr>
+<td>二维卷积</td>
+<td>C_out × C_in × K_h × K_w</td>
+<td>C_in·K_h·K_w</td>
+<td>C_out·K_h·K_w</td>
+</tr>
+</tbody>
+</table>
+<p>例：3×3 卷积，3 个输入通道、64 个输出通道，则 fan-in = 3×3×3 = <strong>27</strong>，fan-out = 64×3×3 = <strong>576</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>初始化</th>
+<th>权重方差</th>
+<th>本例数值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Xavier（gain=1）</td>
+<td>2 / (fan-in + fan-out)</td>
+<td>2/603 ≈ 0.0033</td>
+</tr>
+<tr>
+<td>He，ReLU，fan_in 模式</td>
+<td>2 / fan-in</td>
+<td>2/27 ≈ 0.074</td>
+</tr>
+<tr>
+<td>He，ReLU，fan_out 模式</td>
+<td>2 / fan-out</td>
+<td>2/576 ≈ 0.0035</td>
+</tr>
+</tbody>
+</table>
+<p><strong>fan_in 模式保证前向信号尺度，fan_out 模式保证反向梯度尺度</strong>；ReLU 网络常用的 He 公式默认采用 fan_in。</p>
+<h3 id="2-8-初始化的总目标"><a href="#2-8-初始化的总目标" class="headerlink" title="2.8 初始化的总目标"></a>2.8 初始化的总目标</h3>
+<p>无论具体公式如何，初始化都在追求：</p>
+<div class="course-math">
+\[
+\operatorname{Var}\!\left(h^{(l)}\right)\approx\operatorname{Var}\!\left(h^{(l-1)}\right),
+\qquad
+\operatorname{Var}\!\left(\frac{\partial\mathcal L}{\partial h^{(l)}}\right)\approx
+\operatorname{Var}\!\left(\frac{\partial\mathcal L}{\partial h^{(l-1)}}\right).
+\]
+</div>
+
+<p>也就是选择合适的初始分布或矩阵结构，使前向信号与反向梯度都能稳定传播。沿这一思路还有正交初始化（Saxe et al., 2013）、数据相关初始化（LSUV，Mishkin &amp; Matas, 2015）、无需归一化即可训练深层残差网络的 Fixup（Zhang et al., 2019）等工作。彩票假设（Frankle &amp; Carbin, 2019）则从另一个角度说明了初始值的重要性：大网络中存在某些“中奖”的子网络，用原始初始值单独训练也能达到相近精度。</p>
+<h2 id="3-批归一化与归一化家族"><a href="#3-批归一化与归一化家族" class="headerlink" title="3. 批归一化与归一化家族"></a>3. 批归一化与归一化家族</h2>
+<h3 id="3-1-从协变量偏移说起"><a href="#3-1-从协变量偏移说起" class="headerlink" title="3.1 从协变量偏移说起"></a>3.1 从协变量偏移说起</h3>
+<p><strong>协变量偏移（Covariate Shift）</strong>：训练集和测试集的输入分布不同，但输入到标签的映射不变。例如用白天照片训练、在黄昏照片上测试。</p>
+<p><strong>内部协变量偏移（Internal Covariate Shift）</strong>：同样的现象发生在网络内部。前一层参数一更新，后一层收到的输入分布就随之改变，每一层都在追赶一个不断移动的目标。批归一化最初正是以缓解这一问题为动机提出的。</p>
+<h3 id="3-2-损失面视角：尺度不同让优化变难"><a href="#3-2-损失面视角：尺度不同让优化变难" class="headerlink" title="3.2 损失面视角：尺度不同让优化变难"></a>3.2 损失面视角：尺度不同让优化变难</h3>
+<p>设一个简单模型 y = w₁x₁ + w₂x₂ + b。若 x₁ 的取值在 1、2 左右，x₂ 的取值在 100、200 左右：</p>
+<ul>
+<li>w₁ 变化 Δw₁ 时，输出只变化一点点，损失对 w₁ 很平缓；</li>
+<li>w₂ 同样变化 Δw₂ 时，输出变化很大，损失对 w₂ 很陡峭。</li>
+</ul>
+<p>于是损失面在不同方向的曲率差别悬殊，等高线呈细长椭圆。同一个学习率对陡峭方向太大、对平缓方向太小，梯度下降只能走锯齿路线。<strong>如果让各维输入处于相同范围，等高线接近圆形，梯度方向更直接地指向最优点。</strong></p>
+<p><img src="/images/courses/deep-learning-foundations/normalization-landscape.png" srcset="/img/loading.gif" lazyload alt="特征尺度不同与归一化后的损失面等高线及梯度下降轨迹"><br><em>左：两个方向曲率相差 25 倍，学习率只能迁就陡峭方向，轨迹来回振荡；右：归一化后曲率接近，可以用更大的学习率直线前进。</em></p>
+<h3 id="3-3-特征归一化"><a href="#3-3-特征归一化" class="headerlink" title="3.3 特征归一化"></a>3.3 特征归一化</h3>
+<p>对 R 个样本 x¹, …, xᴿ，在每个维度 i 上分别计算均值 mᵢ 和标准差 σᵢ：</p>
+<div class="course-math">
+\[
+\tilde x_i^{\,r}\leftarrow\frac{x_i^{\,r}-m_i}{\sigma_i}.
+\]
+</div>
+
+<p>处理后每个维度的均值为 0、方差为 1。一般来说，特征归一化能让梯度下降收敛得更快。</p>
+<h3 id="3-4-深层网络中每一层都需要归一化"><a href="#3-4-深层网络中每一层都需要归一化" class="headerlink" title="3.4 深层网络中每一层都需要归一化"></a>3.4 深层网络中每一层都需要归一化</h3>
+<p>输入层做了归一化，第一层的输出 z = W¹x 各维仍可能处在完全不同的范围，对下一层而言同样难以优化。因此也应该对中间层的 z（或激活 a）做归一化。</p>
+<p>网络中间层的统计量无法事先对整个训练集计算（参数一直在变），于是只在<strong>当前 mini-batch</strong> 上估计。设一个 batch 内有 B 个样本：</p>
+<div class="course-math">
+\[
+\mu=\frac1B\sum_{i=1}^{B}z^i,
+\qquad
+\sigma=\sqrt{\frac1B\sum_{i=1}^{B}\left(z^i-\mu\right)^2},
+\qquad
+\tilde z^i=\frac{z^i-\mu}{\sigma}.
+\]
+</div>
+
+<p>注意 μ 和 σ 依赖 batch 内所有 zⁱ。<strong>某一个样本变化，会通过 μ、σ 影响同批其他样本的输出</strong>；反向传播时梯度也要经过 μ 和 σ。也就是说，此时应把整个 batch 看成一个大网络，这就是“批”归一化名称的由来。</p>
+<h3 id="3-5-BN-的完整计算：再加可学习的缩放与平移"><a href="#3-5-BN-的完整计算：再加可学习的缩放与平移" class="headerlink" title="3.5 BN 的完整计算：再加可学习的缩放与平移"></a>3.5 BN 的完整计算：再加可学习的缩放与平移</h3>
+<p>强行让每层输出均值为 0、方差为 1，可能限制网络的表达能力（例如 sigmoid 被限制在近似线性的区间）。BN 在标准化之后再加一组可学习参数 γ、β：</p>
+<div class="course-math">
+\[
+\mu_{\mathcal B}\leftarrow\frac1m\sum_{i=1}^{m}x_i,\qquad
+\sigma_{\mathcal B}^2\leftarrow\frac1m\sum_{i=1}^{m}(x_i-\mu_{\mathcal B})^2,
+\]
+\[
+\hat x_i\leftarrow\frac{x_i-\mu_{\mathcal B}}{\sqrt{\sigma_{\mathcal B}^2+\epsilon}},\qquad
+y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
+\]
+</div>
+
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>计算</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>mini-batch 均值 μ_B</td>
+<td>每个特征维度单独统计</td>
+</tr>
+<tr>
+<td>2</td>
+<td>mini-batch 方差 σ²_B</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>3</td>
+<td>标准化得到 x̂</td>
+<td>ε 防止除以 0</td>
+</tr>
+<tr>
+<td>4</td>
+<td>缩放平移 y = γx̂ + β</td>
+<td>γ、β 随网络一起训练</td>
+</tr>
+</tbody>
+</table>
+<p>γ、β 初始常设为 1 和 0。若网络学到 γ = √(σ²+ε)、β = μ，BN 就退化为恒等映射，所以加入 BN <strong>不会减小网络能表示的函数集合</strong>，只是换了一种更易优化的参数化方式。</p>
+<h3 id="3-6-推理时不能用测试-batch-的统计量"><a href="#3-6-推理时不能用测试-batch-的统计量" class="headerlink" title="3.6 推理时不能用测试 batch 的统计量"></a>3.6 推理时不能用测试 batch 的统计量</h3>
+<p>推理时可能一次只处理一个样本，此时 batch 均值与方差没有意义；即使 batch 较大，输出也不应依赖同批其他样本。做法是：<strong>训练时用指数滑动平均记录全局均值和方差，推理时直接使用。</strong></p>
+<div class="course-math">
+\[
+\bar\mu\leftarrow p\,\bar\mu+(1-p)\,\mu_{\mathcal B_t},
+\qquad
+\bar\sigma^2\leftarrow p\,\bar\sigma^2+(1-p)\,\sigma_{\mathcal B_t}^2,
+\qquad
+\tilde z=\frac{z-\bar\mu}{\sqrt{\bar\sigma^2+\varepsilon}} .
+\]
+</div>
+
+<p>p 一般接近 1。需要注意 PyTorch 的 <code>momentum=0.1</code> 指的是新 batch 统计量所占的权重，相当于这里的 1−p。推理前务必调用 <code>model.eval()</code> 切换到滑动平均统计量。</p>
+<h3 id="3-7-BN-带来了什么"><a href="#3-7-BN-带来了什么" class="headerlink" title="3.7 BN 带来了什么"></a>3.7 BN 带来了什么</h3>
+<table>
+<thead>
+<tr>
+<th>效果</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>深层网络明显更容易训练</td>
+<td>后续研究认为，BN 的主要作用是让损失面更平滑，而不只是减小内部协变量偏移</td>
+</tr>
+<tr>
+<td>改善梯度流</td>
+<td>各层输入尺度稳定，饱和区与梯度消失都更少出现</td>
+</tr>
+<tr>
+<td>允许更大学习率，收敛更快</td>
+<td>参数尺度变化不会直接放大到输出</td>
+</tr>
+<tr>
+<td>对初始化更鲁棒</td>
+<td>初始尺度偏差会被下一层的 BN 修正</td>
+</tr>
+<tr>
+<td>训练时带有正则化效果</td>
+<td>batch 统计量带来的随机扰动类似加噪</td>
+</tr>
+</tbody>
+</table>
+<p><strong>训练和测试时 BN 的行为不同，这是非常常见的 bug 来源</strong>：忘记切换 <code>eval()</code>、batch 太小导致统计量噪声过大、微调时冻结与否处理不当，都会让测试效果异常。</p>
+<h3 id="3-8-BN-在卷积网络中的形式"><a href="#3-8-BN-在卷积网络中的形式" class="headerlink" title="3.8 BN 在卷积网络中的形式"></a>3.8 BN 在卷积网络中的形式</h3>
+<p>对卷积特征图，同一通道在不同空间位置共享卷积核，因此 BN 也按<strong>通道</strong>统计，把 batch 维与空间维一起求平均：</p>
+<table>
+<thead>
+<tr>
+<th>网络类型</th>
+<th>输入形状</th>
+<th>μ、σ 的形状</th>
+<th>γ、β 的形状</th>
+<th>统计范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全连接</td>
+<td>N × D</td>
+<td>1 × D</td>
+<td>1 × D</td>
+<td>每个特征在 batch 上统计</td>
+</tr>
+<tr>
+<td>卷积（BatchNorm2d）</td>
+<td>N × C × H × W</td>
+<td>1 × C × 1 × 1</td>
+<td>1 × C × 1 × 1</td>
+<td>每个通道在 N、H、W 上统计</td>
+</tr>
+</tbody>
+</table>
+<p>输出都写作 y = γ(x − μ)/σ + β，只是广播的维度不同。</p>
+<h3 id="3-9-归一化家族"><a href="#3-9-归一化家族" class="headerlink" title="3.9 归一化家族"></a>3.9 归一化家族</h3>
+<p>把卷积特征看作 N×C×H×W 的张量，不同归一化方法的区别只在于<strong>沿哪些维度计算均值和方差</strong>：</p>
+<p><img src="/images/courses/deep-learning-foundations/normalization-family.png" srcset="/img/loading.gif" lazyload alt="Batch Norm、Layer Norm、Instance Norm、Group Norm 的统计范围对比"><br><em>横轴是 batch 中的样本，纵轴是通道，每个格子代表一张 H×W 特征图；同色的格子一起计算一组统计量。</em></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>统计范围</th>
+<th>统计量形状</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Batch Norm</td>
+<td>同一通道，跨 N、H、W</td>
+<td>1×C×1×1</td>
+<td>图像分类 CNN，batch 较大</td>
+</tr>
+<tr>
+<td>Layer Norm</td>
+<td>同一样本，跨 C、H、W（序列中为同一词元的全部特征）</td>
+<td>N×1×1×1</td>
+<td>RNN、Transformer</td>
+</tr>
+<tr>
+<td>Instance Norm</td>
+<td>同一样本、同一通道，跨 H、W</td>
+<td>N×C×1×1</td>
+<td>风格迁移、图像生成</td>
+</tr>
+<tr>
+<td>Group Norm</td>
+<td>同一样本，把通道分成 G 组，组内跨通道与 H、W</td>
+<td>N×G×1×1</td>
+<td>检测、分割等小 batch 任务</td>
+</tr>
+</tbody>
+</table>
+<p>Layer Norm、Instance Norm 和 Group Norm 的统计量都只来自单个样本，<strong>训练和测试时的计算完全相同</strong>，也不受 batch 大小影响。此外还有 Batch Renormalization、Weight Normalization、Spectral Normalization 等变体。</p>
+<h2 id="4-优化器：从梯度下降到-Adam"><a href="#4-优化器：从梯度下降到-Adam" class="headerlink" title="4. 优化器：从梯度下降到 Adam"></a>4. 优化器：从梯度下降到 Adam</h2>
+<h3 id="4-1-回顾：梯度下降"><a href="#4-1-回顾：梯度下降" class="headerlink" title="4.1 回顾：梯度下降"></a>4.1 回顾：梯度下降</h3>
+<p>训练目标是 w* = arg min_w L(w)。只有一个参数时：</p>
+<ol>
+<li>随机选取初值 w⁰；</li>
+<li>计算导数 dL/dw 在 w⁰ 处的值：为负说明向右损失减小，应增大 w；为正则应减小 w；</li>
+<li>更新 w¹ ← w⁰ − η·dL/dw|_{w=w⁰}，其中 η 称为<strong>学习率</strong>；</li>
+<li>重复多次迭代。</li>
+</ol>
+<p>有多个参数时，把所有偏导数排成梯度向量 ∇L，同时更新。梯度下降可能停在<strong>局部最小值</strong>而非全局最小值；不过在高维神经网络中，更常见的障碍其实是鞍点和大片平坦区域。</p>
+<h3 id="4-2-批量、随机与小批量梯度下降"><a href="#4-2-批量、随机与小批量梯度下降" class="headerlink" title="4.2 批量、随机与小批量梯度下降"></a>4.2 批量、随机与小批量梯度下降</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>每次更新使用的数据</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>批量梯度下降 Batch GD</td>
+<td>全部训练样本</td>
+<td>梯度准确，但一次更新代价很高</td>
+</tr>
+<tr>
+<td>随机梯度下降 SGD</td>
+<td>单个样本</td>
+<td>更新很快，但损失曲线噪声大、路径曲折</td>
+</tr>
+<tr>
+<td>小批量梯度下降 Mini-batch GD</td>
+<td>一小批 B 个样本</td>
+<td>兼顾效率与稳定性，能利用 GPU 并行</td>
+</tr>
+</tbody>
+</table>
+<p>小批量训练时，把 N 个样本分成若干 batch，依次计算每个 batch 的损失 Lᵇ 的梯度并更新：</p>
+<div class="course-math">
+\[
+g^{t}=\nabla L^{(t+1)}(\theta^{t}),\qquad \theta^{t+1}\leftarrow\theta^{t}-\eta\,g^{t}.
+\]
+</div>
+
+<p><strong>所有 batch 都看过一遍称为一个 epoch</strong>，每个 epoch 之后通常重新打乱数据。日常说的 “SGD” 往往就是指小批量梯度下降。</p>
+<h3 id="4-3-SGD-的困难"><a href="#4-3-SGD-的困难" class="headerlink" title="4.3 SGD 的困难"></a>4.3 SGD 的困难</h3>
+<ul>
+<li><strong>平坦区与鞍点</strong>：梯度接近 0，参数几乎不动；</li>
+<li><strong>局部最小值</strong>：梯度为 0，无法逃出；</li>
+<li><strong>峡谷地形</strong>：陡峭方向来回振荡，平缓方向前进缓慢；</li>
+<li><strong>所有参数共用一个学习率</strong>：而不同参数方向的“陡峭程度”可能相差很多。</li>
+</ul>
+<p>现实世界中，从山坡滚下的小球不会在平地上立刻停住，惯性会带它冲过小坑和平台。把这个现象引入梯度下降，就得到动量法。</p>
+<h3 id="4-4-动量法-SGD-with-Momentum"><a href="#4-4-动量法-SGD-with-Momentum" class="headerlink" title="4.4 动量法 SGD with Momentum"></a>4.4 动量法 SGD with Momentum</h3>
+<p>普通 SGD 的移动方向只看当前梯度。动量法的移动量 = <strong>上一步的移动量 − 当前梯度</strong>：</p>
+<div class="course-math">
+\[
+m^{0}=0,\qquad
+m^{t+1}=\lambda m^{t}-\eta g^{t},\qquad
+\theta^{t+1}=\theta^{t}+m^{t+1}.
+\]
+</div>
+
+<p>展开递推可以看出，移动量是此前所有梯度的指数加权和：</p>
+<div class="course-math">
+\[
+m^{1}=-\eta g^{0},\qquad
+m^{2}=-\lambda\eta g^{0}-\eta g^{1},\qquad
+m^{t}=-\eta\sum_{i=0}^{t-1}\lambda^{\,t-1-i}g^{i}.
+\]
+</div>
+
+<p>这就是<strong>指数加权移动平均（EMA）</strong>的思想：越近的梯度权重越大，越早的梯度按 λ 的幂次衰减。效果有两点：</p>
+<ul>
+<li>在梯度方向一致的平缓方向上，动量不断累积，前进更快；</li>
+<li>在来回振荡的方向上，正负梯度相互抵消，振荡减弱；</li>
+<li>即使到达 ∂L/∂w = 0 的点，上一步的动量仍可能带参数越过局部小坑。</li>
+</ul>
+<p>另一种常见写法是 mₜ = β₁mₜ₋₁ + (1−β₁)gₜ，θₜ = θₜ₋₁ − ηmₜ，二者只差一个缩放系数。</p>
+<h3 id="4-5-不同参数需要不同的学习率：Adagrad"><a href="#4-5-不同参数需要不同的学习率：Adagrad" class="headerlink" title="4.5 不同参数需要不同的学习率：Adagrad"></a>4.5 不同参数需要不同的学习率：Adagrad</h3>
+<p>对单个参数 θᵢ，普通更新是 θᵢᵗ⁺¹ ← θᵢᵗ − ηgᵢᵗ。如果某个方向一直很陡（梯度大），应当用小学习率；一直平缓，则应当用大学习率。Adagrad 把学习率改为与参数相关：</p>
+<div class="course-math">
+\[
+\theta_i^{t+1}\leftarrow\theta_i^{t}-\frac{\eta}{\sigma_i^{t}}\,g_i^{t},
+\qquad
+\sigma_i^{t}=\sqrt{\frac{1}{t+1}\sum_{k=0}^{t}\left(g_i^{k}\right)^2}.
+\]
+</div>
+
+<p>σᵢᵗ 是该参数历史梯度的均方根。梯度一直较大的参数 σ 大、步长小；梯度一直较小的参数 σ 小、步长大。</p>
+<p>问题在于 σ 平均了<strong>全部</strong>历史梯度。误差曲面可能很复杂：同一个参数在某段区域很陡、在另一段又很平。Adagrad 对过去和现在一视同仁，无法及时响应这种变化，而且在实际训练中常常导致学习率过早变得很小。</p>
+<h3 id="4-6-RMSProp：只看最近的梯度大小"><a href="#4-6-RMSProp：只看最近的梯度大小" class="headerlink" title="4.6 RMSProp：只看最近的梯度大小"></a>4.6 RMSProp：只看最近的梯度大小</h3>
+<p>RMSProp 再次用上 EMA，让近期梯度的影响更大，旧梯度逐渐被遗忘：</p>
+<div class="course-math">
+\[
+\sigma_i^{0}=\left|g_i^{0}\right|,\qquad
+\sigma_i^{t}=\sqrt{\alpha\left(\sigma_i^{t-1}\right)^2+(1-\alpha)\left(g_i^{t}\right)^2},
+\qquad 0\lt\alpha\lt1 .
+\]
+</div>
+
+<p>小球从平地进入陡坡时，σ 迅速增大、步长变小；从陡坡回到平地时，σ 很快减小、步长恢复。这样学习率就能随误差曲面<strong>动态调整</strong>。</p>
+<h3 id="4-7-Adam-动量-RMSProp"><a href="#4-7-Adam-动量-RMSProp" class="headerlink" title="4.7 Adam = 动量 + RMSProp"></a>4.7 Adam = 动量 + RMSProp</h3>
+<p>Adam 同时维护梯度的一阶矩（方向）和二阶矩（大小）：</p>
+<div class="course-math">
+\[
+g_t=\nabla_\theta f_t(\theta_{t-1}),
+\]
+\[
+m_t=\beta_1m_{t-1}+(1-\beta_1)g_t,\qquad
+v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
+\]
+\[
+\hat m_t=\frac{m_t}{1-\beta_1^{\,t}},\qquad
+\hat v_t=\frac{v_t}{1-\beta_2^{\,t}},\qquad
+\theta_t=\theta_{t-1}-\alpha\,\frac{\hat m_t}{\sqrt{\hat v_t}+\epsilon}.
+\]
+</div>
+
+<table>
+<thead>
+<tr>
+<th>量</th>
+<th>回答的问题</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gₜ</td>
+<td>当前梯度是多少</td>
+<td>反向传播</td>
+</tr>
+<tr>
+<td>mₜ</td>
+<td>最近的梯度平均朝哪个方向</td>
+<td>动量</td>
+</tr>
+<tr>
+<td>vₜ</td>
+<td>最近的梯度通常有多大</td>
+<td>RMSProp</td>
+</tr>
+<tr>
+<td>m̂ₜ、v̂ₜ</td>
+<td>修正初始化为 0 带来的偏差</td>
+<td>偏差修正</td>
+</tr>
+<tr>
+<td>θₜ 更新</td>
+<td>用方向除以典型尺度决定步长</td>
+<td>二者结合</td>
+</tr>
+</tbody>
+</table>
+<p>常用默认值：α = 0.001，β₁ = 0.9，β₂ = 0.999，ε = 10⁻⁸，m₀ = v₀ = 0。</p>
+<p><strong>为什么要偏差修正？</strong> m₀ = 0，第一步 m₁ = 0.1g₁，只有真实梯度的十分之一；v₁ = 0.001g₁² 更是严重偏小。除以 1−β₁ᵗ 和 1−β₂ᵗ 后，第一步恰好得到 m̂₁ = g₁、v̂₁ = g₁²。随着 t 增大，修正因子趋于 1，自动失效。</p>
+<p><strong>一个数值例子</strong>（α = 0.01，第一步）：</p>
+<table>
+<thead>
+<tr>
+<th>计算量</th>
+<th>参数 1</th>
+<th>参数 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>当前梯度 g₁</td>
+<td>10</td>
+<td>1</td>
+</tr>
+<tr>
+<td>m₁ = 0.1g₁</td>
+<td>1</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td>v₁ = 0.001g₁²</td>
+<td>0.1</td>
+<td>0.001</td>
+</tr>
+<tr>
+<td>修正后 m̂₁</td>
+<td>10</td>
+<td>1</td>
+</tr>
+<tr>
+<td>修正后 v̂₁</td>
+<td>100</td>
+<td>1</td>
+</tr>
+<tr>
+<td>m̂₁ / √v̂₁</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>参数变化 Δθ₁</td>
+<td>−0.01</td>
+<td>−0.01</td>
+</tr>
+</tbody>
+</table>
+<p>梯度相差 10 倍，第一步的步长却完全一样。<strong>Adam 的步长大致由 α 决定，而与梯度的绝对尺度无关</strong>，这让它对不同层、不同参数的尺度差异不敏感，也让它成为最常用的默认优化器。</p>
+<p><img src="/images/courses/deep-learning-foundations/optimizer-trajectories.png" srcset="/img/loading.gif" lazyload alt="五种优化器在病态二次函数上的轨迹与损失曲线"><br><em>SGD 在陡峭的 θ₂ 方向来回振荡；动量法冲得更快但会过冲；Adagrad、RMSProp 按维度调整步长，路径更直；Adam 的步长接近固定值 α，靠近最优点时会小幅振荡，这也是它常与学习率衰减搭配的原因。</em></p>
+<h3 id="4-8-从-GD-到-Adam-的脉络"><a href="#4-8-从-GD-到-Adam-的脉络" class="headerlink" title="4.8 从 GD 到 Adam 的脉络"></a>4.8 从 GD 到 Adam 的脉络</h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>更新形式</th>
+<th>学习率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>梯度下降 → SGD（小批量）→ SGD + 动量</td>
+<td>θᵢᵗ⁺¹ ← θᵢᵗ − η gᵢᵗ（动量时用 mᵢᵗ 代替 gᵢᵗ）</td>
+<td>固定</td>
+</tr>
+<tr>
+<td>Adagrad → RMSProp → Adam</td>
+<td>θᵢᵗ⁺¹ ← θᵢᵗ − (η / σᵢᵗ) gᵢᵗ</td>
+<td>按参数自适应</td>
+</tr>
+<tr>
+<td>学习率调度</td>
+<td>θᵢᵗ⁺¹ ← θᵢᵗ − (ηᵗ / σᵢᵗ) gᵢᵗ</td>
+<td>随时间可调</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>优化器</th>
+<th>提出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SGD</td>
+<td>Cauchy, 1847</td>
+</tr>
+<tr>
+<td>SGD with momentum</td>
+<td>Rumelhart et al., Nature 1986</td>
+</tr>
+<tr>
+<td>Adagrad</td>
+<td>Duchi et al., JMLR 2011</td>
+</tr>
+<tr>
+<td>RMSProp</td>
+<td>Hinton, Lecture slides, 2013</td>
+</tr>
+<tr>
+<td>Adam</td>
+<td>Kingma &amp; Ba, ICLR 2015</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-学习率调度"><a href="#5-学习率调度" class="headerlink" title="5. 学习率调度"></a>5. 学习率调度</h2>
+<h3 id="5-1-学习率选多大"><a href="#5-1-学习率选多大" class="headerlink" title="5.1 学习率选多大"></a>5.1 学习率选多大</h3>
+<p>SGD、动量法、Adagrad、RMSProp、Adam 都把学习率当作超参数。典型的训练曲线是：</p>
+<ul>
+<li><strong>学习率过高</strong>：损失很快爆炸或剧烈振荡；</li>
+<li><strong>学习率偏高</strong>：开始下降很快，但很早就停在较高的平台；</li>
+<li><strong>学习率过低</strong>：一直在降，但慢得难以接受；</li>
+<li><strong>合适的学习率</strong>：既下降得快，最终损失也低。</li>
+</ul>
+<p>与其纠结固定取哪一个，不如<strong>开始用较大的学习率，之后随时间逐渐衰减</strong>：前期大步接近目标，后期小步精细收敛。</p>
+<h3 id="5-2-常见的衰减方式"><a href="#5-2-常见的衰减方式" class="headerlink" title="5.2 常见的衰减方式"></a>5.2 常见的衰减方式</h3>
+<div class="course-math">
+\[
+\text{Cosine:}\ \ \alpha_t=\frac12\alpha_0\left(1+\cos\frac{t\pi}{T}\right),\qquad
+\text{Linear:}\ \ \alpha_t=\alpha_0\left(1-\frac tT\right),\qquad
+\text{Inverse sqrt:}\ \ \alpha_t=\frac{\alpha_0}{\sqrt t}.
+\]
+</div>
+
+<p>α₀ 是初始学习率，αₜ 是第 t 个 epoch 的学习率，T 是总 epoch 数。</p>
+<table>
+<thead>
+<tr>
+<th>调度方式</th>
+<th>做法</th>
+<th>代表用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>阶梯衰减 Step</td>
+<td>在几个固定节点把学习率乘以常数</td>
+<td>ResNet：第 30、60、90 个 epoch 各乘 0.1</td>
+</tr>
+<tr>
+<td>按指标衰减 ReduceLROnPlateau</td>
+<td>验证指标停滞若干 epoch 后才降低</td>
+<td>不确定何时该降时使用</td>
+</tr>
+<tr>
+<td>余弦 Cosine</td>
+<td>按半个余弦周期平滑降到 0</td>
+<td>图像分类常用（SGDR，ICLR 2017）</td>
+</tr>
+<tr>
+<td>线性 Linear</td>
+<td>线性降到 0</td>
+<td>语言模型预训练 / 微调常用</td>
+</tr>
+<tr>
+<td>平方根倒数 Inverse sqrt</td>
+<td>按 1/√t 衰减</td>
+<td>Transformer 类模型</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-3-Warmup：先升后降"><a href="#5-3-Warmup：先升后降" class="headerlink" title="5.3 Warmup：先升后降"></a>5.3 Warmup：先升后降</h3>
+<p>有时一开始就用大学习率反而不行，需要<strong>先用小学习率热身，再升到目标值，之后再衰减</strong>。</p>
+<ul>
+<li>训练 110 层 ResNet 时，0.1 的初始学习率太大，难以开始收敛。做法是先用 0.01 训练到训练误差低于 80%（约 400 次迭代），再回到 0.1 继续。</li>
+<li>原始 Transformer 使用 Adam（β₁ = 0.9，β₂ = 0.98，ε = 10⁻⁹），学习率按下式变化：</li>
+</ul>
+<div class="course-math">
+\[
+\mathrm{lrate}=d_{\mathrm{model}}^{-0.5}\cdot
+\min\!\left(\mathrm{step}^{-0.5},\ \mathrm{step}\cdot\mathrm{warmup\_steps}^{-1.5}\right),
+\qquad \mathrm{warmup\_steps}=4000 .
+\]
+</div>
+
+<p>前 4000 步学习率线性增大，之后按步数的平方根倒数减小。</p>
+<p><strong>为什么需要 warmup？</strong> 训练初期参数是随机的，梯度大且方向不稳定；Adam 的二阶矩估计也只基于很少几步，偏差较大。先用小步长让参数和统计量进入较稳定的区域，再放开步长，可以避免早期发散。</p>
+<p><img src="/images/courses/deep-learning-foundations/lr-schedules.png" srcset="/img/loading.gif" lazyload alt="阶梯、余弦、线性、平方根倒数与 warmup 学习率曲线"><br><em>左：阶梯衰减；中：三种连续衰减（初始学习率 0.1，共 100 个 epoch）；右：d_model=512、warmup_steps=4000 时原始 Transformer 的学习率曲线。</em></p>
+<h2 id="6-小结与易错点"><a href="#6-小结与易错点" class="headerlink" title="6. 小结与易错点"></a>6. 小结与易错点</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>权重可以全部初始化为 0 吗</td>
+<td>不可以，隐藏单元会保持对称；偏置通常可以为 0</td>
+</tr>
+<tr>
+<td>Xavier 与 He 怎样选</td>
+<td>tanh / 近似线性激活用 Xavier；ReLU 及其变体用 He</td>
+</tr>
+<tr>
+<td>卷积层的 fan-in 是多少</td>
+<td>C_in·K_h·K_w，不包括特征图高宽与 batch</td>
+</tr>
+<tr>
+<td>BN 推理时用什么统计量</td>
+<td>训练期间累积的滑动平均，而不是测试 batch 的统计量</td>
+</tr>
+<tr>
+<td>BN 为什么还要 γ、β</td>
+<td>恢复表达能力，必要时可退化为恒等映射</td>
+</tr>
+<tr>
+<td>小 batch 训练时用什么归一化</td>
+<td>Group Norm / Layer Norm，统计量不依赖 batch</td>
+</tr>
+<tr>
+<td>动量法的“动量”是什么</td>
+<td>历史梯度的指数加权和</td>
+</tr>
+<tr>
+<td>Adagrad 的缺点</td>
+<td>累计全部历史梯度，学习率只减不增，响应慢</td>
+</tr>
+<tr>
+<td>Adam 为什么要偏差修正</td>
+<td>m、v 从 0 开始，前几步估计偏小</td>
+</tr>
+<tr>
+<td>用了 Adam 还需要学习率调度吗</td>
+<td>通常仍然需要，warmup 与衰减能进一步稳定训练</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="/courses/deep-learning-foundations/">课程目录</a> · <a href="/courses/deep-learning-foundations/convolutional-neural-networks/">上一章：卷积神经网络</a> · <a href="/courses/deep-learning-foundations/recurrent-neural-networks/">下一章：循环神经网络</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <!--<a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>--> <i class="iconfont icon-love"></i> <!--<a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>--> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
