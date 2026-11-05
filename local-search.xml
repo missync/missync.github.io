@@ -4,6 +4,453 @@
   
   
   <entry>
+    <title>矩阵理论与应用</title>
+    <link href="/courses/matrix-theory/"/>
+    <url>/courses/matrix-theory/</url>
+    
+    <content type="html"><![CDATA[<p>这门课的笔记尽量做到“先看图、再看定理、最后看例题”：每个重要结论都配一张几何图或数值实验，并用提示框区分直观理解、定义、定理、例题和易错点。</p><ul><li><p><a href="/courses/matrix-theory/linear-spaces/">第一章：线性空间引论</a>：线性空间与子空间、基与坐标、内积、正交与直和</p></li><li><p><a href="/courses/matrix-theory/linear-maps/">第二章：线性映射与矩阵</a>：核与值域、矩阵表示、相似、特征值、正交与酉变换</p></li><li><p><a href="/courses/matrix-theory/matrix-decompositions/">第三章：矩阵分解</a>：满秩、LU、QR、Schur、对角化、谱分解与 Jordan 标准形</p></li><li><p><a href="/courses/matrix-theory/matrix-analysis/">第四章：矩阵分析</a>：范数、特征值估计、矩阵级数与矩阵函数</p></li></ul>]]></content>
+    
+    <categories>
+      
+      <category>数学</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>矩阵</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>矩阵理论与应用（一）：线性空间引论</title>
+    <link href="/courses/matrix-theory/linear-spaces/index.html"/>
+    <url>/courses/matrix-theory/linear-spaces/index.html</url>
+    
+    <content type="html"><![CDATA[<style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}.markdown-body .note>p:last-child{margin-bottom:0}</style><h2 id="0-阅读说明"><a href="#0-阅读说明" class="headerlink" title="0. 阅读说明"></a>0. 阅读说明</h2><p>矩阵理论的定理很多，但大多数都在回答同几个问题：<strong>一个“空间”里有哪些元素、怎样用坐标描述它们、怎样度量长度和角度、怎样把空间拆成更简单的部分。</strong>本章先把这些“舞台”搭好，后面的线性映射、矩阵分解与矩阵分析都在这个舞台上展开。</p><p>每节按“直观图像 → 严格定义 → 定理 → 例题”的顺序组织，颜色约定如下：</p><div class="note note-info"><p><strong>直观理解</strong>：先用几何图像建立感觉。</p></div><div class="note note-primary"><p><strong>定义</strong>：需要准确记住的概念。</p></div><div class="note note-success"><p><strong>定理</strong>：结论及其成立条件。</p></div><div class="note note-warning"><p><strong>例题</strong>：把结论落到具体计算上。</p></div><div class="note note-danger"><p><strong>易错点</strong>：考试和计算中最容易出错的地方。</p></div><h2 id="1-线性空间"><a href="#1-线性空间" class="headerlink" title="1. 线性空间"></a>1. 线性空间</h2><h3 id="1-1-从箭头到抽象向量"><a href="#1-1-从箭头到抽象向量" class="headerlink" title="1.1 从箭头到抽象向量"></a>1.1 从箭头到抽象向量</h3><p>三维空间中，每个点 A 对应一个从原点出发的箭头 OA，每个箭头又对应一个有序数组 (a₁, a₂, a₃)。箭头之间可以相加（平行四边形法则）、可以伸缩（数乘），这两种运算满足一系列熟悉的规律。</p><div class="note note-info"><p><strong>直观理解</strong>：线性空间就是把“箭头能相加、能伸缩”这件事抽象出来。只要一个集合里的元素能做加法和数乘，并且满足和箭头一样的八条运算规律，就可以把它们当作“向量”。这样，多项式、矩阵、函数、离散信号都能用同一套工具处理。</p></div><h3 id="1-2-数域与线性空间的定义"><a href="#1-2-数域与线性空间的定义" class="headerlink" title="1.2 数域与线性空间的定义"></a>1.2 数域与线性空间的定义</h3><div class="note note-primary"><p><strong>定义（数域）</strong>：设 F 是包含 0 和 1 的数集，若 F 对加、减、乘、除（除数非零）四则运算封闭，则称 F 为数域。有理数集 ℚ、实数集 ℝ、复数集 ℂ 都是数域；整数集 ℤ 不是（对除法不封闭）。</p></div><div class="note note-primary"><p><strong>定义（线性空间）</strong>：设 V 是非空集合，F 是数域。在 V 上定义加法，在 F 与 V 之间定义数乘，若对任意 x, y, z ∈ V 和 k, l ∈ F 满足：</p><ol><li>加法交换律 x + y = y + x；</li><li>加法结合律 (x + y) + z = x + (y + z)；</li><li>存在零元素 θ，使 x + θ = x；</li><li>存在负元素 −x，使 x + (−x) = θ；</li><li>1·x = x；</li><li>k(lx) = (kl)x；</li><li>(k + l)x = kx + lx；</li><li>k(x + y) = kx + ky，</li></ol><p>则称 V 为数域 F 上的<strong>线性空间</strong>。前四条说明 (V, +) 是一个加群。</p></div><p>常见的线性空间：</p><table><thead><tr><th>空间</th><th>元素</th><th>加法与数乘</th></tr></thead><tbody><tr><td>Fⁿ</td><td>n 元有序数组</td><td>按分量</td></tr><tr><td>Fᵐˣⁿ</td><td>m×n 矩阵</td><td>矩阵加法与数乘</td></tr><tr><td>Pₙ[x]</td><td>次数小于 n 的多项式</td><td>多项式加法与数乘</td></tr><tr><td>C[a, b]</td><td>[a, b] 上的连续函数</td><td>函数逐点相加、数乘</td></tr><tr><td>齐次方程组 Ax = 0 的解集</td><td>解向量</td><td>按分量</td></tr></tbody></table><div class="note note-warning"><p><strong>例题：一个“奇怪”的线性空间</strong></p><p>设 V = ℝ⁺（正实数全体），F = ℝ，定义“加法”a ⊕ b = ab，“数乘”k ⊙ a = aᵏ。验证 V 是线性空间。</p><ul><li>封闭性：正数相乘仍为正数，正数的实数次幂仍为正数；</li><li>零元素是 <strong>1</strong>：a ⊕ 1 = a；a 的负元素是 <strong>1/a</strong>：a ⊕ (1/a) = 1；</li><li>分配律：(k + l) ⊙ a = aᵏ⁺ˡ = aᵏaˡ = (k ⊙ a) ⊕ (l ⊙ a)，k ⊙ (a ⊕ b) = (ab)ᵏ = aᵏbᵏ。</li></ul><p>其余几条同样可以逐一验证。这个例子说明：<strong>“零元素”不一定是数 0，“加法”也不一定是普通加法</strong>，关键在于运算是否满足八条规律。事实上 ln 把 (ℝ⁺, ⊕, ⊙) 一一对应到 (ℝ, +, ·)，两者“结构相同”，这就是下一章要讲的同构。</p></div><div class="note note-danger"><p><strong>易错点</strong>：判断是否构成线性空间时，第一步先看<strong>零元素是否在集合中、运算是否封闭</strong>。例如集合 {(1, a₂, …, aₙ)ᵀ} 对普通加法不封闭（两向量相加第一个分量变成 2），因此不是线性空间。</p></div><h3 id="1-3-线性组合"><a href="#1-3-线性组合" class="headerlink" title="1.3 线性组合"></a>1.3 线性组合</h3><p>若 x = k₁x₁ + k₂x₂ + ⋯ + kₘxₘ，则称 x 可由 x₁, …, xₘ <strong>线性表示</strong>。</p><div class="note note-warning"><p><strong>例题：矩阵也能“线性表示”</strong></p><p>设 A = [[1, 1], [0, 1]]。问 A² 能否由 A 和 I 线性表示？</p><p>A² = [[1, 2], [0, 1]]。设 A² = aA + bI，比较元素：右上角 2 = a，对角线 1 = a + b，得 a = 2，b = −1，即 <strong>A² = 2A − I</strong>。</p><p>这个关系并非巧合：A 的特征多项式是 (λ − 1)² = λ² − 2λ + 1，代入 A 恰好为零矩阵。第三章的 Hamilton–Cayley 定理会说明：<strong>任何 n 阶矩阵的 n 次幂都能由更低次幂线性表示</strong>。</p></div><h2 id="2-线性子空间"><a href="#2-线性子空间" class="headerlink" title="2. 线性子空间"></a>2. 线性子空间</h2><h3 id="2-1-子空间与判定定理"><a href="#2-1-子空间与判定定理" class="headerlink" title="2.1 子空间与判定定理"></a>2.1 子空间与判定定理</h3><p><img src="/images/courses/matrix-theory/ch1-subspaces.png" srcset="/img/loading.gif" lazyload alt="子空间、交空间与和空间的几何图像"><br><em>左：过原点的直线是子空间，不过原点的直线对加法不封闭；中：ℝ³ 中两个过原点的平面，交是一条直线，和是整个空间；右：两条坐标轴的并不是子空间，u + v 跑到了并集之外。</em></p><div class="note note-primary"><p><strong>定义（子空间）</strong>：设 W 是线性空间 V 的非空子集，若 W 对 V 的加法和数乘也构成线性空间，则称 W 为 V 的<strong>子空间</strong>。</p></div><div class="note note-success"><p><strong>定理（子空间判定）</strong>：V 的非空子集 W 是子空间，当且仅当 W 对加法和数乘封闭：</p><div class="course-math">
+\[
+\forall\,x,y\in W,\ k\in F:\qquad x+y\in W,\quad kx\in W
+\quad\Longleftrightarrow\quad
+kx+ly\in W .
+\]
+</div><p>八条运算律从 V 继承而来，不必重新验证。</p></div><ul><li>任何子空间都包含零向量，所以<strong>检验子空间时首先看零向量是否在 W 中</strong>；</li><li>{θ} 和 V 本身称为<strong>平凡子空间</strong>；</li><li>ℝ² 不是 ℝ³ 的子空间（元素根本不在 ℝ³ 中），但 {(a₁, a₂, 0)ᵀ} 是 ℝ³ 的子空间，它与 ℝ² 结构相同。</li></ul><h3 id="2-2-交空间与和空间"><a href="#2-2-交空间与和空间" class="headerlink" title="2.2 交空间与和空间"></a>2.2 交空间与和空间</h3><div class="note note-success"><p><strong>定理</strong>：设 W₁、W₂ 是 V 的子空间，则</p><ul><li><strong>交空间</strong> W₁ ∩ W₂ 是子空间；</li><li><strong>和空间</strong> W₁ + W₂ = {x₁ + x₂ | x₁ ∈ W₁, x₂ ∈ W₂} 是子空间，而且是包含 W₁ ∪ W₂ 的<strong>最小</strong>子空间；</li><li><strong>并集</strong> W₁ ∪ W₂ 一般<strong>不是</strong>子空间，只有当一个包含另一个时才是。</li></ul></div><h3 id="2-3-矩阵的四个基本子空间（先认识两个）"><a href="#2-3-矩阵的四个基本子空间（先认识两个）" class="headerlink" title="2.3 矩阵的四个基本子空间（先认识两个）"></a>2.3 矩阵的四个基本子空间（先认识两个）</h3><div class="note note-primary"><p><strong>定义</strong>：设 A ∈ ℂᵐˣⁿ。</p><ul><li><strong>零空间（核）</strong> N(A) = {x ∈ ℂⁿ | Ax = 0}，即齐次方程组 Ax = 0 的解空间，是 ℂⁿ 的子空间；</li><li><strong>列空间（值域）</strong> R(A) = {Ax | x ∈ ℂⁿ} = span{a₁, …, aₙ}，由 A 的列向量张成，是 ℂᵐ 的子空间。</li></ul></div><p>Ax 正是 A 的各列以 x 的分量为系数的线性组合：</p><div class="course-math">
+\[
+Ax=\begin{pmatrix}a_1&a_2&\cdots&a_n\end{pmatrix}\begin{pmatrix}x_1\\\vdots\\x_n\end{pmatrix}
+=x_1a_1+x_2a_2+\cdots+x_na_n .
+\]
+</div><p>所以 <strong>Ax = b 有解 ⇔ b ∈ R(A)</strong>。由向量组 α₁, …, αₙ 生成的子空间记为 span{α₁, …, αₙ}，它是包含这些向量的最小子空间。</p><div class="note note-warning"><p><strong>例题：工程中的子空间</strong></p><p>线性滤波器常由差分方程 y(k) + a₁y(k−1) + ⋯ + aₙy(k−n) = 0 描述。若 y₁(k)、y₂(k) 都是解，则 c₁y₁ + c₂y₂ 代入后仍满足方程，所以全部解构成离散时间信号空间的一个子空间。<strong>“线性系统满足叠加原理”在数学上就是“解集是子空间”。</strong></p></div><h2 id="3-基、坐标与维数"><a href="#3-基、坐标与维数" class="headerlink" title="3. 基、坐标与维数"></a>3. 基、坐标与维数</h2><h3 id="3-1-线性相关与线性无关"><a href="#3-1-线性相关与线性无关" class="headerlink" title="3.1 线性相关与线性无关"></a>3.1 线性相关与线性无关</h3><div class="note note-primary"><p><strong>定义</strong>：若存在不全为零的 k₁, …, kₘ 使 k₁x₁ + ⋯ + kₘxₘ = θ，则称 x₁, …, xₘ <strong>线性相关</strong>；否则（只有全零系数才能组合出零向量）称为<strong>线性无关</strong>。</p></div><p>几何上：两个向量线性相关 ⇔ 共线；三个向量线性相关 ⇔ 共面。几个常用事实：</p><ul><li>单个零向量线性相关；含零向量的向量组必线性相关；</li><li>线性无关组的任一部分组仍线性无关；线性相关组添加向量后仍线性相关；</li><li>若 x₁, …, xₘ 线性无关，而 x₁, …, xₘ, y 线性相关，则 y 可由 x₁, …, xₘ <strong>唯一</strong>线性表示。</li></ul><div class="note note-danger"><p><strong>易错点：线性相关性依赖于数域。</strong> 把 ℂ 看作 ℂ 上的线性空间，1 和 i 线性相关（i·1 + (−1)·i = 0，系数 i 属于 ℂ）；把 ℂ 看作 ℝ 上的线性空间，1 和 i 线性无关（实系数 a + bi = 0 只能 a = b = 0）。</p></div><h3 id="3-2-基与坐标"><a href="#3-2-基与坐标" class="headerlink" title="3.2 基与坐标"></a>3.2 基与坐标</h3><div class="note note-primary"><p><strong>定义（基与坐标）</strong>：若 V 中的向量组 x₁, …, xₙ 线性无关，且 V 中任一向量都能由它们线性表示，则称其为 V 的一组<strong>基</strong>。此时任一 x ∈ V 都有<strong>唯一</strong>的表示</p><div class="course-math">
+\[
+x=\xi_1x_1+\xi_2x_2+\cdots+\xi_nx_n=\begin{pmatrix}x_1&\cdots&x_n\end{pmatrix}\begin{pmatrix}\xi_1\\\vdots\\\xi_n\end{pmatrix},
+\]
+</div><p>(ξ₁, …, ξₙ)ᵀ 称为 x 在这组基下的<strong>坐标</strong>。</p></div><div class="note note-success"><p><strong>定理</strong>：同一线性空间的不同基所含向量个数相同，这个数称为空间的<strong>维数</strong>，记作 dim V。</p></div><p><img src="/images/courses/matrix-theory/ch1-basis-coordinates.png" srcset="/img/loading.gif" lazyload alt="同一个向量在两组基下的坐标"><br><em>坐标不是向量本身，而是“用哪组基去量”的读数。换一组基就像换一张斜的坐标纸，同一个箭头读出的数字不同。</em></p><div class="note note-warning"><p><strong>例题：多项式的坐标就是 Taylor 系数</strong></p><p>在 Pₙ[x] 中取基 1, x, x², …, xⁿ⁻¹，多项式 f(x) 的坐标就是各次项系数。由 Taylor 公式</p><div class="course-math">
+\[
+f(x)=f(0)+f'(0)x+\frac{f''(0)}{2!}x^2+\cdots+\frac{f^{(n-1)}(0)}{(n-1)!}x^{n-1},
+\]
+</div><p>坐标是 (f(0), f′(0), f″(0)/2!, …)ᵀ。若改用基 1, (x−a), (x−a)², …，坐标就变成 f 在 a 点的 Taylor 系数。<strong>同一个多项式，换一个展开点，就是换一组基。</strong></p></div><div class="note note-warning"><p><strong>例题：维数依赖于数域</strong></p><p>ℂ 作为 ℂ 上的线性空间，基为 {1}，维数为 1；作为 ℝ 上的线性空间，基为 {1, i}，维数为 2。</p></div><h3 id="3-3-过渡矩阵与坐标变换"><a href="#3-3-过渡矩阵与坐标变换" class="headerlink" title="3.3 过渡矩阵与坐标变换"></a>3.3 过渡矩阵与坐标变换</h3><div class="note note-primary"><p><strong>定义（过渡矩阵）</strong>：设 x₁, …, xₙ 和 y₁, …, yₙ 是 V 的两组基，若</p><div class="course-math">
+\[
+\begin{pmatrix}y_1&\cdots&y_n\end{pmatrix}=\begin{pmatrix}x_1&\cdots&x_n\end{pmatrix}P,
+\]
+</div><p>则称 P 为从基 {xᵢ} 到基 {yᵢ} 的<strong>过渡矩阵</strong>。P 的第 j 列是 yⱼ 在旧基下的坐标，P 必可逆。</p></div><div class="note note-success"><p><strong>定理（坐标变换公式）</strong>：设向量 x 在旧基下坐标为 ξ，在新基下坐标为 η，则</p><div class="course-math">
+\[
+\xi=P\eta,\qquad \eta=P^{-1}\xi .
+\]
+</div></div><div class="note note-danger"><p><strong>易错点</strong>：<strong>基变换用 P 右乘，坐标变换用 P⁻¹</strong>，方向相反。记忆方法：x = (旧基)ξ = (新基)η = (旧基)Pη，比较即得 ξ = Pη。</p></div><h3 id="3-4-维数定理"><a href="#3-4-维数定理" class="headerlink" title="3.4 维数定理"></a>3.4 维数定理</h3><div class="note note-success"><p><strong>推论（基扩充定理）</strong>：n 维空间中任意 m 个线性无关向量（m &lt; n）都可以扩充为整个空间的一组基。</p></div><div class="note note-success"><p><strong>定理（维数公式）</strong>：设 W₁、W₂ 是有限维空间 V 的子空间，则</p><div class="course-math">
+\[
+\dim(W_1+W_2)=\dim W_1+\dim W_2-\dim(W_1\cap W_2).
+\]
+</div></div><div class="note note-info"><p><strong>直观理解</strong>：这和集合的“容斥原理” |A∪B| = |A| + |B| − |A∩B| 形式相同。两个公共部分被重复计算了一次，所以要减去。例如 ℝ³ 中两个不同的过原点平面：2 + 2 − 1 = 3。</p><p><strong>证明思路</strong>：取 W₁∩W₂ 的一组基 α₁, …, αᵣ，分别扩充成 W₁ 的基（再加 β₁, …, βₛ）和 W₂ 的基（再加 γ₁, …, γₜ），再证明 α、β、γ 合在一起恰好是 W₁+W₂ 的基。</p></div><div class="note note-warning"><p><strong>例题：求和空间与交空间的维数和基</strong></p><p>W₁ = span{α₁, α₂, α₃}，W₂ = span{β₁, β₂}。常用做法：</p><ol><li>把 α₁, α₂, α₃, β₁, β₂ 排成矩阵的列，做初等行变换，求出秩和极大无关组，得 W₁ + W₂ 的维数与基；</li><li>用维数公式算出 dim(W₁∩W₂)；</li><li>交空间的基：解 k₁α₁ + k₂α₂ + k₃α₃ = l₁β₁ + l₂β₂，得到的公共向量 l₁β₁ + l₂β₂ 张成 W₁ ∩ W₂。</li></ol></div><h2 id="4-内积空间"><a href="#4-内积空间" class="headerlink" title="4. 内积空间"></a>4. 内积空间</h2><h3 id="4-1-内积的定义"><a href="#4-1-内积的定义" class="headerlink" title="4.1 内积的定义"></a>4.1 内积的定义</h3><div class="note note-primary"><p><strong>定义（内积）</strong>：设 F = ℝ 或 ℂ，V 是 F 上的线性空间。若对任意 x, y ∈ V 都对应一个数 (x, y) ∈ F，且满足</p><ol><li><strong>共轭对称</strong>：(x, y) = conj((y, x))；</li><li><strong>可加性</strong>：(x + y, z) = (x, z) + (y, z)；</li><li><strong>齐次性</strong>：(kx, y) = k(x, y)；</li><li><strong>正定性</strong>：(x, x) ≥ 0，且 (x, x) = 0 ⇔ x = θ，</li></ol><p>则称 (x, y) 为内积，V 为<strong>内积空间</strong>。实内积空间称为<strong>欧氏空间</strong>，复内积空间称为<strong>酉空间</strong>。</p></div><div class="note note-danger"><p><strong>易错点</strong>：复内积只对第一个变元线性，对第二个变元是<strong>共轭线性</strong>的：(x, ky) = conj(k)(x, y)。ℂⁿ 中的标准内积写作 (x, y) = yᴴx = Σ xᵢ·conj(yᵢ)，不要漏掉共轭，否则 (x, x) 可能不是正实数（例如 x = (1, i)ᵀ 时 xᵀx = 0）。</p></div><h3 id="4-2-Hermite-矩阵、正定矩阵与度量矩阵"><a href="#4-2-Hermite-矩阵、正定矩阵与度量矩阵" class="headerlink" title="4.2 Hermite 矩阵、正定矩阵与度量矩阵"></a>4.2 Hermite 矩阵、正定矩阵与度量矩阵</h3><div class="note note-primary"><p><strong>定义</strong>：若 Aᴴ = A（Aᴴ 为共轭转置），则称 A 为 <strong>Hermite 矩阵</strong>；若对任意非零 x 都有 xᴴAx &gt; 0，则称 Hermite 矩阵 A 为<strong>正定矩阵</strong>。</p></div><p>设 ε₁, …, εₙ 是内积空间 V 的一组基，x、y 的坐标分别为 ξ、η。由内积的线性性：</p><div class="course-math">
+\[
+(x,y)=\sum_{i,j}\xi_i\,\overline{\eta_j}\,(\varepsilon_i,\varepsilon_j)=\eta^{H}G\,\xi,
+\qquad G=\big((\varepsilon_i,\varepsilon_j)\big)^{\mathsf T}\ \text{（第 }i\text{ 行第 }j\text{ 列为 }(\varepsilon_j,\varepsilon_i)\text{）}.
+\]
+</div><div class="note note-primary"><p><strong>定义（度量矩阵 / Gram 矩阵）</strong>：上式中的 G 称为内积在这组基下的<strong>度量矩阵</strong>。G 是 Hermite 正定矩阵；反过来，任意 Hermite 正定矩阵 G 都可以通过 (x, y) = yᴴGx 定义一个内积。<strong>内积与度量矩阵一一对应。</strong></p></div><p><img src="/images/courses/matrix-theory/ch1-inner-products.png" srcset="/img/loading.gif" lazyload alt="同一空间上不同内积对应的单位圆与正交关系"><br><em>度量矩阵 G 决定了“长度为 1”的向量构成什么形状，也决定了谁和谁“垂直”。标准内积下的单位圆，换一个 G 就变成椭圆。</em></p><div class="note note-warning"><p><strong>例题：判断能否定义内积</strong></p><p>在 ℂ² 中令 f(x) = xᴴAx，A = [[2, i], [−i, 2]]。A 是 Hermite 矩阵，顺序主子式 2 &gt; 0、det A = 4 − 1 = 3 &gt; 0，所以 A 正定，(x, y) = yᴴAx 是 ℂ² 上的一个内积。在这个内积下 e₁ = (1, 0)ᵀ 的长度是 √2，而不是 1。</p></div><h2 id="5-长度、夹角与正交"><a href="#5-长度、夹角与正交" class="headerlink" title="5. 长度、夹角与正交"></a>5. 长度、夹角与正交</h2><h3 id="5-1-长度与-Cauchy–Schwarz-不等式"><a href="#5-1-长度与-Cauchy–Schwarz-不等式" class="headerlink" title="5.1 长度与 Cauchy–Schwarz 不等式"></a>5.1 长度与 Cauchy–Schwarz 不等式</h3><div class="note note-primary"><p><strong>定义（长度）</strong>：‖x‖ = √(x, x)。长度满足：非负且只有零向量长度为 0；‖kx‖ = |k|·‖x‖；三角不等式 ‖x + y‖ ≤ ‖x‖ + ‖y‖。</p></div><div class="note note-success"><p><strong>定理（Cauchy–Schwarz 不等式）</strong>：对内积空间中任意 x, y，</p><div class="course-math">
+\[
+|(x,y)|\le\|x\|\,\|y\|,
+\]
+</div><p>等号成立当且仅当 x、y 线性相关。</p></div><div class="note note-info"><p><strong>直观理解（也是证明）</strong>：y ≠ θ 时，把 x 分解成沿 y 的投影 p = ((x, y)/(y, y))·y 和垂直部分 x − p。由勾股定理 ‖x‖² = ‖p‖² + ‖x − p‖² ≥ ‖p‖² = |(x, y)|²/‖y‖²，整理即得不等式。<strong>投影不会比原向量长</strong>，这就是 Cauchy–Schwarz 的全部几何含义；等号成立恰好是 x 没有垂直部分，即 x 与 y 共线。</p></div><p><img src="/images/courses/matrix-theory/ch1-projection-gram-schmidt.png" srcset="/img/loading.gif" lazyload alt="投影与 Cauchy–Schwarz、Gram–Schmidt 正交化"></p><p>换不同的内积就得到不同的不等式。例如：</p><ul><li>ℝⁿ 标准内积：(Σ xᵢyᵢ)² ≤ (Σ xᵢ²)(Σ yᵢ²)；</li><li>C[a, b] 上 (f, g) = ∫ f(t)g(t) dt：(∫ fg)² ≤ ∫ f² · ∫ g²。</li></ul><h3 id="5-2-夹角与正交"><a href="#5-2-夹角与正交" class="headerlink" title="5.2 夹角与正交"></a>5.2 夹角与正交</h3><p>有了 Cauchy–Schwarz，就可以在实内积空间中定义夹角：</p><div class="course-math">
+\[
+\cos\langle x,y\rangle=\frac{(x,y)}{\|x\|\,\|y\|}\in[-1,1].
+\]
+</div><div class="note note-primary"><p><strong>定义（正交）</strong>：若 (x, y) = 0，则称 x 与 y <strong>正交</strong>。两两正交的非零向量组称为<strong>正交向量组</strong>；每个向量长度都为 1 的正交向量组称为<strong>标准正交组</strong>。</p></div><div class="note note-success"><p><strong>定理</strong>：正交向量组线性无关。因此 n 维内积空间中正交向量组最多含 n 个向量。由 n 个向量构成的标准正交组称为<strong>标准正交基</strong>。</p></div><ul><li>零向量与任何向量都正交；</li><li>x ⊥ y ⇔ ‖x + y‖² = ‖x‖² + ‖y‖²（勾股定理，在实空间中成立）；</li><li>在标准正交基下，<strong>坐标就是内积</strong>：x = Σ (x, εᵢ)εᵢ；<strong>内积等于坐标的标准内积</strong>：(x, y) = ηᴴξ，度量矩阵是单位阵。</li></ul><div class="note note-warning"><p><strong>例题：函数空间里的正交基</strong></p><p>在 [−π, π] 上的光滑函数空间中定义 (f, g) = ∫ f(t)g(t) dt，则</p><div class="course-math">
+\[
+\frac{1}{\sqrt{2\pi}},\ \frac{\cos t}{\sqrt\pi},\ \frac{\sin t}{\sqrt\pi},\ \frac{\cos 2t}{\sqrt\pi},\ \frac{\sin 2t}{\sqrt\pi},\ \ldots
+\]
+</div><p>是一组标准正交函数，例如 ∫ sin(mt)sin(nt) dt = 0（m ≠ n）。函数 f 在这组“基”上的坐标就是内积 (f, εₖ)，也就是 Fourier 系数。<strong>傅里叶展开就是在函数空间里求正交坐标。</strong></p></div><p><img src="/images/courses/matrix-theory/ch1-fourier-basis.png" srcset="/img/loading.gif" lazyload alt="方波的傅里叶展开：函数空间中的正交坐标"><br><em>方波只在奇数阶正弦上有非零坐标；取的基函数越多，部分和越接近原函数。</em></p><h3 id="5-3-Gram–Schmidt-正交化"><a href="#5-3-Gram–Schmidt-正交化" class="headerlink" title="5.3 Gram–Schmidt 正交化"></a>5.3 Gram–Schmidt 正交化</h3><div class="note note-success"><p><strong>定理</strong>：有限维内积空间一定存在标准正交基。构造方法（Gram–Schmidt）：由线性无关组 x₁, …, xₙ，依次令</p><div class="course-math">
+\[
+y_1=x_1,\qquad
+y_k=x_k-\sum_{i=1}^{k-1}\frac{(x_k,y_i)}{(y_i,y_i)}\,y_i\quad(k=2,\ldots,n),
+\qquad
+\varepsilon_k=\frac{y_k}{\|y_k\|}.
+\]
+</div><p>每一步都从 xₖ 中减去它在已得到方向上的投影，余下的部分自然与前面所有方向正交，且 span{y₁, …, yₖ} = span{x₁, …, xₖ}。</p></div><div class="note note-warning"><p><strong>例题</strong>：把 x₁ = (1, 1, 0)ᵀ、x₂ = (1, 0, 1)ᵀ 正交化（标准内积）。</p><ul><li>y₁ = (1, 1, 0)ᵀ；</li><li>(x₂, y₁) = 1，(y₁, y₁) = 2，y₂ = x₂ − ½y₁ = (½, −½, 1)ᵀ；</li><li>检验 (y₂, y₁) = ½ − ½ + 0 = 0 ✓；</li><li>单位化：ε₁ = (1, 1, 0)ᵀ/√2，ε₂ = (1, −1, 2)ᵀ/√6。</li></ul><p>第三章会看到，Gram–Schmidt 写成矩阵形式就是 <strong>QR 分解</strong>。</p></div><h2 id="6-直和与投影"><a href="#6-直和与投影" class="headerlink" title="6. 直和与投影"></a>6. 直和与投影</h2><h3 id="6-1-直和"><a href="#6-1-直和" class="headerlink" title="6.1 直和"></a>6.1 直和</h3><div class="note note-primary"><p><strong>定义（直和）</strong>：若和空间 W₁ + W₂ 中每个向量 x 的分解 x = x₁ + x₂（x₁ ∈ W₁，x₂ ∈ W₂）都是<strong>唯一</strong>的，则称 W₁ + W₂ 为<strong>直和</strong>，记作 W₁ ⊕ W₂。</p></div><div class="note note-success"><p><strong>定理（直和判定）</strong>：以下条件等价：</p><ol><li>W₁ + W₂ 是直和；</li><li>零向量的分解唯一：x₁ + x₂ = θ ⇒ x₁ = x₂ = θ；</li><li>W₁ ∩ W₂ = {θ}；</li><li>dim(W₁ + W₂) = dim W₁ + dim W₂；</li><li>W₁ 的基与 W₂ 的基合起来是 W₁ + W₂ 的基。</li></ol></div><div class="note note-warning"><p><strong>例题：方阵 = 对称阵 ⊕ 反对称阵</strong></p><p>在 ℝⁿˣⁿ 中，W₁ = {Aᵀ = A}，W₂ = {Aᵀ = −A}。任一方阵</p><div class="course-math">
+\[
+A=\underbrace{\frac{A+A^{\mathsf T}}{2}}_{\in W_1}+\underbrace{\frac{A-A^{\mathsf T}}{2}}_{\in W_2},
+\]
+</div><p>又 W₁ ∩ W₂ 中的矩阵满足 A = Aᵀ = −A，只能是零矩阵，所以 ℝⁿˣⁿ = W₁ ⊕ W₂。维数检验：n(n+1)/2 + n(n−1)/2 = n²。</p></div><div class="note note-warning"><p><strong>例题：幂等矩阵把空间一分为二</strong></p><p>设 A² = A，证明 ℂⁿ = R(A) ⊕ N(A)。</p><ul><li><strong>和</strong>：任一 x = Ax + (x − Ax)，其中 Ax ∈ R(A)，而 A(x − Ax) = Ax − A²x = 0，所以 x − Ax ∈ N(A)；</li><li><strong>交为零</strong>：若 y ∈ R(A) ∩ N(A)，则 y = Az，且 Ay = 0，于是 y = Az = A²z = Ay = 0。</li></ul><p>几何上，A 就是“沿 N(A) 方向投影到 R(A) 上”的投影算子。这个结论在第三章的谱分解中会反复用到。</p></div><h3 id="6-2-正交补与正交直和"><a href="#6-2-正交补与正交直和" class="headerlink" title="6.2 正交补与正交直和"></a>6.2 正交补与正交直和</h3><div class="note note-primary"><p><strong>定义</strong>：若 x 与子空间 W 中每个向量都正交，记 x ⊥ W；若 W₁ 中每个向量都与 W₂ 正交，记 W₁ ⊥ W₂。W 的<strong>正交补</strong> W⊥ = {x ∈ V | x ⊥ W}。若 W₁ ⊥ W₂，则 W₁ + W₂ 一定是直和，称为<strong>正交直和</strong>。</p></div><div class="note note-success"><p><strong>定理</strong>：设 W 是有限维内积空间 V 的子空间，则 W⊥ 也是子空间，且</p><div class="course-math">
+\[
+V=W\oplus W^{\perp},\qquad \dim W+\dim W^{\perp}=\dim V,\qquad (W^{\perp})^{\perp}=W .
+\]
+</div></div><p><img src="/images/courses/matrix-theory/ch1-direct-sum.png" srcset="/img/loading.gif" lazyload alt="一般直和与正交直和的分解"><br><em>一般直和是沿另一个子空间的方向“斜着”投影；正交直和是“垂直”投影，投影点是子空间中离 x 最近的点。</em></p><div class="note note-success"><p><strong>定理（矩阵子空间的正交关系）</strong>：设 A ∈ ℂᵐˣⁿ，则</p><div class="course-math">
+\[
+N(A)=R(A^{H})^{\perp},\qquad \mathbb C^{n}=N(A)\oplus R(A^{H});\qquad
+N(A^{H})=R(A)^{\perp},\qquad \mathbb C^{m}=N(A^{H})\oplus R(A).
+\]
+</div><p>理由很简单：Ax = 0 意味着 x 与 A 的每一行（的共轭）都正交，也就是与 Aᴴ 的列空间正交。</p></div><div class="note note-info"><p><strong>直观理解</strong>：正交投影给出“最佳近似”。在 W 中找离 x 最近的点，答案就是 x 在 W 上的正交投影。最小二乘法、傅里叶级数截断、信号去噪，本质上都是这一句话。</p></div><h2 id="7-本章小结"><a href="#7-本章小结" class="headerlink" title="7. 本章小结"></a>7. 本章小结</h2><table><thead><tr><th>概念</th><th>一句话理解</th><th>常用结论</th></tr></thead><tbody><tr><td>线性空间</td><td>能做加法和数乘的集合</td><td>零元素唯一、负元素唯一</td></tr><tr><td>子空间</td><td>对运算封闭的子集</td><td>必含零向量；交、和是子空间，并一般不是</td></tr><tr><td>基与坐标</td><td>用来“量”向量的标尺</td><td>坐标唯一；维数与基的选法无关</td></tr><tr><td>过渡矩阵</td><td>新基在旧基下的坐标</td><td>基右乘 P，坐标左乘 P⁻¹</td></tr><tr><td>维数公式</td><td>子空间版的容斥原理</td><td>dim(W₁+W₂) = dim W₁ + dim W₂ − dim(W₁∩W₂)</td></tr><tr><td>内积与度量矩阵</td><td>决定长度与角度</td><td>内积 ↔ Hermite 正定矩阵</td></tr><tr><td>Cauchy–Schwarz</td><td>投影不比原向量长</td><td>等号 ⇔ 线性相关</td></tr><tr><td>Gram–Schmidt</td><td>逐个减投影</td><td>得到标准正交基；矩阵形式是 QR</td></tr><tr><td>直和</td><td>分解唯一</td><td>⇔ 交为 {0} ⇔ 维数相加</td></tr><tr><td>正交补</td><td>与 W 垂直的全部向量</td><td>V = W ⊕ W⊥；N(A) = R(Aᴴ)⊥</td></tr></tbody></table><hr><p><a href="/courses/matrix-theory/">课程目录</a> · <a href="/courses/matrix-theory/linear-maps/">下一章：线性映射与矩阵</a></p>]]></content>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>矩阵理论与应用（二）：线性映射与矩阵</title>
+    <link href="/courses/matrix-theory/linear-maps/index.html"/>
+    <url>/courses/matrix-theory/linear-maps/index.html</url>
+    
+    <content type="html"><![CDATA[<style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}.markdown-body .note>p:last-child{margin-bottom:0}</style><h2 id="1-映射与多项式"><a href="#1-映射与多项式" class="headerlink" title="1. 映射与多项式"></a>1. 映射与多项式</h2><h3 id="1-1-映射的基本概念"><a href="#1-1-映射的基本概念" class="headerlink" title="1.1 映射的基本概念"></a>1.1 映射的基本概念</h3><div class="note note-primary"><p><strong>定义</strong>：设 V、W 是非空集合，若对每个 x ∈ V 都有唯一的 f(x) ∈ W 与之对应，则称 f 为从 V 到 W 的<strong>映射</strong>，记作 f: V → W。V 到自身的映射称为<strong>变换</strong>。</p><ul><li><strong>单射</strong>：x₁ ≠ x₂ ⇒ f(x₁) ≠ f(x₂)；</li><li><strong>满射</strong>：W 中每个元素都有原像；</li><li><strong>双射</strong>：既单又满。</li></ul></div><div class="note note-success"><p><strong>定理</strong>：映射 f: V → W 可逆（存在 g 使 g∘f = 恒等、f∘g = 恒等）当且仅当 f 是双射；可逆映射的逆映射唯一。映射乘积满足结合律，但一般不满足交换律。</p></div><h3 id="1-2-多项式工具"><a href="#1-2-多项式工具" class="headerlink" title="1.2 多项式工具"></a>1.2 多项式工具</h3><p>后面讨论特征多项式、最小多项式、Jordan 标准形时，经常用到多项式的整除、公因式等概念。</p><div class="note note-primary"><p><strong>定义</strong>：</p><ul><li><strong>带余除法</strong>：对 g(λ) 和 h(λ) ≠ 0，存在唯一的 q(λ)、r(λ) 使 g = qh + r，且 r = 0 或 deg r &lt; deg h；</li><li><strong>整除</strong>：若 r = 0，则称 h 整除 g，记 h | g；</li><li><strong>最大公因式 / 最小公倍式</strong>：首项系数为 1 的公因式中次数最高者 / 公倍式中次数最低者；</li><li><strong>友矩阵</strong>：首一多项式 f(λ) = λⁿ + aₙ₋₁λⁿ⁻¹ + ⋯ + a₁λ + a₀ 的友矩阵</li></ul><div class="course-math">
+\[
+C_f=\begin{pmatrix}
+0&0&\cdots&0&-a_0\\
+1&0&\cdots&0&-a_1\\
+0&1&\cdots&0&-a_2\\
+\vdots&&\ddots&&\vdots\\
+0&0&\cdots&1&-a_{n-1}
+\end{pmatrix},
+\qquad \det(\lambda I-C_f)=f(\lambda).
+\]
+</div></div><div class="note note-info"><p><strong>直观理解</strong>：友矩阵说明“任何首一多项式都是某个矩阵的特征多项式”。数值软件求多项式的根时，实际上就是构造友矩阵再求它的特征值。</p></div><h2 id="2-线性映射"><a href="#2-线性映射" class="headerlink" title="2. 线性映射"></a>2. 线性映射</h2><h3 id="2-1-定义与例子"><a href="#2-1-定义与例子" class="headerlink" title="2.1 定义与例子"></a>2.1 定义与例子</h3><div class="note note-primary"><p><strong>定义（线性映射）</strong>：设 V、W 是数域 F 上的线性空间。若映射 T: V → W 满足</p><div class="course-math">
+\[
+T(kx+ly)=kT(x)+lT(y),\qquad\forall\,x,y\in V,\ k,l\in F,
+\]
+</div><p>则称 T 为<strong>线性映射</strong>；V 到 V 的线性映射称为<strong>线性变换</strong>。全体线性映射记作 ℒ(V, W)，它对映射的加法与数乘也构成线性空间。</p></div><table><thead><tr><th>例子</th><th>映射</th><th>是否线性</th></tr></thead><tbody><tr><td>数乘变换</td><td>T(x) = kx</td><td>是（k = 0 时为零变换，k = 1 时为恒等变换）</td></tr><tr><td>平面旋转</td><td>把向量逆时针转 θ</td><td>是</td></tr><tr><td>求导</td><td>T(f) = f′，Pₙ → Pₙ</td><td>是</td></tr><tr><td>积分</td><td>T(f)(x) = ∫ₐˣ f(t) dt</td><td>是</td></tr><tr><td>正交投影</td><td>把 x 投到子空间 W</td><td>是</td></tr><tr><td>平移</td><td>T(x) = x + a（a ≠ 0）</td><td>否，T(0) ≠ 0</td></tr></tbody></table><p><img src="/images/courses/matrix-theory/ch2-linear-maps.png" srcset="/img/loading.gif" lazyload alt="常见线性映射对网格和图形的作用"><br><em>线性映射把直线变成直线（或点），保持原点不动，网格变形后仍然平行等距。矩阵的第 j 列就是第 j 个基向量的像；行列式是面积的缩放倍数，负号表示翻转了朝向。</em></p><div class="note note-success"><p><strong>定理（基本性质）</strong>：设 T 是线性映射，则</p><ol><li>T(θ) = θ，T(−x) = −T(x)；</li><li>T 保持线性组合：T(Σ kᵢxᵢ) = Σ kᵢT(xᵢ)；</li><li><strong>线性相关的向量组映射后仍线性相关</strong>；但线性无关组映射后可能变得线性相关（例如投影）；</li><li>T 由它在一组基上的像<strong>完全确定</strong>。</li></ol></div><p>第 4 条最重要：要描述一个线性映射，只需要说清楚每个基向量被送到哪里。这正是“矩阵表示”的出发点。</p><h3 id="2-2-核与值域"><a href="#2-2-核与值域" class="headerlink" title="2.2 核与值域"></a>2.2 核与值域</h3><div class="note note-primary"><p><strong>定义</strong>：设 T ∈ ℒ(V, W)。</p><ul><li><strong>值域</strong>（像空间）R(T) = {T(x) | x ∈ V}，是 W 的子空间，dim R(T) 称为 T 的<strong>秩</strong>；</li><li><strong>核</strong>（零空间）N(T) = {x ∈ V | T(x) = θ}，是 V 的子空间，dim N(T) 称为 T 的<strong>亏</strong>（零度）。</li></ul></div><div class="note note-success"><p><strong>定理（亏加秩定理 / 秩–零化度定理）</strong>：设 V 是有限维空间，T ∈ ℒ(V, W)，则</p><div class="course-math">
+\[
+\dim N(T)+\dim R(T)=\dim V .
+\]
+</div><p>推论：T 是单射 ⇔ N(T) = {θ}；若 dim V = dim W，则 T 单射 ⇔ T 满射 ⇔ T 可逆。</p></div><p><img src="/images/courses/matrix-theory/ch2-kernel-image.png" srcset="/img/loading.gif" lazyload alt="核与值域：一个秩 2 的映射"><br><em>定义域被“压扁”了一个维度：核那条直线上的点全部变成零，任意 x₀ 加上核里的向量后像不变；剩下的两个维度铺满了值域平面。</em></p><div class="note note-info"><p><strong>直观理解</strong>：把 V 想成 n 份“自由度”。线性映射要么把某份自由度“压扁”成零（进入核），要么把它“保留”到像里，二者之和不变。所以<strong>方程 Ax = b 的解 = 一个特解 + 核中的任意向量</strong>，解的自由参数个数等于 dim N(A) = n − rank A。</p></div><div class="note note-warning"><p><strong>例题：求导映射的核与值域</strong></p><p>T: P₄[x] → P₄[x]，T(f) = f′（P₄ 是次数小于 4 的多项式）。</p><ul><li>核：导数为零的多项式是常数，N(T) = span{1}，dim = 1；</li><li>值域：1, x, x², x³ 的导数是 0, 1, 2x, 3x²，R(T) = span{1, x, x²}，dim = 3；</li><li>检验：1 + 3 = 4 = dim P₄ ✓。</li></ul></div><h2 id="3-线性映射的矩阵"><a href="#3-线性映射的矩阵" class="headerlink" title="3. 线性映射的矩阵"></a>3. 线性映射的矩阵</h2><h3 id="3-1-矩阵表示"><a href="#3-1-矩阵表示" class="headerlink" title="3.1 矩阵表示"></a>3.1 矩阵表示</h3><div class="note note-primary"><p><strong>定义</strong>：设 ε₁, …, εₙ 是 V 的基，η₁, …, ηₘ 是 W 的基，T ∈ ℒ(V, W)。把每个基向量的像用 W 的基表示：</p><div class="course-math">
+\[
+T\begin{pmatrix}\varepsilon_1&\cdots&\varepsilon_n\end{pmatrix}
+=\begin{pmatrix}T\varepsilon_1&\cdots&T\varepsilon_n\end{pmatrix}
+=\begin{pmatrix}\eta_1&\cdots&\eta_m\end{pmatrix}A,
+\qquad A\in F^{m\times n},
+\]
+</div><p>A 称为 T 在这两组基下的<strong>矩阵</strong>。<strong>A 的第 j 列 = T(εⱼ) 在基 {ηᵢ} 下的坐标。</strong></p></div><div class="note note-success"><p><strong>定理（坐标关系）</strong>：若 x 在基 {εⱼ} 下的坐标为 ξ，则 T(x) 在基 {ηᵢ} 下的坐标为 Aξ。</p><p>基选定后，ℒ(V, W) 与 Fᵐˣⁿ 一一对应，并且保持加法、数乘；映射的复合对应矩阵乘法，可逆映射对应可逆矩阵。</p></div><div class="note note-warning"><p><strong>例题 1：平面旋转</strong></p><p>把 ℝ² 中向量逆时针旋转 θ。e₁ = (1, 0)ᵀ 转到 (cos θ, sin θ)ᵀ，e₂ = (0, 1)ᵀ 转到 (−sin θ, cos θ)ᵀ，所以</p><div class="course-math">
+\[
+R_\theta=\begin{pmatrix}\cos\theta&-\sin\theta\\ \sin\theta&\cos\theta\end{pmatrix},
+\qquad R_\alpha R_\beta=R_{\alpha+\beta}.
+\]
+</div><p>“先转 β 再转 α 等于转 α+β”，矩阵乘法与三角函数和角公式在这里是一回事。</p></div><div class="note note-warning"><p><strong>例题 2：求导映射的矩阵</strong></p><p>P₄[x] 中取基 1, x, x², x³，求导 T(f) = f′：T(1) = 0，T(x) = 1，T(x²) = 2x，T(x³) = 3x²，于是</p><div class="course-math">
+\[
+D=\begin{pmatrix}0&1&0&0\\0&0&2&0\\0&0&0&3\\0&0&0&0\end{pmatrix}.
+\]
+</div><p>求 f = 1 + 2x + 5x³ 的导数：坐标 (1, 2, 0, 5)ᵀ，D 乘以它得 (2, 0, 15, 0)ᵀ，即 f′ = 2 + 15x² ✓。另外 D⁴ = 0：对三次以下多项式求四次导数必为零。这类“某次幂为零”的矩阵称为<strong>幂零矩阵</strong>，它是 Jordan 标准形的基本组成部分。</p></div><h3 id="3-2-换基：相抵与相似"><a href="#3-2-换基：相抵与相似" class="headerlink" title="3.2 换基：相抵与相似"></a>3.2 换基：相抵与相似</h3><div class="note note-success"><p><strong>定理（相抵）</strong>：设 T ∈ ℒ(V, W) 在基 {εⱼ}、{ηᵢ} 下的矩阵为 A，在新基 {ε̃ⱼ}、{η̃ᵢ} 下的矩阵为 B。若 V 中过渡矩阵为 P，W 中过渡矩阵为 Q，则</p><div class="course-math">
+\[
+B=Q^{-1}AP .
+\]
+</div><p>同一个线性映射在不同基下的矩阵是<strong>相抵</strong>的。任一秩为 r 的矩阵都相抵于标准形 [[Iᵣ, 0], [0, 0]]。</p></div><div class="note note-success"><p><strong>推论（相似）</strong>：线性变换 T ∈ ℒ(V) 在两组基下的矩阵 A、B 满足</p><div class="course-math">
+\[
+B=P^{-1}AP,
+\]
+</div><p>其中 P 是两组基之间的过渡矩阵。<strong>相似矩阵描述的是同一个线性变换</strong>，只是换了“观察坐标”。</p></div><div class="note note-info"><p><strong>直观理解</strong>：相似变换 P⁻¹AP 可以读成三步：P 把新坐标翻译成旧坐标，A 在旧坐标下做变换，P⁻¹ 再翻译回新坐标。选一组“好”的基，可以让同一个变换的矩阵变得非常简单（例如对角阵）。第三章的各种分解，就是在寻找这样的好基。</p></div><p>相似矩阵的<strong>不变量</strong>：秩、行列式、迹、特征多项式、特征值（含重数）、最小多项式。</p><h3 id="3-3-同构"><a href="#3-3-同构" class="headerlink" title="3.3 同构"></a>3.3 同构</h3><div class="note note-primary"><p><strong>定义（同构）</strong>：若线性映射 T: V → W 是双射，则称 T 为<strong>同构映射</strong>，称 V 与 W <strong>同构</strong>。</p></div><div class="note note-success"><p><strong>定理</strong>：数域 F 上两个有限维线性空间同构，当且仅当它们维数相等。因此任一 n 维实（复）线性空间都与 ℝⁿ（ℂⁿ）同构，同构映射可取“向量 ↦ 坐标”。</p></div><div class="note note-info"><p><strong>直观理解</strong>：同构意味着“只是换了名字，结构完全一样”。P₄[x] 中的多项式、ℝ²ˣ² 中的矩阵、ℝ⁴ 中的数组，作为线性空间没有区别。这就是为什么学会了 ℝⁿ 上的矩阵计算，就能处理多项式、函数、信号等各种对象：先取坐标，再算矩阵。</p></div><div class="note note-warning"><p><strong>例题：差分方程解空间的维数</strong></p><p>n 阶齐次线性差分方程 y(k) + a₁y(k−1) + ⋯ + aₙy(k−n) = 0 的解由前 n 个初值 y(0), …, y(n−1) 唯一确定。“解 ↦ 初值向量”是解空间到 ℝⁿ 的同构，所以<strong>解空间是 n 维的</strong>，只要找出 n 个线性无关的解，就能表示全部解。</p></div><h2 id="4-特征值与特征向量"><a href="#4-特征值与特征向量" class="headerlink" title="4. 特征值与特征向量"></a>4. 特征值与特征向量</h2><h3 id="4-1-定义与几何意义"><a href="#4-1-定义与几何意义" class="headerlink" title="4.1 定义与几何意义"></a>4.1 定义与几何意义</h3><div class="note note-primary"><p><strong>定义</strong>：设 T ∈ ℒ(V)。若存在数 λ 和非零向量 ξ 使 T(ξ) = λξ，则称 λ 为 T 的<strong>特征值</strong>，ξ 为属于 λ 的<strong>特征向量</strong>。对方阵 A，若 Ax = λx（x ≠ 0），则 λ、x 称为 A 的特征值与特征向量，λ 是<strong>特征多项式</strong> det(λI − A) 的根。</p></div><p><img src="/images/courses/matrix-theory/ch2-eigenvectors.png" srcset="/img/loading.gif" lazyload alt="特征向量的几何意义与幂法"><br><em>左：对称矩阵把单位圆变成椭圆，大多数向量都被“转”了方向，只有特征方向保持在原直线上，被拉伸 λ 倍。右：反复用 A 作用并归一化，方向逐步转向主特征方向。</em></p><div class="note note-info"><p><strong>直观理解</strong>：特征向量是变换下的“不转轴”。如果能找到 n 个线性无关的不转轴，把它们当作基，变换就只是沿各轴的伸缩，矩阵变成对角阵。“找特征向量”就是“找最好用的坐标系”。</p></div><p>几个要点：</p><ul><li>特征向量必须非零，但特征值可以是 0；N(T) 中的非零向量就是属于 0 的特征向量。0 是特征值 ⇔ A 不可逆；</li><li>属于同一特征值的特征向量的非零线性组合仍是特征向量；</li><li>线性变换的特征多项式与基的选择无关（相似矩阵特征多项式相同）。</li></ul><h3 id="4-2-特征值与迹、行列式"><a href="#4-2-特征值与迹、行列式" class="headerlink" title="4.2 特征值与迹、行列式"></a>4.2 特征值与迹、行列式</h3><div class="note note-success"><p><strong>定理</strong>：设 A = (aᵢⱼ) ∈ ℂⁿˣⁿ 的 n 个特征值为 λ₁, …, λₙ（按重数计），则</p><div class="course-math">
+\[
+\sum_{i=1}^{n}\lambda_i=\operatorname{tr}A=\sum_{i=1}^{n}a_{ii},
+\qquad
+\prod_{i=1}^{n}\lambda_i=\det A .
+\]
+</div><p>若 f 是多项式，则 f(A) 的特征值为 f(λ₁), …, f(λₙ)；A 可逆时 A⁻¹ 的特征值为 1/λᵢ，伴随矩阵 A* 的特征值为 det A / λᵢ。</p></div><div class="note note-warning"><p><strong>例题：不必求特征向量也能做的题</strong></p><p>设 3 阶矩阵 A 的特征值为 1, 2, −1，求 det(A² − 2A + 3I) 和 tr(A⁻¹)。</p><ul><li>B = A² − 2A + 3I 的特征值为 f(λ) = λ² − 2λ + 3：f(1) = 2，f(2) = 3，f(−1) = 6，所以 det B = 2·3·6 = <strong>36</strong>；</li><li>A⁻¹ 的特征值为 1, ½, −1，tr(A⁻¹) = <strong>½</strong>。</li></ul><p><strong>技巧</strong>：凡是问“矩阵多项式的行列式、迹、可逆性”，先把特征值代入多项式。</p></div><h3 id="4-3-特征子空间与重数"><a href="#4-3-特征子空间与重数" class="headerlink" title="4.3 特征子空间与重数"></a>4.3 特征子空间与重数</h3><div class="note note-primary"><p><strong>定义</strong>：属于 λ 的全部特征向量加上零向量构成<strong>特征子空间</strong> E(λ) = N(λI − A)。</p><ul><li><strong>代数重数</strong>：λ 作为特征多项式根的重数；</li><li><strong>几何重数</strong>：dim E(λ) = n − rank(λI − A)。</li></ul></div><div class="note note-success"><p><strong>定理</strong>：</p><ol><li>任一特征值的几何重数 ≤ 代数重数；</li><li>属于不同特征值的特征向量线性无关（证明中会用到 Vandermonde 行列式非零）。</li></ol></div><div class="note note-warning"><p><strong>例题：两种重数不相等</strong></p><p>A = [[2, 1], [0, 2]]：特征多项式 (λ − 2)²，λ = 2 的代数重数为 2；而 2I − A = [[0, −1], [0, 0]] 的秩为 1，几何重数为 2 − 1 = 1。只能找到一个方向 (1, 0)ᵀ 的特征向量，A <strong>不能对角化</strong>。这正是最简单的 Jordan 块。</p></div><div class="note note-danger"><p><strong>易错点</strong>：实矩阵的特征值可能是复数。例如旋转矩阵 R_θ（θ ≠ kπ）在实平面上没有不转的方向，其特征值为 e^(±iθ)。讨论特征值时一般在复数域中进行。</p></div><h3 id="4-4-幂法：求模最大的特征值"><a href="#4-4-幂法：求模最大的特征值" class="headerlink" title="4.4 幂法：求模最大的特征值"></a>4.4 幂法：求模最大的特征值</h3><div class="note note-success"><p><strong>方法（幂法）</strong>：设 A 有唯一的模最大特征值 λ₁，任取初始向量 x₀（在 λ₁ 方向上的分量非零），迭代</p><div class="course-math">
+\[
+y_{k}=Ax_{k-1},\qquad x_k=\frac{y_k}{\|y_k\|},
+\]
+</div><p>则 xₖ 的方向趋于属于 λ₁ 的特征向量，Rayleigh 商 xₖᴴAxₖ（或相邻两步分量之比）趋于 λ₁。收敛速度取决于 |λ₂/λ₁|。</p></div><div class="note note-info"><p><strong>为什么有效</strong>：把 x₀ 按特征向量展开 x₀ = c₁v₁ + c₂v₂ + ⋯，则 Aᵏx₀ = c₁λ₁ᵏv₁ + c₂λ₂ᵏv₂ + ⋯ = λ₁ᵏ[c₁v₁ + c₂(λ₂/λ₁)ᵏv₂ + ⋯]。因为 |λᵢ/λ₁| &lt; 1，其他分量按几何级数衰减，只剩主方向。网页排序 PageRank 算法就是在一个巨大的矩阵上做幂法。</p></div><h2 id="5-正交变换与酉变换"><a href="#5-正交变换与酉变换" class="headerlink" title="5. 正交变换与酉变换"></a>5. 正交变换与酉变换</h2><h3 id="5-1-定义与等价刻画"><a href="#5-1-定义与等价刻画" class="headerlink" title="5.1 定义与等价刻画"></a>5.1 定义与等价刻画</h3><div class="note note-primary"><p><strong>定义</strong>：欧氏（酉）空间上保持内积不变的线性变换，即 (Tx, Ty) = (x, y)，称为<strong>正交（酉）变换</strong>。满足 AᵀA = I 的实方阵称为<strong>正交矩阵</strong>，满足 AᴴA = I 的复方阵称为<strong>酉矩阵</strong>。</p></div><div class="note note-success"><p><strong>定理</strong>：设 T 是 n 维欧氏（酉）空间上的线性变换，以下等价：</p><ol><li>T 是正交（酉）变换，即保持内积；</li><li>T 保持长度：‖Tx‖ = ‖x‖；</li><li>T 把标准正交基映成标准正交基；</li><li>T 在标准正交基下的矩阵是正交（酉）矩阵。</li></ol><p>矩阵 A 是正交（酉）矩阵 ⇔ A 的列（行）向量组是标准正交组 ⇔ A⁻¹ = Aᵀ（Aᴴ）。</p></div><p>正交（酉）矩阵的性质：|det A| = 1；<strong>特征值的模都等于 1</strong>；乘积和逆仍是正交（酉）矩阵。几何上，二维正交矩阵要么是旋转（det = 1），要么是反射（det = −1）。</p><div class="note note-warning"><p><strong>例题</strong>：A = [[0, 0, 1], [1, 0, 0], [0, 1, 0]] 把坐标轴轮换 e₁ → e₂ → e₃ → e₁，是正交矩阵。特征多项式 λ³ − 1，特征值 1、−½ ± (√3/2)i，模都为 1。实际上它是绕 (1, 1, 1)ᵀ 轴旋转 120°。</p></div><h3 id="5-2-Givens-旋转"><a href="#5-2-Givens-旋转" class="headerlink" title="5.2 Givens 旋转"></a>5.2 Givens 旋转</h3><div class="note note-primary"><p><strong>定义（Givens 矩阵）</strong>：在单位阵中，把第 (i, i)、(j, j) 位置换成 c，(i, j) 位置换成 s，(j, i) 位置换成 −s（c² + s² = 1），得到的 T(i, j) 表示在 xᵢ–xⱼ 坐标平面内的一个旋转，其余坐标不变。</p></div><p>若 xᵢ² + xⱼ² ≠ 0，取 c = xᵢ/r，s = xⱼ/r，r = √(xᵢ² + xⱼ²)，则 T(i, j)x 的第 i 个分量变成 r，第 j 个分量变成 0。<strong>一次 Givens 旋转消去一个分量</strong>，适合稀疏矩阵和逐元素消元。</p><div class="note note-warning"><p><strong>例题</strong>：把 x = (0, 1, 1)ᵀ 用 Givens 旋转化为 ‖x‖e₁ = (√2, 0, 0)ᵀ。</p><ol><li>先用 T(1, 2) 处理 x₁ = 0、x₂ = 1：r = 1，c = 0，s = 1，得 (1, 0, 1)ᵀ；</li><li>再用 T(1, 3) 处理 1 和 1：r = √2，c = s = 1/√2，得 (√2, 0, 0)ᵀ。</li></ol><p>所以 T = T(1, 3)T(1, 2) 满足 Tx = √2 e₁。</p></div><h3 id="5-3-Householder-反射"><a href="#5-3-Householder-反射" class="headerlink" title="5.3 Householder 反射"></a>5.3 Householder 反射</h3><div class="note note-primary"><p><strong>定义（Householder 矩阵）</strong>：设 w 是单位向量，</p><div class="course-math">
+\[
+H=I-2ww^{H}.
+\]
+</div><p>H 表示关于超平面 w⊥ 的镜面反射：w 方向的分量反号，与 w 正交的分量不变。H 满足 Hᴴ = H、HᴴH = I、H² = I，det H = −1。</p></div><div class="note note-success"><p><strong>定理</strong>：若 ‖x‖ = ‖y‖ 且 x ≠ y（实情形，或复情形下 yᴴx 为实数），取 w = (x − y)/‖x − y‖，则 Hx = y。特别地，可以把任意 x 一步反射到 ‖x‖e₁ 方向。</p></div><p><img src="/images/courses/matrix-theory/ch2-householder-givens.png" srcset="/img/loading.gif" lazyload alt="Householder 反射与 Givens 旋转"><br><em>Householder 一次反射就能把整列化为 (∗, 0, …, 0)；Givens 每次只旋转两个坐标、消去一个元素。二者都是 QR 分解的常用工具。</em></p><div class="note note-warning"><p><strong>例题</strong>：x = (0, 1, 1)ᵀ，y = (√2, 0, 0)ᵀ，‖x‖ = ‖y‖ = √2。x − y = (−√2, 1, 1)ᵀ，‖x − y‖² = 4，w = (−√2, 1, 1)ᵀ/2，</p><div class="course-math">
+\[
+H=I-2ww^{\mathsf T}=I-\frac12\begin{pmatrix}2&-\sqrt2&-\sqrt2\\-\sqrt2&1&1\\-\sqrt2&1&1\end{pmatrix}
+=\begin{pmatrix}0&\tfrac{\sqrt2}{2}&\tfrac{\sqrt2}{2}\\ \tfrac{\sqrt2}{2}&\tfrac12&-\tfrac12\\ \tfrac{\sqrt2}{2}&-\tfrac12&\tfrac12\end{pmatrix},
+\]
+</div><p>验证 Hx = (√2, 0, 0)ᵀ ✓。与上一个例题比较：Givens 需要两次旋转，Householder 一次反射完成。</p></div><h2 id="6-本章小结"><a href="#6-本章小结" class="headerlink" title="6. 本章小结"></a>6. 本章小结</h2><table><thead><tr><th>概念</th><th>一句话理解</th><th>常用结论</th></tr></thead><tbody><tr><td>线性映射</td><td>保持线性组合的映射</td><td>由基的像完全确定；T(0) = 0</td></tr><tr><td>核与值域</td><td>被压扁的部分 / 能到达的部分</td><td>dim N + dim R = dim V</td></tr><tr><td>矩阵表示</td><td>第 j 列 = 第 j 个基向量的像的坐标</td><td>复合 ↔ 乘法，坐标 η = Aξ</td></tr><tr><td>相抵</td><td>同一映射、换两边的基</td><td>B = Q⁻¹AP，由秩决定</td></tr><tr><td>相似</td><td>同一变换、换一组基</td><td>B = P⁻¹AP，保持特征多项式、迹、行列式</td></tr><tr><td>同构</td><td>只换名字，结构不变</td><td>有限维空间同构 ⇔ 维数相等</td></tr><tr><td>特征值</td><td>不转轴上的伸缩倍数</td><td>Σλ = tr A，Πλ = det A，f(A) 的特征值是 f(λ)</td></tr><tr><td>两种重数</td><td>根的重数 vs 特征子空间维数</td><td>几何重数 ≤ 代数重数</td></tr><tr><td>幂法</td><td>反复作用，只剩主方向</td><td>速度由</td></tr><tr><td>正交 / 酉矩阵</td><td>保长度、保角度</td><td>特征值模为 1；Givens 旋转、Householder 反射</td></tr></tbody></table><hr><p><a href="/courses/matrix-theory/">课程目录</a> · <a href="/courses/matrix-theory/linear-spaces/">上一章：线性空间引论</a> · <a href="/courses/matrix-theory/matrix-decompositions/">下一章：矩阵分解</a></p>]]></content>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>矩阵理论与应用（三）：矩阵分解</title>
+    <link href="/courses/matrix-theory/matrix-decompositions/index.html"/>
+    <url>/courses/matrix-theory/matrix-decompositions/index.html</url>
+    
+    <content type="html"><![CDATA[<style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}.markdown-body .note>p:last-child{margin-bottom:0}</style><h2 id="0-为什么要分解矩阵"><a href="#0-为什么要分解矩阵" class="headerlink" title="0. 为什么要分解矩阵"></a>0. 为什么要分解矩阵</h2><p>一个整数可以分解成质因数，分解后很多问题（最大公约数、开方）变得一目了然。矩阵分解也是同样的思路：<strong>把一个复杂矩阵写成几个结构简单的矩阵的乘积</strong>，每个因子都有明确的几何或计算意义。</p><table><thead><tr><th>分解</th><th>形式</th><th>因子的意义</th><th>主要用途</th></tr></thead><tbody><tr><td>满秩分解</td><td>A = FG</td><td>列空间的基 × 坐标</td><td>秩、广义逆</td></tr><tr><td>LU / LDU</td><td>A = LU</td><td>Gauss 消元的记录</td><td>解线性方程组</td></tr><tr><td>Cholesky</td><td>A = GGᵀ</td><td>正定阵的“平方根”</td><td>正定方程组、采样</td></tr><tr><td>QR</td><td>A = QR</td><td>正交基 × 坐标</td><td>最小二乘、特征值计算</td></tr><tr><td>Schur</td><td>A = UTUᴴ</td><td>酉变换下的三角化</td><td>理论证明的万能工具</td></tr><tr><td>对角化 / 谱分解</td><td>A = PΛP⁻¹ = Σ λᵢPᵢ</td><td>特征基下的伸缩</td><td>矩阵幂、矩阵函数、微分方程</td></tr><tr><td>Jordan</td><td>A = PJP⁻¹</td><td>不能对角化时的最简形式</td><td>一般矩阵的结构理论</td></tr></tbody></table><div class="note note-info"><p><strong>一条主线</strong>：上一章说过，相似变换 P⁻¹AP 就是“换一组基看同一个变换”。对角化、Schur、Jordan 都在找“好基”：最好是特征向量组成的基（对角阵）；如果要求基正交，退一步得到三角阵（Schur）；如果特征向量不够，再退一步得到 Jordan 块。</p></div><h2 id="1-秩与单边逆"><a href="#1-秩与单边逆" class="headerlink" title="1. 秩与单边逆"></a>1. 秩与单边逆</h2><div class="note note-success"><p><strong>引理（秩标准形）</strong>：设 A ∈ Fᵐˣⁿ 的秩为 r，则存在可逆矩阵 P、Q 使</p><div class="course-math">
+\[
+PAQ=\begin{pmatrix}I_r&0\\0&0\end{pmatrix}.
+\]
+</div></div><p>非方阵没有通常意义的逆，但可以有“单边逆”：</p><div class="note note-success"><p><strong>定理（左逆与右逆）</strong>：设 A ∈ ℂᵐˣⁿ。</p><ul><li>A 有<strong>左逆</strong>（存在 B 使 BA = Iₙ）⇔ A <strong>列满秩</strong>（rank A = n），此时可取 A_L⁻¹ = (AᴴA)⁻¹Aᴴ；</li><li>A 有<strong>右逆</strong>（存在 C 使 AC = Iₘ）⇔ A <strong>行满秩</strong>（rank A = m），此时可取 A_R⁻¹ = Aᴴ(AAᴴ)⁻¹。</li></ul><p>左逆、右逆一般不唯一。证明中要用到 <strong>rank(AᴴA) = rank A</strong>。</p></div><div class="note note-warning"><p><strong>例题：超定方程组与左逆</strong></p><p>方程个数多于未知数的 Ax = b（A 列满秩）一般无解。用左逆得到的 x = (AᴴA)⁻¹Aᴴb 恰好是最小二乘解：它使 ‖Ax − b‖ 最小。几何上，Ax 是 b 在列空间 R(A) 上的正交投影。</p></div><h2 id="2-满秩分解"><a href="#2-满秩分解" class="headerlink" title="2. 满秩分解"></a>2. 满秩分解</h2><div class="note note-success"><p><strong>定理（满秩分解）</strong>：设 A ∈ ℂᵐˣⁿ，rank A = r &gt; 0，则存在列满秩的 F ∈ ℂᵐˣʳ 和行满秩的 G ∈ ℂʳˣⁿ 使</p><div class="course-math">
+\[
+A=FG .
+\]
+</div><p>分解不唯一：对任意 r 阶可逆矩阵 D，A = (FD)(D⁻¹G) 也是满秩分解。</p></div><div class="note note-info"><p><strong>直观理解</strong>：A 的 n 个列向量都落在 r 维列空间里。F 的 r 列就是列空间的一组基，G 的第 j 列是 A 的第 j 列在这组基下的坐标。“A 的列 = 基 × 坐标”，这正是满秩分解。</p></div><p><strong>计算方法</strong>：对 A 做初等行变换化为行最简形，主元所在列号为 j₁, …, jᵣ；</p><ul><li>F 取 A 的第 j₁, …, jᵣ 列（原矩阵的列，不是行最简形的列）；</li><li>G 取行最简形的前 r 个非零行。</li></ul><p><img src="/images/courses/matrix-theory/ch3-lu-fullrank.png" srcset="/img/loading.gif" lazyload alt="LU 分解与满秩分解的矩阵块示意"></p><div class="note note-warning"><p><strong>例题</strong>：求下列矩阵的满秩分解</p><div class="course-math">
+\[
+B=\begin{pmatrix}1&2&1&3&4\\2&4&0&2&2\\3&6&1&5&6\\1&2&-1&-1&-2\end{pmatrix}
+\ \xrightarrow{\text{行变换}}\ 
+\begin{pmatrix}1&2&0&1&1\\0&0&1&2&3\\0&0&0&0&0\\0&0&0&0&0\end{pmatrix}.
+\]
+</div><p>主元在第 1、3 列，rank B = 2，于是</p><div class="course-math">
+\[
+F=\begin{pmatrix}1&1\\2&0\\3&1\\1&-1\end{pmatrix},\qquad
+G=\begin{pmatrix}1&2&0&1&1\\0&0&1&2&3\end{pmatrix}.
+\]
+</div><p>从 G 可以直接读出列之间的关系：第 2 列 = 2×第 1 列，第 4 列 = 第 1 列 + 2×第 3 列，第 5 列 = 第 1 列 + 3×第 3 列。</p></div><h2 id="3-LU-分解与-Cholesky-分解"><a href="#3-LU-分解与-Cholesky-分解" class="headerlink" title="3. LU 分解与 Cholesky 分解"></a>3. LU 分解与 Cholesky 分解</h2><h3 id="3-1-LU-分解就是-Gauss-消元"><a href="#3-1-LU-分解就是-Gauss-消元" class="headerlink" title="3.1 LU 分解就是 Gauss 消元"></a>3.1 LU 分解就是 Gauss 消元</h3><div class="note note-info"><p><strong>直观理解</strong>：Gauss 消元每一步“第 i 行减去第 k 行的 lᵢₖ 倍”，相当于左乘一个单位下三角的初等矩阵。消元结束得到上三角阵 U，把这些初等矩阵的逆乘起来就是 L，而 L 的下三角部分恰好就是各步的乘数 lᵢₖ。<strong>LU 分解就是把消元过程“存档”。</strong></p></div><div class="note note-success"><p><strong>定理（LU 与 LDU 分解）</strong>：设 A ∈ ℂⁿˣⁿ 非奇异。A 可分解为 A = LU（L 为单位下三角阵、U 为上三角阵，称为 <strong>Doolittle 分解</strong>）的充分必要条件是 A 的各阶顺序主子式 Δₖ ≠ 0（k = 1, …, n−1），且此时分解唯一。进一步有唯一的 <strong>LDU 分解</strong>：</p><div class="course-math">
+\[
+A=LDU,\qquad D=\operatorname{diag}\!\left(\Delta_1,\ \frac{\Delta_2}{\Delta_1},\ \ldots,\ \frac{\Delta_n}{\Delta_{n-1}}\right),
+\]
+</div><p>L 为单位下三角阵，U 为单位上三角阵。把 D 并到 U 上得 Doolittle 分解，并到 L 上得 <strong>Crout 分解</strong>（L 下三角、U 单位上三角）。</p></div><div class="note note-warning"><p><strong>例题</strong>：对 A 做 LU 分解</p><div class="course-math">
+\[
+A=\begin{pmatrix}2&1&1&0\\4&3&3&1\\8&7&9&5\\6&7&9&8\end{pmatrix}
+=\underbrace{\begin{pmatrix}1&&&\\2&1&&\\4&3&1&\\3&4&1&1\end{pmatrix}}_{L}
+\underbrace{\begin{pmatrix}2&1&1&0\\&1&1&1\\&&2&2\\&&&2\end{pmatrix}}_{U}.
+\]
+</div><p>第一步用第 1 行消第 2、3、4 行，乘数是 2、4、3，正好是 L 的第一列；后面同理。有了 LU，解 Ax = b 变成两次三角回代：先解 Ly = b，再解 Ux = y。若要对多个右端 b 求解，只需分解一次。</p></div><div class="note note-danger"><p><strong>易错点</strong>：非奇异矩阵也可能没有 LU 分解。例如 A = [[0, 1], [1, 0]]，Δ₁ = 0，第一步就没有主元。此时需要先交换行：<strong>任何非奇异矩阵都存在排列矩阵 P 使 PA = LU</strong>（列主元消元），数值计算中总是这样做。</p></div><h3 id="3-2-Cholesky-分解"><a href="#3-2-Cholesky-分解" class="headerlink" title="3.2 Cholesky 分解"></a>3.2 Cholesky 分解</h3><div class="note note-success"><p><strong>定理（Cholesky 分解）</strong>：若 A 是 n 阶实对称正定矩阵，则存在唯一的对角元为正的下三角矩阵 G，使</p><div class="course-math">
+\[
+A=GG^{\mathsf T}.
+\]
+</div><p>（复情形：Hermite 正定矩阵 A = GGᴴ。）</p></div><div class="note note-info"><p><strong>直观理解</strong>：正数 a 可以写成 (√a)²；正定矩阵是“矩阵版的正数”，G 就是它的“平方根”。由于对称性，Cholesky 只需要 LU 一半的计算量。在统计中，若要生成协方差为 Σ 的高斯随机向量，就取 Σ = GGᵀ，再令 x = Gz（z 为标准高斯向量）。</p></div><div class="note note-warning"><p><strong>例题</strong>：A = [[4, 2], [2, 5]]。设 G = [[g₁₁, 0], [g₂₁, g₂₂]]，比较 GGᵀ 与 A 的元素：g₁₁² = 4 ⇒ g₁₁ = 2；g₂₁g₁₁ = 2 ⇒ g₂₁ = 1；g₂₁² + g₂₂² = 5 ⇒ g₂₂ = 2。所以 G = [[2, 0], [1, 2]]。</p></div><h2 id="4-QR-分解"><a href="#4-QR-分解" class="headerlink" title="4. QR 分解"></a>4. QR 分解</h2><h3 id="4-1-定理与几何意义"><a href="#4-1-定理与几何意义" class="headerlink" title="4.1 定理与几何意义"></a>4.1 定理与几何意义</h3><div class="note note-success"><p><strong>定理（QR 分解）</strong>：若复方阵 A 满秩（非奇异），则存在酉矩阵 Q 和上三角矩阵 R 使 A = QR；若进一步要求 R 的对角元为正，则分解唯一。</p><p>若 A ∈ ℂᵐˣⁿ 列满秩，则 A = QR，其中 Q ∈ ℂᵐˣⁿ 的列是标准正交组（<strong>列正交规范矩阵</strong>，QᴴQ = Iₙ），R 是 n 阶上三角矩阵。</p></div><div class="note note-info"><p><strong>直观理解</strong>：对 A 的列 a₁, a₂, …, aₙ 做 Gram–Schmidt 正交化得到 q₁, q₂, …, qₙ。因为 aₖ 只用到 q₁, …, qₖ 就能表示，</p><div class="course-math">
+\[
+a_k=r_{1k}q_1+r_{2k}q_2+\cdots+r_{kk}q_k,\qquad r_{ik}=q_i^{H}a_k,
+\]
+</div><p>写成矩阵就是 A = QR，R 自然是上三角的。<strong>Q 是列空间的标准正交基，R 是 A 的各列在这组基下的坐标。</strong></p></div><p><img src="/images/courses/matrix-theory/ch3-qr.png" srcset="/img/loading.gif" lazyload alt="QR 分解的几何意义与 QR 迭代的收敛"><br><em>左：r₁₂ 是 a₂ 在 q₁ 上的投影长度，r₂₂ 是减去投影后剩余部分的长度。右：对对称矩阵做 QR 迭代，次对角元按几何级数趋于零，对角元收敛到特征值。</em></p><div class="note note-warning"><p><strong>例题</strong>：求 A = [[1, 1, 0], [1, 0, 1], [0, 1, 1]] 的 QR 分解。</p><p>对列做 Gram–Schmidt：</p><ul><li>q₁ = (1, 1, 0)ᵀ/√2，r₁₁ = √2；</li><li>r₁₂ = q₁ᵀa₂ = 1/√2，a₂ − r₁₂q₁ = (½, −½, 1)ᵀ，r₂₂ = √6/2，q₂ = (1, −1, 2)ᵀ/√6；</li><li>r₁₃ = 1/√2，r₂₃ = 1/√6，a₃ − r₁₃q₁ − r₂₃q₂ = (−⅔, ⅔, ⅔)ᵀ，r₃₃ = 2/√3，q₃ = (−1, 1, 1)ᵀ/√3。</li></ul><div class="course-math">
+\[
+Q=\begin{pmatrix}\tfrac{1}{\sqrt2}&\tfrac{1}{\sqrt6}&-\tfrac{1}{\sqrt3}\\[2pt]\tfrac{1}{\sqrt2}&-\tfrac{1}{\sqrt6}&\tfrac{1}{\sqrt3}\\[2pt]0&\tfrac{2}{\sqrt6}&\tfrac{1}{\sqrt3}\end{pmatrix},\qquad
+R=\begin{pmatrix}\sqrt2&\tfrac{1}{\sqrt2}&\tfrac{1}{\sqrt2}\\[2pt]0&\tfrac{\sqrt6}{2}&\tfrac{1}{\sqrt6}\\[2pt]0&0&\tfrac{2}{\sqrt3}\end{pmatrix}.
+\]
+</div></div><p>除了 Gram–Schmidt，还可以用上一章的 <strong>Householder 反射</strong>（每次把一列下方化零）或 <strong>Givens 旋转</strong>（每次消一个元素）构造 QR，二者数值上更稳定。</p><h3 id="4-2-QR-迭代求特征值"><a href="#4-2-QR-迭代求特征值" class="headerlink" title="4.2 QR 迭代求特征值"></a>4.2 QR 迭代求特征值</h3><div class="note note-success"><p><strong>方法（QR 算法）</strong>：令 A₁ = A，反复执行</p><div class="course-math">
+\[
+A_k=Q_kR_k,\qquad A_{k+1}=R_kQ_k=Q_k^{H}A_kQ_k .
+\]
+</div><p>每个 Aₖ 都与 A 酉相似，特征值不变。在一定条件下（例如特征值模互不相等），Aₖ 趋于上三角矩阵，对角元收敛到 A 的特征值。</p></div><p>这是现代数值软件计算特征值的核心算法（实际中会先化为 Hessenberg 形，再加位移加速）。</p><h2 id="5-Schur-分解、Hamilton–Cayley-定理与最小多项式"><a href="#5-Schur-分解、Hamilton–Cayley-定理与最小多项式" class="headerlink" title="5. Schur 分解、Hamilton–Cayley 定理与最小多项式"></a>5. Schur 分解、Hamilton–Cayley 定理与最小多项式</h2><h3 id="5-1-Schur-引理"><a href="#5-1-Schur-引理" class="headerlink" title="5.1 Schur 引理"></a>5.1 Schur 引理</h3><div class="note note-success"><p><strong>定理（Schur 引理）</strong>：任意复方阵 A 都酉相似于上三角矩阵：存在酉矩阵 U 使</p><div class="course-math">
+\[
+U^{H}AU=T=\begin{pmatrix}\lambda_1&*&\cdots&*\\&\lambda_2&\cdots&*\\&&\ddots&\vdots\\&&&\lambda_n\end{pmatrix},
+\]
+</div><p>T 的对角元是 A 的全部特征值。若实方阵 A 的特征值全为实数，则 A 正交相似于实上三角矩阵。</p></div><div class="note note-info"><p><strong>证明思路（数学归纳）</strong>：取一个单位特征向量 u₁ 作为第一个基向量，扩充成标准正交基 U₁，则 U₁ᴴAU₁ 的第一列变成 (λ₁, 0, …, 0)ᵀ。对右下角 n−1 阶子矩阵重复同样的操作即可。<strong>每一步都只要求一个特征向量</strong>，复数域中特征值总是存在，所以 Schur 分解总能完成。</p></div><p>Schur 引理是许多定理的“万能钥匙”：先三角化，再在三角阵上验证结论。</p><h3 id="5-2-Hamilton–Cayley-定理"><a href="#5-2-Hamilton–Cayley-定理" class="headerlink" title="5.2 Hamilton–Cayley 定理"></a>5.2 Hamilton–Cayley 定理</h3><div class="note note-success"><p><strong>定理（Hamilton–Cayley）</strong>：设 f(λ) = det(λI − A) 是 A 的特征多项式，则</p><div class="course-math">
+\[
+f(A)=0 .
+\]
+</div></div><div class="note note-info"><p><strong>直观理解</strong>：对可对角化的 A = PΛP⁻¹，f(A) = P·diag(f(λ₁), …, f(λₙ))·P⁻¹，而每个 f(λᵢ) = 0，所以 f(A) = 0。一般情形用 Schur 三角化后逐列验证。</p><div class="note note-danger"><p><strong>易错点</strong>：不能直接“把 λ = A 代入 det(λI − A)”得到 det(A − A) = 0。这个“证明”混淆了数和矩阵：f(A) 是一个矩阵，而 det(0) 是一个数。</p></div></div><p><strong>用途 1：降次计算矩阵多项式。</strong> 用特征多项式去除高次多项式 g(λ) = q(λ)f(λ) + r(λ)，则 g(A) = r(A)，只需计算低次的余式。</p><p><strong>用途 2：求逆矩阵。</strong> 若 f(λ) = λⁿ + aₙ₋₁λⁿ⁻¹ + ⋯ + a₁λ + a₀ 且 a₀ ≠ 0（即 A 可逆），则</p><div class="course-math">
+\[
+A^{-1}=-\frac{1}{a_0}\left(A^{n-1}+a_{n-1}A^{n-2}+\cdots+a_1I\right).
+\]
+</div><div class="note note-warning"><p><strong>例题：用 Hamilton–Cayley 求逆</strong></p><p>A = [[2, 1, 0], [0, 1, 1], [1, 0, 1]]，特征多项式 f(λ) = λ³ − 4λ² + 5λ − 3。由 A³ − 4A² + 5A − 3I = 0 得</p><div class="course-math">
+\[
+A^{-1}=\frac13\left(A^2-4A+5I\right)=\frac13\begin{pmatrix}1&-1&1\\1&2&-2\\-1&1&2\end{pmatrix}.
+\]
+</div><p>不必做初等变换，只需算一次 A²。</p></div><h3 id="5-3-最小多项式"><a href="#5-3-最小多项式" class="headerlink" title="5.3 最小多项式"></a>5.3 最小多项式</h3><div class="note note-primary"><p><strong>定义</strong>：若多项式 φ 满足 φ(A) = 0，则称 φ 为 A 的<strong>零化多项式</strong>。零化多项式中次数最低的首一多项式称为 A 的<strong>最小多项式</strong>，记作 m_A(λ)。</p></div><div class="note note-success"><p><strong>定理（最小多项式的性质）</strong>：</p><ol><li>最小多项式唯一，且整除 A 的任一零化多项式（特别地整除特征多项式）；</li><li>最小多项式与特征多项式的根相同（只是重数可能更低），即每个特征值都是最小多项式的根；</li><li>相似矩阵有相同的最小多项式；</li><li>分块对角阵 diag(A₁, A₂) 的最小多项式是 m_A₁ 与 m_A₂ 的最小公倍式；</li><li><strong>A 可对角化 ⇔ 最小多项式没有重根。</strong></li></ol></div><div class="note note-warning"><p><strong>例题：用最小多项式算 A¹⁰⁰</strong></p><p>A = [[1, 1, 0], [0, 1, 0], [0, 0, 2]]，特征多项式 (λ−1)²(λ−2)。A − I ≠ 0，(A − I)(A − 2I) ≠ 0（其 (1, 2) 元为 −1），所以最小多项式就是 (λ−1)²(λ−2)，次数 3。</p><p>设 λ¹⁰⁰ = q(λ)m(λ) + aλ² + bλ + c，余式 r 在 m 的根上与 λ¹⁰⁰ 取值一致，二重根处导数也一致：</p><div class="course-math">
+\[
+r(1)=1,\qquad r'(1)=100,\qquad r(2)=2^{100}.
+\]
+</div><p>解出 a、b、c 后 A¹⁰⁰ = aA² + bA + cI，结果为</p><div class="course-math">
+\[
+A^{100}=\begin{pmatrix}1&100&0\\0&1&0\\0&0&2^{100}\end{pmatrix}.
+\]
+</div><p><strong>技巧</strong>：重根处要用导数条件，这一思路在第四章计算矩阵函数时会再次出现。</p></div><h2 id="6-对角化"><a href="#6-对角化" class="headerlink" title="6. 对角化"></a>6. 对角化</h2><h3 id="6-1-单纯矩阵"><a href="#6-1-单纯矩阵" class="headerlink" title="6.1 单纯矩阵"></a>6.1 单纯矩阵</h3><div class="note note-primary"><p><strong>定义</strong>：若 A 相似于对角阵，即存在可逆 P 使 P⁻¹AP = Λ，则称 A 为<strong>单纯矩阵</strong>（可对角化矩阵）。</p></div><div class="note note-success"><p><strong>定理（可对角化的判定）</strong>：设 A ∈ ℂⁿˣⁿ 的互异特征值为 λ₁, …, λₛ，以下等价：</p><ol><li>A 可对角化；</li><li>A 有 n 个线性无关的特征向量（此时 P 的列就是它们）；</li><li>每个特征值的几何重数都等于代数重数；</li><li>ℂⁿ = E(λ₁) ⊕ ⋯ ⊕ E(λₛ)；</li><li>最小多项式无重根；</li><li>初等因子全是一次的（见第 8 节）。</li></ol><p>充分条件：A 有 n 个互异特征值；或 A 有一个无重根的零化多项式。</p></div><div class="note note-warning"><p><strong>例题：幂等矩阵一定可对角化</strong></p><p>若 A² = A，则 φ(λ) = λ² − λ = λ(λ − 1) 是零化多项式且无重根，所以 A 可对角化，特征值只能是 0 和 1，A ≅ diag(Iᵣ, 0)，r = rank A = tr A。同理，A² = I（对合矩阵）也一定可对角化，特征值为 ±1。</p></div><h3 id="6-2-对角化的威力：矩阵幂与微分方程"><a href="#6-2-对角化的威力：矩阵幂与微分方程" class="headerlink" title="6.2 对角化的威力：矩阵幂与微分方程"></a>6.2 对角化的威力：矩阵幂与微分方程</h3><p><img src="/images/courses/matrix-theory/ch3-diagonalization.png" srcset="/img/loading.gif" lazyload alt="对角化后的动力学：每个特征方向独立演化"><br><em>左：反复左乘 A，λ = 0.7 的分量逐步衰减，轨迹落到 λ = 1 的特征直线上。右：用特征向量画的坐标网格里，每个坐标只是各自乘以 λᵢ。</em></p><div class="note note-warning"><p><strong>例题：人口迁移的长期趋势</strong></p><p>每年城市人口有 20% 迁往乡村，乡村人口有 30% 迁往城市。记第 k 年城市、乡村人口为 xₖ = (cₖ, rₖ)ᵀ，则</p><div class="course-math">
+\[
+x_{k+1}=Ax_k,\qquad A=\begin{pmatrix}0.8&0.3\\0.2&0.7\end{pmatrix}.
+\]
+</div><p>特征值 λ₁ = 1、λ₂ = 0.5，特征向量 v₁ = (3, 2)ᵀ、v₂ = (1, −1)ᵀ。于是</p><div class="course-math">
+\[
+A^{k}=P\begin{pmatrix}1&0\\0&0.5^{k}\end{pmatrix}P^{-1}
+=\frac15\begin{pmatrix}3+2\cdot0.5^{k}&3-3\cdot0.5^{k}\\2-2\cdot0.5^{k}&2+3\cdot0.5^{k}\end{pmatrix}
+\ \xrightarrow{k\to\infty}\ \frac15\begin{pmatrix}3&3\\2&2\end{pmatrix}.
+\]
+</div><p>无论初始分布如何，长期看城市与乡村人口之比都趋于 <strong>3 : 2</strong>，也就是 λ = 1 的特征向量方向。0.5ᵏ 决定了趋于稳态的速度。</p></div><div class="note note-warning"><p><strong>例题：解耦线性微分方程组</strong></p><p>解 x′(t) = Ax(t)，A = [[1, 2], [2, 1]]。特征值 3、−1，特征向量 (1, 1)ᵀ、(1, −1)ᵀ。令 x = Py，则 y′ = Λy 变成两个独立的一阶方程 y₁′ = 3y₁、y₂′ = −y₂，于是</p><div class="course-math">
+\[
+x(t)=c_1e^{3t}\begin{pmatrix}1\\1\end{pmatrix}+c_2e^{-t}\begin{pmatrix}1\\-1\end{pmatrix}.
+\]
+</div><p><strong>对角化把“相互耦合的系统”拆成“各自独立的标量问题”</strong>，这是它在工程中最重要的用途。</p></div><h3 id="6-3-酉对角化与正规矩阵"><a href="#6-3-酉对角化与正规矩阵" class="headerlink" title="6.3 酉对角化与正规矩阵"></a>6.3 酉对角化与正规矩阵</h3><div class="note note-primary"><p><strong>定义</strong>：若存在酉矩阵 U 使 UᴴAU 为对角阵，则称 A 可<strong>酉对角化</strong>。满足 AᴴA = AAᴴ 的矩阵称为<strong>正规矩阵</strong>。Hermite 矩阵、反 Hermite 矩阵、酉矩阵、实对称矩阵、正交矩阵都是正规矩阵。</p></div><div class="note note-success"><p><strong>定理</strong>：</p><ol><li>A 可酉对角化 ⇔ A 是正规矩阵 ⇔ A 有 n 个两两正交的单位特征向量；</li><li>A 是 Hermite 矩阵 ⇔ A 可酉对角化且特征值全为实数；</li><li>A 是酉矩阵 ⇔ A 可酉对角化且特征值的模全为 1；</li><li>实矩阵 A 是对称矩阵 ⇔ A 可正交对角化（存在正交矩阵 Q 使 QᵀAQ 为实对角阵）。</li></ol></div><div class="note note-info"><p><strong>直观理解</strong>：正规矩阵的特征向量可以选成互相垂直的，所以它只是沿几条<strong>互相垂直</strong>的轴伸缩（复情形还可带旋转相位）。非正规矩阵的特征方向是“斜”的，这会带来第四章中看到的“暂态增长”等现象。</p></div><div class="note note-warning"><p><strong>例题：实对称矩阵的正交对角化步骤</strong></p><ol><li>求特征值（一定是实数）；</li><li>对每个特征值求特征子空间的基；</li><li><strong>只在同一个特征子空间内部</strong>做 Gram–Schmidt 正交化（不同特征值的特征向量本来就正交）；</li><li>全部单位化，排成正交矩阵 Q，则 QᵀAQ = Λ。</li></ol><p>已知一部分特征向量时，常用正交性反推其余的：例如 3 阶实对称矩阵特征值为 1, 1, 2，已知 λ = 2 的特征向量 (1, 1, 1)ᵀ，则 λ = 1 的特征子空间就是它的正交补 {x₁ + x₂ + x₃ = 0}，于是 A = I + (1/3)·(1, 1, 1)ᵀ(1, 1, 1)。</p></div><h2 id="7-谱分解与投影矩阵"><a href="#7-谱分解与投影矩阵" class="headerlink" title="7. 谱分解与投影矩阵"></a>7. 谱分解与投影矩阵</h2><h3 id="7-1-谱分解"><a href="#7-1-谱分解" class="headerlink" title="7.1 谱分解"></a>7.1 谱分解</h3><div class="note note-success"><p><strong>定理（单纯矩阵的谱分解）</strong>：设单纯矩阵 A 的互异特征值为 λ₁, …, λₛ，则存在唯一的一组矩阵 P₁, …, Pₛ 使</p><div class="course-math">
+\[
+A=\sum_{i=1}^{s}\lambda_iP_i,\qquad
+\sum_{i=1}^{s}P_i=I,\qquad P_iP_j=\delta_{ij}P_i,\qquad AP_i=P_iA=\lambda_iP_i,
+\]
+</div><p>并且对任意多项式 f，有 f(A) = Σ f(λᵢ)Pᵢ。Pᵢ 可以直接用 A 表示：</p><div class="course-math">
+\[
+P_i=\prod_{j\ne i}\frac{A-\lambda_jI}{\lambda_i-\lambda_j}.
+\]
+</div></div><div class="note note-info"><p><strong>直观理解</strong>：Pᵢ 是“沿其他特征子空间、投影到第 i 个特征子空间”的投影算子。Ax 的计算可以分两步：先把 x 拆成各特征子空间中的分量 Pᵢx，再把每个分量乘以对应的 λᵢ。这和把光分解成不同频率的光谱完全类似，“谱分解”由此得名。</p></div><p><img src="/images/courses/matrix-theory/ch3-spectral.png" srcset="/img/loading.gif" lazyload alt="谱分解：沿特征方向拆分再各自伸缩"></p><div class="note note-warning"><p><strong>例题</strong>：A = [[1, 2], [0, 2]]，特征值 1、2。</p><div class="course-math">
+\[
+P_1=\frac{A-2I}{1-2}=\begin{pmatrix}1&-2\\0&0\end{pmatrix},\qquad
+P_2=\frac{A-I}{2-1}=\begin{pmatrix}0&2\\0&1\end{pmatrix}.
+\]
+</div><p>检验 P₁ + P₂ = I，P₁P₂ = 0，1·P₁ + 2·P₂ = A ✓。于是 A¹⁰⁰ = P₁ + 2¹⁰⁰P₂ = [[1, 2¹⁰¹ − 2], [0, 2¹⁰⁰]]。第四章会看到，sin A、eᴬ 也可以这样算。</p></div><h3 id="7-2-幂等矩阵与正交投影矩阵"><a href="#7-2-幂等矩阵与正交投影矩阵" class="headerlink" title="7.2 幂等矩阵与正交投影矩阵"></a>7.2 幂等矩阵与正交投影矩阵</h3><div class="note note-primary"><p><strong>定义</strong>：满足 P² = P 的矩阵称为<strong>幂等矩阵</strong>（投影矩阵）；若同时满足 Pᴴ = P，称为<strong>正交投影矩阵</strong>。</p></div><div class="note note-success"><p><strong>定理</strong>：</p><ol><li>幂等矩阵 P 是沿 N(P) 到 R(P) 的投影，ℂⁿ = R(P) ⊕ N(P)，I − P 也幂等，rank P = tr P；</li><li>正交投影矩阵对应正交直和 ℂⁿ = R(P) ⊕ R(P)⊥；</li><li>若 A 列满秩，则投影到 R(A) 的正交投影矩阵为</li></ol><div class="course-math">
+\[
+P_A=A\left(A^{H}A\right)^{-1}A^{H}.
+\]
+</div><ol><li>正规矩阵的谱分解中，各 Pᵢ 都是正交投影矩阵。</li></ol></div><div class="note note-warning"><p><strong>例题</strong>：投影到直线 span{a}（a = (1, 2)ᵀ）的正交投影矩阵 P = aaᵀ/(aᵀa) = (1/5)·[[1, 2], [2, 4]]。验证 P² = P，Pᵀ = P，tr P = 1 = rank P。点 b = (3, 1)ᵀ 在直线上的投影 Pb = (1, 2)ᵀ，残差 (2, −1)ᵀ 与 a 正交 ✓。</p></div><h2 id="8-λ-矩阵与-Jordan-标准形"><a href="#8-λ-矩阵与-Jordan-标准形" class="headerlink" title="8. λ 矩阵与 Jordan 标准形"></a>8. λ 矩阵与 Jordan 标准形</h2><p>并非所有矩阵都能对角化。Jordan 标准形回答了“相似变换下最简单能化到什么程度”。判断两个矩阵是否相似，转化为判断它们的特征矩阵 λI − A 是否“等价”，这就需要 λ 矩阵理论。</p><h3 id="8-1-λ-矩阵与-Smith-标准形"><a href="#8-1-λ-矩阵与-Smith-标准形" class="headerlink" title="8.1 λ 矩阵与 Smith 标准形"></a>8.1 λ 矩阵与 Smith 标准形</h3><div class="note note-primary"><p><strong>定义</strong>：元素是 λ 的多项式的矩阵称为 <strong>λ 矩阵</strong>，例如特征矩阵 λI − A。</p><ul><li><strong>秩</strong>：不恒为零的子式的最高阶数；</li><li><strong>可逆</strong>：存在 B(λ) 使 A(λ)B(λ) = B(λ)A(λ) = I，<strong>当且仅当 det A(λ) 是非零常数</strong>（不只是“不恒为零”）；</li><li><strong>初等变换</strong>：交换两行（列）；某行（列）乘<strong>非零常数</strong>；某行（列）加上另一行（列）的<strong>多项式倍</strong>；</li><li><strong>相抵</strong>：经有限次初等变换可互相得到，记作 A(λ) ≅ B(λ)。</li></ul></div><div class="note note-primary"><p><strong>定义（行列式因子、不变因子、初等因子）</strong>：设 A(λ) 的秩为 r。</p><ul><li><strong>k 阶行列式因子</strong> Dₖ(λ)：全部 k 阶子式的首一最大公因式；</li><li><strong>不变因子</strong> dₖ(λ) = Dₖ(λ)/Dₖ₋₁(λ)（D₀ = 1），满足 d₁ | d₂ | ⋯ | dᵣ；</li><li><strong>初等因子</strong>：在复数域中把每个不变因子分解成 (λ − a)ᵉ 的乘积，所有 e &gt; 0 的因式（按出现次数计）称为初等因子。</li></ul></div><div class="note note-success"><p><strong>定理（Smith 标准形）</strong>：秩为 r 的 λ 矩阵相抵于唯一的</p><div class="course-math">
+\[
+\operatorname{diag}\big(d_1(\lambda),\ d_2(\lambda),\ \ldots,\ d_r(\lambda),\ 0,\ \ldots,\ 0\big),\qquad d_1\mid d_2\mid\cdots\mid d_r .
+\]
+</div><p>两个 λ 矩阵相抵 ⇔ 有相同的行列式因子 ⇔ 有相同的不变因子 ⇔ 有相同的秩和初等因子。</p></div><div class="note note-success"><p><strong>定理（相似判定）</strong>：复方阵 A 与 B 相似 ⇔ λI − A ≅ λI − B ⇔ 二者有相同的不变因子 ⇔ 有相同的初等因子。</p></div><div class="note note-warning"><p><strong>例题：由不变因子读初等因子</strong></p><p>若 λI − A 的不变因子为 1, λ − 1, (λ − 1)²(λ + 2)，则初等因子是 λ − 1、(λ − 1)²、λ + 2（注意 λ − 1 在两个不变因子里各出现一次，要分别计入）。不变因子的乘积就是特征多项式 (λ − 1)³(λ + 2)，最后一个不变因子 (λ − 1)²(λ + 2) 就是最小多项式。</p></div><h3 id="8-2-Jordan-标准形"><a href="#8-2-Jordan-标准形" class="headerlink" title="8.2 Jordan 标准形"></a>8.2 Jordan 标准形</h3><div class="note note-primary"><p><strong>定义（Jordan 块）</strong>：</p><div class="course-math">
+\[
+J_k(a)=\begin{pmatrix}a&1&&\\&a&\ddots&\\&&\ddots&1\\&&&a\end{pmatrix}_{k\times k},
+\]
+</div><p>其特征矩阵的初等因子只有一个 (λ − a)ᵏ，最小多项式也是 (λ − a)ᵏ。由若干 Jordan 块组成的分块对角阵称为 <strong>Jordan 矩阵</strong>。</p></div><div class="note note-success"><p><strong>定理（Jordan 标准形）</strong>：设复方阵 A 的初等因子为 (λ − a₁)ᵏ¹, …, (λ − aₜ)ᵏᵗ，则</p><div class="course-math">
+\[
+A\sim J=\operatorname{diag}\big(J_{k_1}(a_1),\ \ldots,\ J_{k_t}(a_t)\big),
+\]
+</div><p>若不计 Jordan 块的排列次序，J 由 A 唯一确定。</p><p>推论：</p><ul><li>每个初等因子对应一个 Jordan 块；特征值 a 的 Jordan 块个数 = 几何重数；块的总阶数 = 代数重数；最大块的阶数 = a 在最小多项式中的重数；</li><li>A 可对角化 ⇔ 初等因子都是一次的 ⇔ 所有 Jordan 块都是 1 阶的。</li></ul></div><p><img src="/images/courses/matrix-theory/ch3-jordan.png" srcset="/img/loading.gif" lazyload alt="Jordan 块的几何作用与幂的增长"><br><em>左：数量阵对所有方向都只做伸缩；中：Jordan 块除了伸缩还有“剪切”，只有一个方向不转。右：Jordan 块的幂含 kλᵏ⁻¹、C(k,2)λᵏ⁻² 这样的项，即使 |λ| &lt; 1 也会先增大后衰减。</em></p><div class="note note-info"><p><strong>直观理解</strong>：Jordan 块 J = aI + N，其中 N 是只有上对角线为 1 的幂零矩阵：N 把 e₂ 送到 e₁，e₃ 送到 e₂，……，e₁ 送到 0，像一条“传送链”。由于 aI 与 N 可交换，</p><div class="course-math">
+\[
+J^{m}=(aI+N)^{m}=a^{m}I+\binom m1a^{m-1}N+\binom m2a^{m-2}N^2+\cdots,
+\]
+</div><p>二项式展开在 Nᵏ = 0 处截断。这给出了 Jordan 块幂次和矩阵函数的计算公式。</p></div><h3 id="8-3-不用-Smith-形也能定-Jordan-形：秩的计数"><a href="#8-3-不用-Smith-形也能定-Jordan-形：秩的计数" class="headerlink" title="8.3 不用 Smith 形也能定 Jordan 形：秩的计数"></a>8.3 不用 Smith 形也能定 Jordan 形：秩的计数</h3><p>对每个特征值 a，令 rₖ = rank((A − aI)ᵏ)（r₀ = n），则</p><div class="course-math">
+\[
+\#\{\text{阶数}\ \ge k\ \text{的 Jordan 块}\}=r_{k-1}-r_k .
+\]
+</div><div class="note note-warning"><p><strong>例题</strong>：求 A = [[3, 1, 0], [−1, 1, 0], [1, 0, 2]] 的 Jordan 标准形。</p><ol><li>特征多项式 (λ − 2)³，只有一个特征值 2；</li><li>2I − A = [[−1, −1, 0], [1, 1, 0], [−1, 0, 0]] 的秩为 2，几何重数 3 − 2 = 1，<strong>只有一个 Jordan 块</strong>；</li><li>所以 J = J₃(2)，最小多项式为 (λ − 2)³。</li></ol><p>求变换矩阵 P：需要一条长为 3 的<strong>Jordan 链</strong> (A − 2I)p₁ = 0，(A − 2I)p₂ = p₁，(A − 2I)p₃ = p₂。解得一组为 p₁ = (0, 0, 1)ᵀ、p₂ = (1, −1, 1)ᵀ、p₃ = (1, 0, 0)ᵀ，令 P = (p₁, p₂, p₃)，则 P⁻¹AP = J₃(2)。</p></div><div class="note note-danger"><p><strong>易错点</strong>：</p><ol><li>特征值相同、重数相同的矩阵不一定相似。例如 diag(2, 2) 与 J₂(2)：特征多项式都是 (λ−2)²，但前者最小多项式是 λ − 2，后者是 (λ − 2)²；</li><li>特征多项式和最小多项式都相同也不一定相似（4 阶以上）。例如 diag(J₂(0), J₂(0)) 与 diag(J₂(0), J₁(0), J₁(0))：两者特征多项式都是 λ⁴、最小多项式都是 λ²，但 Jordan 块的个数不同；</li><li>判断相似的“最终标准”是初等因子（或 Jordan 形），而不是某一个不变量。</li></ol></div><h2 id="9-本章小结"><a href="#9-本章小结" class="headerlink" title="9. 本章小结"></a>9. 本章小结</h2><table><thead><tr><th>分解 / 结论</th><th>存在条件</th><th>关键公式或用途</th></tr></thead><tbody><tr><td>左逆 / 右逆</td><td>列满秩 / 行满秩</td><td>(AᴴA)⁻¹Aᴴ / Aᴴ(AAᴴ)⁻¹</td></tr><tr><td>满秩分解</td><td>任意非零矩阵</td><td>F = 主元列，G = 行最简形非零行</td></tr><tr><td>LU（Doolittle）</td><td>顺序主子式 Δ₁…Δₙ₋₁ ≠ 0</td><td>一般用 PA = LU</td></tr><tr><td>Cholesky</td><td>实对称（Hermite）正定</td><td>A = GGᵀ，唯一</td></tr><tr><td>QR</td><td>列满秩</td><td>Gram–Schmidt / Householder / Givens；QR 迭代求特征值</td></tr><tr><td>Schur</td><td>任意复方阵</td><td>A = UTUᴴ，T 上三角</td></tr><tr><td>Hamilton–Cayley</td><td>任意方阵</td><td>f(A) = 0，用于降次和求逆</td></tr><tr><td>最小多项式</td><td>唯一，整除零化多项式</td><td>无重根 ⇔ 可对角化</td></tr><tr><td>对角化</td><td>n 个无关特征向量</td><td>Aᵏ = PΛᵏP⁻¹，解耦微分方程</td></tr><tr><td>酉对角化</td><td>正规矩阵 AᴴA = AAᴴ</td><td>Hermite ⇔ 实特征值；酉 ⇔</td></tr><tr><td>谱分解</td><td>单纯矩阵</td><td>A = Σ λᵢPᵢ，f(A) = Σ f(λᵢ)Pᵢ</td></tr><tr><td>Jordan 标准形</td><td>任意复方阵</td><td>初等因子 ↔ Jordan 块；相似 ⇔ 初等因子相同</td></tr></tbody></table><hr><p><a href="/courses/matrix-theory/">课程目录</a> · <a href="/courses/matrix-theory/linear-maps/">上一章：线性映射与矩阵</a> · <a href="/courses/matrix-theory/matrix-analysis/">下一章：矩阵分析</a></p>]]></content>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>矩阵理论与应用（四）：矩阵分析</title>
+    <link href="/courses/matrix-theory/matrix-analysis/index.html"/>
+    <url>/courses/matrix-theory/matrix-analysis/index.html</url>
+    
+    <content type="html"><![CDATA[<style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}.markdown-body .note>p:last-child{margin-bottom:0}</style><h2 id="0-从代数到分析"><a href="#0-从代数到分析" class="headerlink" title="0. 从代数到分析"></a>0. 从代数到分析</h2><p>前三章是“代数”：讨论等式、分解、相似。这一章是“分析”：讨论<strong>大小</strong>和<strong>极限</strong>。</p><ul><li>向量和矩阵有多“大”？——<strong>范数</strong>；</li><li>不解特征方程，能否估计特征值在哪里？——<strong>谱半径、Rayleigh 商、盖尔圆</strong>；</li><li>Aᵏ 会不会趋于零？I + A + A² + ⋯ 收敛吗？——<strong>矩阵序列与级数</strong>；</li><li>eᴬ、sin A 是什么意思、怎么算？——<strong>矩阵函数</strong>。</li></ul><p>最后一个问题直接关系到线性微分方程 x′ = Ax 的求解：它的解就是 x(t) = eᵗᴬx(0)。</p><h2 id="1-向量范数"><a href="#1-向量范数" class="headerlink" title="1. 向量范数"></a>1. 向量范数</h2><h3 id="1-1-定义与常见范数"><a href="#1-1-定义与常见范数" class="headerlink" title="1.1 定义与常见范数"></a>1.1 定义与常见范数</h3><div class="note note-primary"><p><strong>定义（向量范数）</strong>：设 V 是数域 F（ℝ 或 ℂ）上的线性空间。若对每个 x ∈ V 都对应一个实数 ‖x‖，满足</p><ol><li><strong>正定性</strong>：‖x‖ ≥ 0，且 ‖x‖ = 0 ⇔ x = θ；</li><li><strong>齐次性</strong>：‖kx‖ = |k|·‖x‖；</li><li><strong>三角不等式</strong>：‖x + y‖ ≤ ‖x‖ + ‖y‖，</li></ol><p>则称 ‖·‖ 为 V 上的<strong>向量范数</strong>，(V, ‖·‖) 称为赋范线性空间。</p></div><p>对 x = (x₁, …, xₙ)ᵀ ∈ ℂⁿ，最常用的是 <strong>p-范数</strong>（1 ≤ p ≤ ∞）：</p><div class="course-math">
+\[
+\|x\|_1=\sum_{i=1}^{n}|x_i|,\qquad
+\|x\|_2=\Big(\sum_{i=1}^{n}|x_i|^2\Big)^{1/2}=\sqrt{x^{H}x},\qquad
+\|x\|_\infty=\max_{1\le i\le n}|x_i|,\qquad
+\|x\|_p=\Big(\sum_{i=1}^{n}|x_i|^p\Big)^{1/p}.
+\]
+</div><div class="note note-info"><p><strong>直观理解</strong>：在城市里从 A 走到 B，直线距离是 2-范数；只能沿街道横平竖直地走，距离是 1-范数（“曼哈顿距离”）；国际象棋里国王走一步可以斜走，所需步数是 ∞-范数（“切比雪夫距离”）。三种范数是三种量“远近”的标准。</p></div><p><img src="/images/courses/matrix-theory/ch4-unit-balls.png" srcset="/img/loading.gif" lazyload alt="不同范数的单位球"><br><em>单位球 {x : ‖x‖ = 1} 的形状完全刻画了一个范数。p = 1 是菱形，p = 2 是圆，p = ∞ 是正方形；加权范数 √(xᴴAx) 的单位球是椭圆。</em></p><p>其他常见范数：</p><ul><li><strong>加权范数</strong>：设 A 是 Hermite 正定矩阵，‖x‖_A = √(xᴴAx)；</li><li><strong>坐标诱导的范数</strong>：设 ε₁, …, εₙ 是 V 的基，x 的坐标为 α，则 ‖x‖ := ‖α‖ₚ 是 V 上的范数；</li><li>若 ‖·‖ 是 ℂᵐ 上的范数、A ∈ ℂᵐˣⁿ 列满秩，则 ‖x‖_A := ‖Ax‖ 是 ℂⁿ 上的范数。</li></ul><div class="note note-danger"><p><strong>易错点</strong>：当 0 &lt; p &lt; 1 时，(Σ|xᵢ|ᵖ)^(1/p) <strong>不是</strong>范数，它不满足三角不等式（单位球不是凸集）。例如 p = ½，x = (1, 0)ᵀ、y = (0, 1)ᵀ，“范数”都是 1，而 x + y 的值为 (1 + 1)² = 4 &gt; 2。</p></div><h3 id="1-2-范数的等价性"><a href="#1-2-范数的等价性" class="headerlink" title="1.2 范数的等价性"></a>1.2 范数的等价性</h3><div class="note note-primary"><p><strong>定义（范数等价）</strong>：若存在正常数 c₁、c₂，使对一切 x 都有 c₁‖x‖_α ≤ ‖x‖_β ≤ c₂‖x‖_α，则称 ‖·‖_α 与 ‖·‖_β 等价。</p></div><div class="note note-success"><p><strong>定理</strong>：有限维线性空间上的任意两个向量范数都等价。（关键步骤：任一范数都是坐标的连续函数，在紧的单位球面上取得正的最大值和最小值。）</p><p>例如在 ℂⁿ 中：</p><div class="course-math">
+\[
+\|x\|_\infty\le\|x\|_2\le\|x\|_1\le\sqrt n\,\|x\|_2\le n\,\|x\|_\infty .
+\]
+</div></div><div class="note note-info"><p><strong>直观理解</strong>：各种范数的单位球形状不同，但总能用一个范数的大球套住另一个范数的单位球，也能被它的小球套住。所以在有限维空间中，<strong>讨论收敛性时选哪个范数都一样</strong>，可以挑最方便计算的那个。</p></div><h2 id="2-矩阵范数"><a href="#2-矩阵范数" class="headerlink" title="2. 矩阵范数"></a>2. 矩阵范数</h2><h3 id="2-1-矩阵的向量范数与矩阵范数"><a href="#2-1-矩阵的向量范数与矩阵范数" class="headerlink" title="2.1 矩阵的向量范数与矩阵范数"></a>2.1 矩阵的向量范数与矩阵范数</h3><p>矩阵组成的空间 ℂᵐˣⁿ 本身是 mn 维线性空间，所以可以把矩阵“拉直”后用向量范数度量：</p><div class="course-math">
+\[
+\|A\|_{m_1}=\sum_{i,j}|a_{ij}|,\qquad
+\|A\|_F=\Big(\sum_{i,j}|a_{ij}|^2\Big)^{1/2}=\sqrt{\operatorname{tr}(A^{H}A)},\qquad
+\|A\|_{m_\infty}=\max_{i,j}|a_{ij}|.
+\]
+</div><p>但矩阵还能相乘，我们希望范数与乘法“协调”：</p><div class="note note-primary"><p><strong>定义（矩阵范数）</strong>：若 ℂⁿˣⁿ 上的向量范数 ‖·‖ 还满足<strong>次乘性</strong></p><div class="course-math">
+\[
+\|AB\|\le\|A\|\,\|B\|,
+\]
+</div><p>则称它为<strong>矩阵范数</strong>。</p></div><ul><li>‖A‖ₘ₁ 和 Frobenius 范数 ‖A‖_F 都是矩阵范数；</li><li>‖A‖ₘ∞ <strong>不是</strong>矩阵范数：A = B = [[1, 1], [1, 1]] 时 ‖AB‖ₘ∞ = 2 &gt; 1·1；但 n·‖A‖ₘ∞ 是矩阵范数；</li><li>F 范数是<strong>酉不变</strong>的：对酉矩阵 U、V，‖UAV‖_F = ‖A‖_F。</li></ul><h3 id="2-2-相容性与算子范数"><a href="#2-2-相容性与算子范数" class="headerlink" title="2.2 相容性与算子范数"></a>2.2 相容性与算子范数</h3><div class="note note-primary"><p><strong>定义（相容）</strong>：若矩阵范数 ‖·‖_M 与向量范数 ‖·‖_v 满足 ‖Ax‖_v ≤ ‖A‖_M‖x‖_v，则称二者<strong>相容</strong>。例如 ‖Ax‖₂ ≤ ‖A‖_F‖x‖₂（由 Cauchy–Schwarz 得到）。</p></div><div class="note note-success"><p><strong>定理（算子范数 / 诱导范数）</strong>：设 ‖·‖_v 是 ℂⁿ 上的向量范数，定义</p><div class="course-math">
+\[
+\|A\|=\max_{\|x\|_v=1}\|Ax\|_v=\max_{x\ne0}\frac{\|Ax\|_v}{\|x\|_v},
+\]
+</div><p>则 ‖A‖ 是与 ‖·‖_v 相容的矩阵范数，称为由 ‖·‖_v <strong>诱导的算子范数</strong>。它是使 ‖Ax‖_v ≤ c‖x‖_v 恒成立的<strong>最小</strong>常数 c，并且 ‖I‖ = 1。</p></div><div class="note note-success"><p><strong>定理（三种常用算子范数）</strong>：设 A = (aᵢⱼ) ∈ ℂᵐˣⁿ，σ_max(A) 为 A 的最大奇异值，则</p><div class="course-math">
+\[
+\|A\|_1=\max_{j}\sum_{i=1}^{m}|a_{ij}|\ \ (\text{列和范数}),\qquad
+\|A\|_\infty=\max_{i}\sum_{j=1}^{n}|a_{ij}|\ \ (\text{行和范数}),
+\]
+\[
+\|A\|_2=\sqrt{\lambda_{\max}(A^{H}A)}=\sigma_{\max}(A)\ \ (\text{谱范数}).
+\]
+</div><p>记忆方法：<strong>1 竖列、∞ 横行</strong>（1 像一根竖棍，∞ 横着放）。</p></div><p><img src="/images/courses/matrix-theory/ch4-operator-norms.png" srcset="/img/loading.gif" lazyload alt="三种算子范数的几何意义"><br><em>把对应范数的单位球用 A 映过去，再找能包住像的最小同形球，半径就是算子范数。2-范数中，单位圆被映成椭圆，最长半轴等于最大奇异值。</em></p><div class="note note-warning"><p><strong>例题</strong>：A = [[2, −1, 0], [0, 2, 3], [1, 2, 0]]，求 ‖A‖₁、‖A‖∞、‖A‖_F、‖A‖₂。</p><ul><li>列绝对值和为 3, 5, 3，‖A‖₁ = <strong>5</strong>；</li><li>行绝对值和为 3, 5, 3，‖A‖∞ = <strong>5</strong>；</li><li>‖A‖_F = √(4 + 1 + 4 + 9 + 1 + 4) = <strong>√23</strong>；</li><li>AᵀA 的最大特征值为 15，‖A‖₂ = <strong>√15</strong> ≈ 3.873。</li></ul><p>‖A‖₁、‖A‖∞ 很容易算；‖A‖₂ 要求特征值，代价高。总有 ‖A‖₂ ≤ ‖A‖_F，也有 ‖A‖₂ ≤ √(‖A‖₁‖A‖∞)（本例 √15 ≤ 5），常用来快速估计谱范数。</p></div><div class="note note-danger"><p><strong>易错点</strong>：F 范数与 2-范数相容，但 F 范数<strong>不是</strong>任何向量范数诱导出来的算子范数（因为 ‖I‖_F = √n ≠ 1）。“与同一个向量范数相容的矩阵范数可以有很多个”，算子范数只是其中最小的那个。</p></div><h3 id="2-3-Rayleigh-商与极大极小定理"><a href="#2-3-Rayleigh-商与极大极小定理" class="headerlink" title="2.3 Rayleigh 商与极大极小定理"></a>2.3 Rayleigh 商与极大极小定理</h3><p>在求谱范数的过程中自然出现了 Hermite 矩阵的 <strong>Rayleigh 商</strong>：</p><div class="course-math">
+\[
+R(x)=\frac{x^{H}Ax}{x^{H}x},\qquad x\ne0 .
+\]
+</div><div class="note note-success"><p><strong>定理</strong>：设 Hermite 矩阵 A 的特征值为 λ₁ ≥ λ₂ ≥ ⋯ ≥ λₙ，则</p><div class="course-math">
+\[
+\lambda_n\le R(x)\le\lambda_1,\qquad
+\lambda_1=\max_{x\ne0}R(x),\qquad
+\lambda_n=\min_{x\ne0}R(x),
+\]
+</div><p>最大（小）值在对应的特征向量处取到。</p></div><p><img src="/images/courses/matrix-theory/ch4-rayleigh.png" srcset="/img/loading.gif" lazyload alt="Rayleigh 商在单位圆上的取值"><br><em>R(x) 只与 x 的方向有关。在单位圆上转一圈，R 在 λ₁ 和 λ₂ 之间变化，最大、最小值恰好出现在两个互相垂直的特征方向上。</em></p><div class="note note-info"><p><strong>直观理解</strong>：用特征向量的标准正交基展开 x = Σ cᵢuᵢ，则 R(x) = Σ λᵢ|cᵢ|² / Σ |cᵢ|²，是各特征值的<strong>加权平均</strong>，权重为 |cᵢ|²。平均值自然夹在最大值与最小值之间。</p></div><div class="note note-success"><p><strong>定理（Courant–Fischer 极大极小定理）</strong>：设 Vₖ 表示 ℂⁿ 的 k 维子空间，则</p><div class="course-math">
+\[
+\lambda_k=\max_{V_k}\ \min_{x\in V_k,\,x\ne0}R(x)=\min_{V_{n-k+1}}\ \max_{x\in V_{n-k+1},\,x\ne0}R(x).
+\]
+</div></div><div class="note note-success"><p><strong>推论（Weyl 不等式，特征值的扰动）</strong>：设 A、B 都是 n 阶 Hermite 矩阵，λₖ(·) 表示第 k 大特征值，则</p><div class="course-math">
+\[
+\lambda_k(A)+\lambda_n(B)\le\lambda_k(A+B)\le\lambda_k(A)+\lambda_1(B).
+\]
+</div><p>特别地，|λₖ(A + B) − λₖ(A)| ≤ ‖B‖₂：<strong>Hermite 矩阵的特征值对扰动是稳定的</strong>，矩阵改变多少，特征值最多改变多少。</p></div><div class="note note-success"><p><strong>定理</strong>：若某个矩阵范数满足 ‖A‖ &lt; 1，则 I − A 可逆，且</p><div class="course-math">
+\[
+\left\|(I-A)^{-1}\right\|\le\frac{\|I\|}{1-\|A\|}.
+\]
+</div><p>（对算子范数 ‖I‖ = 1。）这一结论在第 4 节的 Neumann 级数中会再次出现。</p></div><h2 id="3-特征值估计"><a href="#3-特征值估计" class="headerlink" title="3. 特征值估计"></a>3. 特征值估计</h2><h3 id="3-1-谱半径"><a href="#3-1-谱半径" class="headerlink" title="3.1 谱半径"></a>3.1 谱半径</h3><div class="note note-primary"><p><strong>定义</strong>：A 的全体特征值构成的集合 λ(A) 称为 A 的<strong>谱</strong>；特征值模的最大值 ρ(A) = max |λᵢ| 称为<strong>谱半径</strong>。</p></div><div class="note note-success"><p><strong>定理</strong>：</p><ol><li>谱半径不超过任何矩阵范数：ρ(A) ≤ ‖A‖；</li><li>对任意 ε &gt; 0，存在某个（与 A 有关的）矩阵范数使 ‖A‖ ≤ ρ(A) + ε。</li></ol><p>所以 ρ(A) 是 A 的所有矩阵范数的下确界。</p></div><div class="note note-info"><p><strong>证明（第 1 条）</strong>：设 Ax = λx，取矩阵 X = (x, x, …, x)，则 AX = λX，于是 |λ|·‖X‖ = ‖AX‖ ≤ ‖A‖·‖X‖，约去 ‖X‖ &gt; 0 即得。<strong>一行就证完，这是“构造辅助矩阵”的典型技巧。</strong></p></div><div class="note note-danger"><p><strong>易错点</strong>：谱半径本身<strong>不是</strong>矩阵范数。例如 A = [[0, 1], [0, 0]] ≠ 0，但 ρ(A) = 0，违反正定性。对正规矩阵（特别是 Hermite 矩阵）有 ρ(A) = ‖A‖₂。</p></div><h3 id="3-2-盖尔圆盘定理"><a href="#3-2-盖尔圆盘定理" class="headerlink" title="3.2 盖尔圆盘定理"></a>3.2 盖尔圆盘定理</h3><div class="note note-primary"><p><strong>定义（盖尔圆盘）</strong>：设 A = (aᵢⱼ) ∈ ℂⁿˣⁿ，令 Rᵢ = Σ(j≠i) |aᵢⱼ|（第 i 行非对角元模之和），称复平面上的闭圆盘</p><div class="course-math">
+\[
+G_i=\{z\in\mathbb C:\ |z-a_{ii}|\le R_i\},\qquad i=1,\ldots,n
+\]
+</div><p>为 A 的第 i 个<strong>盖尔圆盘</strong>（Gershgorin 圆）。</p></div><div class="note note-success"><p><strong>定理（盖尔圆盘定理）</strong>：</p><ol><li>A 的每个特征值都落在 n 个盖尔圆盘的并集中：λ ∈ G₁ ∪ ⋯ ∪ Gₙ；</li><li>若其中 k 个圆盘的并形成一个连通区域，且与其余 n − k 个圆盘不相交，则该区域中<strong>恰有 k 个</strong>特征值（按重数计）。特别地，孤立的圆盘中恰有一个特征值。</li></ol><p>对 Aᵀ 用同样的结论，可以得到按<strong>列</strong>构造的圆盘，两者可以结合使用。</p></div><div class="note note-info"><p><strong>证明（第 1 条）</strong>：设 Ax = λx，取 x 中模最大的分量 xᵢ（|xᵢ| ≥ |xⱼ|）。第 i 个方程为 (λ − aᵢᵢ)xᵢ = Σ(j≠i) aᵢⱼxⱼ，两边取模、除以 |xᵢ| 得 |λ − aᵢᵢ| ≤ Σ(j≠i) |aᵢⱼ|·|xⱼ|/|xᵢ| ≤ Rᵢ。<strong>直观上，非对角元越小，矩阵越接近对角阵，特征值越贴近对角元</strong>；盖尔圆把“贴近多少”量化了。第 2 条用连续性论证：令 A(t) = D + t(A − D)，t 从 0 增大到 1，圆盘从点逐渐长大，特征值连续移动，跑不出连通区域。</p></div><p><img src="/images/courses/matrix-theory/ch4-gershgorin.png" srcset="/img/loading.gif" lazyload alt="盖尔圆盘与特征值的位置"><br><em>一个 4 阶复矩阵的行圆盘与列圆盘，黑色星号是真实特征值。四个圆盘互不相交，每个圆盘中恰有一个特征值。</em></p><div class="note note-warning"><p><strong>例题</strong>：估计 A = [[1, 0.02, 0.11], [0.01, i, 0.14], [0.02, 0.01, 0.5]] 的特征值。</p><p>三个行圆盘：</p><ul><li>G₁：圆心 1，半径 0.13；</li><li>G₂：圆心 i，半径 0.15；</li><li>G₃：圆心 0.5，半径 0.03。</li></ul><p>三个圆盘两两不相交，所以每个圆盘中恰有一个特征值。实际特征值约为 1.0045、0.4961、0.9988i，与估计一致。不解三次方程，就能知道特征值大致在哪里、各有几个。</p></div><div class="note note-success"><p><strong>推论</strong>：</p><ol><li><strong>对角占优矩阵可逆</strong>：若对每个 i 都有 |aᵢᵢ| &gt; Rᵢ，则原点不在任何圆盘中，0 不是特征值；</li><li>若 A 的 n 个盖尔圆盘两两不相交，则 A 有 n 个互异特征值，因而<strong>可对角化</strong>；</li><li><strong>实矩阵的孤立圆盘中的特征值必为实数</strong>：实矩阵的复特征值共轭成对出现，而圆心在实轴上的孤立圆盘关于实轴对称，只能容纳一个特征值，它的共轭也在同一圆盘中，所以只能是实数。</li></ol></div><div class="note note-warning"><p><strong>技巧：用相似变换缩小圆盘</strong></p><p>令 D = diag(d₁, …, dₙ)，D⁻¹AD 的特征值与 A 相同，但第 i 行非对角元变成 aᵢⱼdⱼ/dᵢ。适当选取 dᵢ 可以缩小某个圆盘、放大另一些，把重叠的圆盘“分离”开，从而得到更精细的估计。</p></div><h2 id="4-矩阵序列与矩阵级数"><a href="#4-矩阵序列与矩阵级数" class="headerlink" title="4. 矩阵序列与矩阵级数"></a>4. 矩阵序列与矩阵级数</h2><h3 id="4-1-收敛性"><a href="#4-1-收敛性" class="headerlink" title="4.1 收敛性"></a>4.1 收敛性</h3><div class="note note-primary"><p><strong>定义</strong>：若矩阵序列 {A⁽ᵏ⁾} 的每个元素都收敛，即 aᵢⱼ⁽ᵏ⁾ → aᵢⱼ，则称 A⁽ᵏ⁾ 收敛到 A。由于有限维空间中所有范数等价，这等价于对<strong>任意</strong>一种矩阵范数有 ‖A⁽ᵏ⁾ − A‖ → 0。</p></div><div class="note note-success"><p><strong>定理（矩阵幂收敛）</strong>：设 A ∈ ℂⁿˣⁿ，则</p><div class="course-math">
+\[
+\lim_{k\to\infty}A^{k}=0\quad\Longleftrightarrow\quad\rho(A)\lt 1 .
+\]
+</div><p>推论：若存在某个矩阵范数使 ‖A‖ &lt; 1，则 Aᵏ → 0。</p></div><div class="note note-info"><p><strong>证明思路</strong>：用 Jordan 标准形 A = PJP⁻¹，Aᵏ = PJᵏP⁻¹。每个 Jordan 块的幂中的元素形如 C(k, j)λᵏ⁻ʲ，多项式增长被 |λ|ᵏ 的指数衰减压倒的充分必要条件是 |λ| &lt; 1。</p></div><p><img src="/images/courses/matrix-theory/ch4-powers-neumann.png" srcset="/img/loading.gif" lazyload alt="矩阵幂的收敛与 Neumann 级数"><br><em>左：两个矩阵的谱半径都是 0.9，正规矩阵的 ‖Aᵏ‖ 单调衰减；非正规矩阵先增长到约 8 倍，之后才衰减，但最终都趋于零。是否收敛只看 ρ(A)，衰减前的暂态则与矩阵是否正规有关。右：Neumann 级数部分和的误差以 ρ(A)ᵏ 的速度下降。</em></p><h3 id="4-2-矩阵级数与幂级数"><a href="#4-2-矩阵级数与幂级数" class="headerlink" title="4.2 矩阵级数与幂级数"></a>4.2 矩阵级数与幂级数</h3><div class="note note-primary"><p><strong>定义</strong>：若部分和 S_N = Σₖ₌₀ᴺ A⁽ᵏ⁾ 收敛，则称矩阵级数 Σ A⁽ᵏ⁾ 收敛；若 Σ ‖A⁽ᵏ⁾‖ 收敛（等价地，每个元素的级数都绝对收敛），则称其<strong>绝对收敛</strong>。绝对收敛的级数一定收敛，且可以任意重排。</p></div><div class="note note-success"><p><strong>定理（矩阵幂级数的 Abel 型定理）</strong>：设复幂级数 Σ cₖzᵏ 的收敛半径为 R，则</p><ul><li>当 ρ(A) &lt; R 时，矩阵幂级数 Σ cₖAᵏ 绝对收敛；</li><li>当 ρ(A) &gt; R 时，Σ cₖAᵏ 发散。</li></ul></div><div class="note note-success"><p><strong>推论（Neumann 级数）</strong>：</p><div class="course-math">
+\[
+\sum_{k=0}^{\infty}A^{k}=I+A+A^2+\cdots\ \text{收敛}\quad\Longleftrightarrow\quad\rho(A)\lt 1,
+\qquad\text{此时}\quad\sum_{k=0}^{\infty}A^{k}=(I-A)^{-1}.
+\]
+</div><p>这是数的等比级数 1 + q + q² + ⋯ = 1/(1 − q) 的矩阵版本。</p></div><div class="note note-warning"><p><strong>例题：Leontief 投入产出模型</strong></p><p>一个经济体有两个部门。生产 1 单位部门 1 的产品需要消耗部门 1、部门 2 的产品各 0.5、0.2 单位；生产 1 单位部门 2 的产品需要各 0.3、0.4 单位。消耗系数矩阵（第 j 列为部门 j 的投入）为</p><div class="course-math">
+\[
+A=\begin{pmatrix}0.5&0.3\\0.2&0.4\end{pmatrix}.
+\]
+</div><p>为满足最终需求 d，总产出 x 必须满足 x = Ax + d，即 x = (I − A)⁻¹d。</p><ul><li>经济含义：要满足需求 d，先得生产 d；生产 d 本身又消耗 Ad，生产 Ad 又消耗 A²d……总产出 x = d + Ad + A²d + ⋯，正是 Neumann 级数；</li><li>收敛性：‖A‖₁ = 0.7 &lt; 1（每个部门的投入少于产出），所以级数收敛，经济体是“可持续”的；特征值为 0.7、0.2，ρ(A) = 0.7；</li><li>结果：(I − A)⁻¹ = (1/0.24)·[[0.6, 0.3], [0.2, 0.5]]，且 ‖(I − A)⁻¹‖₁ ≤ 1/(1 − 0.7) ≈ 3.33（实际值为 0.8/0.24 ≈ 3.33，恰好取到）。</li></ul></div><h2 id="5-矩阵函数"><a href="#5-矩阵函数" class="headerlink" title="5. 矩阵函数"></a>5. 矩阵函数</h2><h3 id="5-1-用幂级数定义"><a href="#5-1-用幂级数定义" class="headerlink" title="5.1 用幂级数定义"></a>5.1 用幂级数定义</h3><div class="note note-primary"><p><strong>定义</strong>：设复函数 f(z) = Σ cₖzᵏ 的收敛半径为 R，A 的谱半径 ρ(A) &lt; R，定义矩阵函数</p><div class="course-math">
+\[
+f(A)=\sum_{k=0}^{\infty}c_kA^{k}.
+\]
+</div><p>常用的有</p><div class="course-math">
+\[
+e^{A}=\sum_{k=0}^{\infty}\frac{A^{k}}{k!},\qquad
+\sin A=\sum_{k=0}^{\infty}\frac{(-1)^kA^{2k+1}}{(2k+1)!},\qquad
+\cos A=\sum_{k=0}^{\infty}\frac{(-1)^kA^{2k}}{(2k)!},
+\]
+</div><p>它们对一切方阵都收敛（收敛半径为 ∞）。把 A 换成 tA 得到<strong>含参矩阵函数</strong> eᵗᴬ、sin(tA) 等。</p></div><div class="note note-success"><p><strong>定理（性质）</strong>：</p><ol><li>若 AB = BA，则 eᴬeᴮ = eᴮeᴬ = eᴬ⁺ᴮ；</li><li>eᴬ 总是可逆的，且 (eᴬ)⁻¹ = e⁻ᴬ（无论 A 是否可逆）；</li><li>sin²A + cos²A = I，eⁱᴬ = cos A + i sin A；</li><li>det eᴬ = e^(tr A)；</li><li>d/dt eᵗᴬ = Aeᵗᴬ = eᵗᴬA。</li></ol></div><div class="note note-danger"><p><strong>易错点</strong>：AB ≠ BA 时 eᴬ⁺ᴮ 一般<strong>不等于</strong> eᴬeᴮ。例如 A = [[0, 1], [0, 0]]、B = [[0, 0], [1, 0]]，可以直接验证二者不同。标量函数的恒等式能否推广到矩阵，关键看涉及的矩阵是否可交换。</p></div><div class="note note-warning"><p><strong>例题：eᵗᴬ 是旋转</strong></p><p>A = [[0, 1], [−1, 0]]，A² = −I，A³ = −A，A⁴ = I，……。按偶数次与奇数次分组：</p><div class="course-math">
+\[
+e^{tA}=\Big(1-\frac{t^2}{2!}+\frac{t^4}{4!}-\cdots\Big)I+\Big(t-\frac{t^3}{3!}+\cdots\Big)A
+=\begin{pmatrix}\cos t&\sin t\\-\sin t&\cos t\end{pmatrix}.
+\]
+</div><p>A 就像矩阵版的虚数单位 i（A² = −I），eᵗᴬ 就是 Euler 公式 eⁱᵗ = cos t + i sin t 的矩阵版本：一个旋转。</p></div><h3 id="5-2-计算方法一：对角化与谱分解"><a href="#5-2-计算方法一：对角化与谱分解" class="headerlink" title="5.2 计算方法一：对角化与谱分解"></a>5.2 计算方法一：对角化与谱分解</h3><div class="note note-success"><p><strong>定理</strong>：若 A = PBP⁻¹，则 f(A) = Pf(B)P⁻¹。因此对单纯矩阵</p><div class="course-math">
+\[
+f(A)=P\operatorname{diag}\big(f(\lambda_1),\ldots,f(\lambda_n)\big)P^{-1}=\sum_{i=1}^{s}f(\lambda_i)P_i,
+\qquad
+f(tA)=\sum_{i=1}^{s}f(\lambda_it)P_i .
+\]
+</div></div><div class="note note-warning"><p><strong>例题</strong>：A = [[1, 2], [0, 2]]，求 sin A。</p><p>第三章已求得谱分解 A = 1·P₁ + 2·P₂，P₁ = [[1, −2], [0, 0]]，P₂ = [[0, 2], [0, 1]]，所以</p><div class="course-math">
+\[
+\sin A=\sin1\cdot P_1+\sin2\cdot P_2=\begin{pmatrix}\sin1&2\sin2-2\sin1\\0&\sin2\end{pmatrix}.
+\]
+</div><p>同理 eᴬ = [[e, 2e² − 2e], [0, e²]]。</p></div><h3 id="5-3-计算方法二：Jordan-标准形"><a href="#5-3-计算方法二：Jordan-标准形" class="headerlink" title="5.3 计算方法二：Jordan 标准形"></a>5.3 计算方法二：Jordan 标准形</h3><p>不能对角化时，用 A = PJP⁻¹ 化为 Jordan 块。对 k 阶 Jordan 块 Jₖ(a)，利用 J = aI + N 和 Taylor 展开：</p><div class="course-math">
+\[
+f\big(J_k(a)\big)=\begin{pmatrix}
+f(a)&f'(a)&\dfrac{f''(a)}{2!}&\cdots&\dfrac{f^{(k-1)}(a)}{(k-1)!}\\
+&f(a)&f'(a)&\ddots&\vdots\\
+&&\ddots&\ddots&\dfrac{f''(a)}{2!}\\
+&&&f(a)&f'(a)\\
+&&&&f(a)
+\end{pmatrix}.
+\]
+</div><div class="note note-warning"><p><strong>例题</strong>：J = J₃(2) = [[2, 1, 0], [0, 2, 1], [0, 0, 2]]。</p><ul><li>f(x) = eˣ：f = f′ = f″ = e²，所以 eᴶ = e²·[[1, 1, ½], [0, 1, 1], [0, 0, 1]]；</li><li>f(x) = 1/x：f(2) = ½，f′(2) = −¼，f″(2)/2! = ⅛，所以 J⁻¹ = [[½, −¼, ⅛], [0, ½, −¼], [0, 0, ½]]，与直接求逆一致；</li><li>f(x) = eᵗˣ：eᵗᴶ = e²ᵗ·[[1, t, t²/2], [0, 1, t], [0, 0, 1]]，出现了 te²ᵗ、t²e²ᵗ，这正是常微分方程重根时解的形式。</li></ul></div><h3 id="5-4-计算方法三：多项式插值（谱上一致）"><a href="#5-4-计算方法三：多项式插值（谱上一致）" class="headerlink" title="5.4 计算方法三：多项式插值（谱上一致）"></a>5.4 计算方法三：多项式插值（谱上一致）</h3><div class="note note-primary"><p><strong>定义（f 在 A 的谱上给定）</strong>：设 A 的最小多项式为 m(λ) = (λ − λ₁)ᵏ¹⋯(λ − λₛ)ᵏˢ，若 f 在每个 λᵢ 处都有直到 kᵢ − 1 阶的导数，则称 f 在 A 的谱上<strong>给定</strong>。</p></div><div class="note note-success"><p><strong>定理</strong>：设 deg m = d，f 在 A 的谱上给定，则存在唯一的次数小于 d 的多项式 r(λ) 满足</p><div class="course-math">
+\[
+r^{(j)}(\lambda_i)=f^{(j)}(\lambda_i),\qquad j=0,\ldots,k_i-1,\quad i=1,\ldots,s,
+\]
+</div><p>并且 f(A) = r(A)。这一条件比“幂级数收敛”更弱，可以用来<strong>推广</strong>矩阵函数的定义（例如 f(x) = 1/x、√x）。</p></div><div class="note note-info"><p><strong>直观理解</strong>：f(A) 只“看得见” f 在 A 的特征值处的取值（及重根处的导数），对其他地方的 f 毫不关心。所以只要找一个在这些点上与 f“对得上”的低次多项式 r，就有 f(A) = r(A)。第三章用最小多项式算 A¹⁰⁰ 的方法，就是 f(x) = x¹⁰⁰ 时的特例。</p><p><strong>实用技巧</strong>：不知道最小多项式时，可以改用任一零化多项式（比如特征多项式）代替，只是插值多项式的次数可能高一些。</p></div><div class="note note-warning"><p><strong>例题：只知道特征值时求 sin A、cos A</strong></p><p>设 4 阶矩阵 A 的特征值为 π、−π、0、0（未必可对角化），求 sin A 与 cos A。</p><p>用特征多项式 λ²(λ − π)(λ + π) 作零化多项式，找次数不超过 3 的 r(λ)：</p><ul><li><strong>sin A</strong>：条件 r(π) = r(−π) = r(0) = 0，r′(0) = cos 0 = 1。前三个条件给出 r = aλ(λ² − π²)，再由 r′(0) = −aπ² = 1 得 a = −1/π²，所以</li></ul><div class="course-math">
+\[
+\sin A=A-\frac{1}{\pi^2}A^{3}.
+\]
+</div><ul><li><strong>cos A</strong>：条件 r(±π) = −1，r(0) = 1，r′(0) = 0。设 r = α + βλ + γλ² + δλ³，得 α = 1，β = 0，δ = 0，γ = −2/π²，所以</li></ul><div class="course-math">
+\[
+\cos A=I-\frac{2}{\pi^2}A^{2}.
+\]
+</div><p>不知道 A 的具体元素，也能把 sin A、cos A 写成 A 的多项式。</p></div><h3 id="5-5-应用：线性常微分方程组"><a href="#5-5-应用：线性常微分方程组" class="headerlink" title="5.5 应用：线性常微分方程组"></a>5.5 应用：线性常微分方程组</h3><div class="note note-success"><p><strong>定理</strong>：初值问题</p><div class="course-math">
+\[
+x'(t)=Ax(t)+b(t),\qquad x(t_0)=x_0
+\]
+</div><p>的唯一解为</p><div class="course-math">
+\[
+x(t)=e^{(t-t_0)A}x_0+\int_{t_0}^{t}e^{(t-s)A}b(s)\,ds .
+\]
+</div><p>齐次情形（b = 0）的解就是 x(t) = e^((t−t₀)A)x₀。</p></div><p><img src="/images/courses/matrix-theory/ch4-matrix-exponential.png" srcset="/img/loading.gif" lazyload alt="矩阵指数描述的三种典型运动"><br><em>特征值为 ±i 时 eᵗᴬ 是旋转，轨迹为圆；特征值实部为负时轨迹螺旋收缩到原点；Jordan 块（重特征值、只有一个特征方向）时，轨迹沿唯一的特征方向弯曲着进入原点。浅色箭头是向量场 Ax。</em></p><div class="note note-info"><p><strong>直观理解</strong>：x′ = Ax 说的是“在位置 x 处，速度是 Ax”。矩阵指数把这个“速度场”沿时间积分，得到整条轨迹。特征值决定了运动的类型：实部的正负决定增长还是衰减，虚部决定旋转的快慢，Jordan 块带来 t·e^(λt) 这样的“多项式 × 指数”项。<strong>整门课的工具在这里汇合</strong>：特征值（第二章）、对角化与 Jordan 形（第三章）、矩阵函数（本章）。</p></div><h2 id="6-本章小结"><a href="#6-本章小结" class="headerlink" title="6. 本章小结"></a>6. 本章小结</h2><table><thead><tr><th>概念</th><th>一句话理解</th><th>常用结论</th></tr></thead><tbody><tr><td>向量范数</td><td>度量向量大小的标准</td><td>有限维空间中所有范数等价</td></tr><tr><td>矩阵范数</td><td>还要满足次乘性</td><td>‖AB‖ ≤ ‖A‖‖B‖；‖A‖ₘ∞ 不是矩阵范数</td></tr><tr><td>算子范数</td><td>最大放大倍数</td><td>‖A‖₁ 列和，‖A‖∞ 行和，‖A‖₂ = σ_max</td></tr><tr><td>Rayleigh 商</td><td>特征值的加权平均</td><td>λ_min ≤ R(x) ≤ λ_max；极大极小定理；Weyl 不等式</td></tr><tr><td>谱半径</td><td>特征值的最大模</td><td>ρ(A) ≤ ‖A‖；不是范数</td></tr><tr><td>盖尔圆盘</td><td>特征值“离对角元不远”</td><td>孤立圆盘恰含一个特征值；对角占优 ⇒ 可逆</td></tr><tr><td>矩阵幂</td><td>Aᵏ 的长期行为</td><td>Aᵏ → 0 ⇔ ρ(A) &lt; 1</td></tr><tr><td>Neumann 级数</td><td>矩阵版等比级数</td><td>ρ(A) &lt; 1 时 Σ Aᵏ = (I − A)⁻¹</td></tr><tr><td>矩阵函数</td><td>幂级数 / 谱上插值</td><td>f(A) = Pf(J)P⁻¹ = Σ f(λᵢ)Pᵢ = r(A)</td></tr><tr><td>矩阵指数</td><td>线性系统的“演化算子”</td><td>x(t) = eᵗᴬx₀；AB = BA 时 eᴬ⁺ᴮ = eᴬeᴮ</td></tr></tbody></table><hr><p><a href="/courses/matrix-theory/">课程目录</a> · <a href="/courses/matrix-theory/matrix-decompositions/">上一章：矩阵分解</a></p>]]></content>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>深度学习基础与应用</title>
     <link href="/courses/deep-learning-foundations/"/>
     <url>/courses/deep-learning-foundations/</url>
