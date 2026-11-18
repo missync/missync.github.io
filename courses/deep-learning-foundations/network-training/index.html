@@ -485,16 +485,16 @@ W_{ij}\sim\mathcal U\!\left(-\sqrt{\frac{6}{n_{\mathrm{in}}}},\ \sqrt{\frac{6}{n
 
 
 <p>也就是选择合适的初始分布或矩阵结构，使前向信号与反向梯度都能稳定传播。沿这一思路还有正交初始化（Saxe et al., 2013）、面向很深前馈网络的随机游走初始化（Sussillo &amp; Abbott, 2014）、用数据统计量校准各层尺度的数据相关初始化（Krähenbühl et al., 2015）与 LSUV（<em>All you need is a good init</em>，Mishkin &amp; Matas, 2015）、无需归一化即可训练深层残差网络的 Fixup（Zhang et al., 2019）等工作。彩票假设（Frankle &amp; Carbin, 2019）则从另一个角度说明了初始值的重要性：大网络中存在某些“中奖”的子网络，用原始初始值单独训练也能达到相近精度。</p>
-<h2 id="3-批归一化与归一化家族"><a href="#3-批归一化与归一化家族" class="headerlink" title="3. 批归一化与归一化家族"></a>3. 批归一化与归一化家族</h2><h3 id="3-1-从协变量偏移说起"><a href="#3-1-从协变量偏移说起" class="headerlink" title="3.1 从协变量偏移说起"></a>3.1 从协变量偏移说起</h3><p><strong>协变量偏移（Covariate Shift）</strong>：训练集和测试集的输入分布不同，但输入到标签的映射不变。例如用白天照片训练、在黄昏照片上测试。</p>
+<h2 id="3-批归一化与归一化家族"><a href="#3-批归一化与归一化家族" class="headerlink" title="3. 批归一化与归一化家族"></a>3. 批归一化与归一化家族</h2><h3 id="3-1-为什么需要归一化"><a href="#3-1-为什么需要归一化" class="headerlink" title="3.1 为什么需要归一化"></a>3.1 为什么需要归一化</h3><p><strong>协变量偏移（Covariate Shift）</strong>：训练集和测试集的输入分布不同，但输入到标签的映射不变。例如用白天照片训练、在黄昏照片上测试。</p>
 <p><strong>内部协变量偏移（Internal Covariate Shift）</strong>：同样的现象发生在网络内部。前一层参数一更新，后一层收到的输入分布就随之改变，每一层都在追赶一个不断移动的目标。批归一化最初正是以缓解这一问题为动机提出的。</p>
-<h3 id="3-2-损失面视角：尺度不同让优化变难"><a href="#3-2-损失面视角：尺度不同让优化变难" class="headerlink" title="3.2 损失面视角：尺度不同让优化变难"></a>3.2 损失面视角：尺度不同让优化变难</h3><p>设一个简单模型 y &#x3D; w₁x₁ + w₂x₂ + b。若 x₁ 的取值在 1、2 左右，x₂ 的取值在 100、200 左右：</p>
+<p><strong>损失面视角：尺度不同让优化变难。</strong> 设一个简单模型 y &#x3D; w₁x₁ + w₂x₂ + b。若 x₁ 的取值在 1、2 左右，x₂ 的取值在 100、200 左右：</p>
 <ul>
 <li>w₁ 变化 Δw₁ 时，输出只变化一点点，损失对 w₁ 很平缓；</li>
 <li>w₂ 同样变化 Δw₂ 时，输出变化很大，损失对 w₂ 很陡峭。</li>
 </ul>
 <p>于是损失面在不同方向的曲率差别悬殊，等高线呈细长椭圆。同一个学习率对陡峭方向太大、对平缓方向太小，梯度下降只能走锯齿路线。<strong>如果让各维输入处于相同范围，等高线接近圆形，梯度方向更直接地指向最优点。</strong></p>
 <p><img src="/images/courses/deep-learning-foundations/normalization-landscape.png" srcset="/img/loading.gif" lazyload alt="特征尺度不同与归一化后的损失面等高线及梯度下降轨迹"><br><em>左：两个方向曲率相差 25 倍，学习率只能迁就陡峭方向，轨迹来回振荡；右：归一化后曲率接近，可以用更大的学习率直线前进。</em></p>
-<h3 id="3-3-特征归一化"><a href="#3-3-特征归一化" class="headerlink" title="3.3 特征归一化"></a>3.3 特征归一化</h3><p>对 R 个样本 $x^1,\dots,x^R$，在每个维度 i 上分别计算均值 mᵢ 和标准差 σᵢ：</p>
+<p><strong>特征归一化。</strong> 对 R 个样本 $x^1,\dots,x^R$，在每个维度 i 上分别计算均值 mᵢ 和标准差 σᵢ：</p>
 
 <div class="course-math">
 \[
@@ -504,7 +504,7 @@ W_{ij}\sim\mathcal U\!\left(-\sqrt{\frac{6}{n_{\mathrm{in}}}},\ \sqrt{\frac{6}{n
 
 
 <p>处理后每个维度的均值为 0、方差为 1。一般来说，特征归一化能让梯度下降收敛得更快。</p>
-<h3 id="3-4-深层网络中每一层都需要归一化"><a href="#3-4-深层网络中每一层都需要归一化" class="headerlink" title="3.4 深层网络中每一层都需要归一化"></a>3.4 深层网络中每一层都需要归一化</h3><p>输入层做了归一化，第一层的输出 z &#x3D; W¹x 各维仍可能处在完全不同的范围，对下一层而言同样难以优化。因此也应该对中间层的 z（或激活 a）做归一化。</p>
+<h3 id="3-2-批归一化的计算"><a href="#3-2-批归一化的计算" class="headerlink" title="3.2 批归一化的计算"></a>3.2 批归一化的计算</h3><p><strong>深层网络中每一层都需要归一化。</strong> 输入层做了归一化，第一层的输出 z &#x3D; W¹x 各维仍可能处在完全不同的范围，对下一层而言同样难以优化。因此也应该对中间层的 z（或激活 a）做归一化。</p>
 <p>网络中间层的统计量无法事先对整个训练集计算（参数一直在变），于是只在<strong>当前 mini-batch</strong> 上估计。设一个 batch 内有 B 个样本：</p>
 
 <div class="course-math">
@@ -519,7 +519,7 @@ W_{ij}\sim\mathcal U\!\left(-\sqrt{\frac{6}{n_{\mathrm{in}}}},\ \sqrt{\frac{6}{n
 
 
 <p>注意 μ 和 σ 依赖 batch 内所有 zⁱ。<strong>某一个样本变化，会通过 μ、σ 影响同批其他样本的输出</strong>；反向传播时梯度也要经过 μ 和 σ。也就是说，此时应把整个 batch 看成一个大网络，这就是“批”归一化名称的由来。</p>
-<h3 id="3-5-BN-的完整计算：再加可学习的缩放与平移"><a href="#3-5-BN-的完整计算：再加可学习的缩放与平移" class="headerlink" title="3.5 BN 的完整计算：再加可学习的缩放与平移"></a>3.5 BN 的完整计算：再加可学习的缩放与平移</h3><p>强行让每层输出均值为 0、方差为 1，可能限制网络的表达能力（例如 sigmoid 被限制在近似线性的区间）。BN 在标准化之后再加一组可学习参数 γ、β：</p>
+<p><strong>再加可学习的缩放与平移。</strong> 强行让每层输出均值为 0、方差为 1，可能限制网络的表达能力（例如 sigmoid 被限制在近似线性的区间）。BN 在标准化之后再加一组可学习参数 γ、β：</p>
 
 <div class="course-math">
 \[
@@ -563,7 +563,7 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 </tr>
 </tbody></table>
 <p>γ、β 初始常设为 1 和 0。若网络学到 $\gamma&#x3D;\sqrt{\sigma^2+\epsilon}$、$\beta&#x3D;\mu$，BN 就退化为恒等映射，所以加入 BN <strong>不会减小网络能表示的函数集合</strong>，只是换了一种更易优化的参数化方式。</p>
-<h3 id="3-6-推理时不能用测试-batch-的统计量"><a href="#3-6-推理时不能用测试-batch-的统计量" class="headerlink" title="3.6 推理时不能用测试 batch 的统计量"></a>3.6 推理时不能用测试 batch 的统计量</h3><p>推理时可能一次只处理一个样本，此时 batch 均值与方差没有意义；即使 batch 较大，输出也不应依赖同批其他样本。做法是：<strong>训练时用指数滑动平均记录全局均值和方差，推理时直接使用。</strong></p>
+<h3 id="3-3-训练与推理，以及-BN-的效果"><a href="#3-3-训练与推理，以及-BN-的效果" class="headerlink" title="3.3 训练与推理，以及 BN 的效果"></a>3.3 训练与推理，以及 BN 的效果</h3><p><strong>推理时不能用测试 batch 的统计量。</strong> 推理时可能一次只处理一个样本，此时 batch 均值与方差没有意义；即使 batch 较大，输出也不应依赖同批其他样本。做法是：<strong>训练时用指数滑动平均记录全局均值和方差，推理时直接使用。</strong></p>
 
 <div class="course-math">
 \[
@@ -577,7 +577,8 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 
 
 <p>p 一般接近 1。需要注意 PyTorch 的 <code>momentum=0.1</code> 指的是新 batch 统计量所占的权重，相当于这里的 1−p。推理前务必调用 <code>model.eval()</code> 切换到滑动平均统计量。</p>
-<h3 id="3-7-BN-带来了什么"><a href="#3-7-BN-带来了什么" class="headerlink" title="3.7 BN 带来了什么"></a>3.7 BN 带来了什么</h3><table>
+<p><strong>BN 带来了什么。</strong></p>
+<table>
 <thead>
 <tr>
 <th>效果</th>
@@ -606,7 +607,7 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 </tr>
 </tbody></table>
 <p><strong>训练和测试时 BN 的行为不同，这是非常常见的 bug 来源</strong>：忘记切换 <code>eval()</code>、batch 太小导致统计量噪声过大、微调时冻结与否处理不当，都会让测试效果异常。</p>
-<h3 id="3-8-BN-在卷积网络中的形式"><a href="#3-8-BN-在卷积网络中的形式" class="headerlink" title="3.8 BN 在卷积网络中的形式"></a>3.8 BN 在卷积网络中的形式</h3><p>对卷积特征图，同一通道在不同空间位置共享卷积核，因此 BN 也按<strong>通道</strong>统计，把 batch 维与空间维一起求平均：</p>
+<h3 id="3-4-卷积网络中的-BN-与归一化家族"><a href="#3-4-卷积网络中的-BN-与归一化家族" class="headerlink" title="3.4 卷积网络中的 BN 与归一化家族"></a>3.4 卷积网络中的 BN 与归一化家族</h3><p><strong>按通道统计。</strong> 对卷积特征图，同一通道在不同空间位置共享卷积核，因此 BN 也按<strong>通道</strong>统计，把 batch 维与空间维一起求平均：</p>
 <table>
 <thead>
 <tr>
@@ -633,7 +634,7 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 </tr>
 </tbody></table>
 <p>输出都写作 y &#x3D; γ(x − μ)&#x2F;σ + β，只是广播的维度不同。</p>
-<h3 id="3-9-归一化家族"><a href="#3-9-归一化家族" class="headerlink" title="3.9 归一化家族"></a>3.9 归一化家族</h3><p>把卷积特征看作 N×C×H×W 的张量，不同归一化方法的区别只在于<strong>沿哪些维度计算均值和方差</strong>：</p>
+<p><strong>归一化家族。</strong> 把卷积特征看作 N×C×H×W 的张量，不同归一化方法的区别只在于<strong>沿哪些维度计算均值和方差</strong>：</p>
 <p><img src="/images/courses/deep-learning-foundations/normalization-family.png" srcset="/img/loading.gif" lazyload alt="Batch Norm、Layer Norm、Instance Norm、Group Norm 的统计范围对比"><br><em>横轴是 batch 中的样本，纵轴是通道，每个格子代表一张 H×W 特征图；同色的格子一起计算一组统计量。</em></p>
 <table>
 <thead>
