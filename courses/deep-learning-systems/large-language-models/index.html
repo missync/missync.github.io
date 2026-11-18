@@ -391,7 +391,7 @@ W=W_0+BA,\qquad P_{trainable}=r(d_{in}+d_{out}).
 <ul>
 <li><strong>AdaQuant</strong>：逐层校准，重点最小化量化层与全精度层的输出差异。</li>
 <li><strong>BRECQ</strong>：以残差块等基本块为单位重构，考虑块内跨层依赖，用二阶误差 &#x2F; Fisher 信息近似衡量重要性。</li>
-<li>**LLM.int8()**：用向量级缩放处理矩阵乘，并将异常特征维度拆出，走 FP16；其余部分走 INT8，减轻异常值对量化精度的破坏。</li>
+<li><strong>LLM.int8()</strong>：用向量级缩放处理矩阵乘，并将异常特征维度拆出，走 FP16；其余部分走 INT8，减轻异常值对量化精度的破坏。</li>
 </ul>
 <p><strong>CPU INT4 是落地执行案例</strong>，涉及整条链路：先选择 GPTQ、AWQ、TEQ、SignRound 等算法及 channel-wise &#x2F; group-wise 粒度，再调整 group size、验证精度，最后交给适配的张量库和 INT4 Runtime。张量库可针对 AVX2、AVX512、VNNI、AMX 等指令优化；低位宽收益取决于目标设备与具体 Kernel。</p>
 <p>常见整数仿射量化可写为：</p>
