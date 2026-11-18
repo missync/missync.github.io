@@ -29,6 +29,7 @@
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/init-activation-scale.png">
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/normalization-landscape.png">
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/normalization-family.png">
+<meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/sgd-difficulties.png">
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/optimizer-trajectories.png">
 <meta property="og:image" content="https://missync.github.io/images/courses/deep-learning-foundations/lr-schedules.png">
 <meta property="article:published_time" content="2026-11-05T04:00:00.000Z">
@@ -715,24 +716,90 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 </tr>
 </tbody></table>
 <p>BGD 和 SGD 可以看成 Mini-batch GD 在 $B&#x3D;N$ 和 $B&#x3D;1$ 时的两个极端。B 越大，梯度估计的方差越小，但每个 epoch 的更新次数越少；实践中常按显存选 B，B 增大时学习率也相应调大。3.2 节中 BN 的 batch 统计量也正是在这 B 个样本上计算的，所以 B 太小时 BN 的效果会变差。</p>
-<p>小批量训练时，把 N 个样本分成若干 batch，依次计算每个 batch 的损失 Lᵇ 的梯度并更新：</p>
+<p>小批量训练时，把 N 个样本分成若干 batch，每一步取一个 batch，计算它的损失对参数的梯度并更新：</p>
 
 <div class="course-math">
 \[
-g^{t}=\nabla L^{(t+1)}(\theta^{t}),\qquad \theta^{t+1}\leftarrow\theta^{t}-\eta\,g^{t}.
+g^{t}=\nabla_\theta L_{\text{batch}}(\theta^{t}),\qquad \theta^{t+1}\leftarrow\theta^{t}-\eta\,g^{t}.
 \]
 </div>
 
 
+<p>记号约定（后面各优化器都沿用）：上标 t 表示第 t 次更新；θᵗ 是此时的全部参数；<strong>gᵗ 是在 θᵗ 处、用当前这个 batch 算出的梯度向量</strong>，与 θ 形状相同，每个分量 $g_i^{t}$ 对应一个参数 θᵢ；η 是学习率。</p>
 <p><strong>所有 batch 都看过一遍称为一个 epoch</strong>，每个 epoch 之后通常重新打乱数据。日常说的 “SGD” 往往就是指小批量梯度下降。</p>
-<h3 id="4-3-SGD-的困难"><a href="#4-3-SGD-的困难" class="headerlink" title="4.3 SGD 的困难"></a>4.3 SGD 的困难</h3><ul>
-<li><strong>平坦区与鞍点</strong>：梯度接近 0，参数几乎不动；</li>
-<li><strong>局部最小值</strong>：梯度为 0，无法逃出；</li>
-<li><strong>峡谷地形</strong>：陡峭方向来回振荡，平缓方向前进缓慢；</li>
-<li><strong>所有参数共用一个学习率</strong>：而不同参数方向的“陡峭程度”可能相差很多。</li>
-</ul>
-<p>现实世界中，从山坡滚下的小球不会在平地上立刻停住，惯性会带它冲过小坑和平台。把这个现象引入梯度下降，就得到动量法。</p>
-<h3 id="4-4-动量法-SGD-with-Momentum"><a href="#4-4-动量法-SGD-with-Momentum" class="headerlink" title="4.4 动量法 SGD with Momentum"></a>4.4 动量法 SGD with Momentum</h3><p>普通 SGD 的移动方向只看当前梯度。动量法的移动量 &#x3D; <strong>上一步的移动量 − 当前梯度</strong>：</p>
+<h3 id="4-3-SGD-的困难"><a href="#4-3-SGD-的困难" class="headerlink" title="4.3 SGD 的困难"></a>4.3 SGD 的困难</h3><p>SGD 每一步只做一件事：从当前位置沿负梯度方向走 $\eta g^{t}$。这条规则有两个隐含的弱点：</p>
+<ol>
+<li><strong>只看当前这一点的梯度</strong>：梯度小，步子就小；梯度为 0，参数就完全停下，不管远处是否还有更低的地方；</li>
+<li><strong>所有参数共用同一个学习率 η</strong>：不管某个方向是陡还是缓，步长都按同一个比例缩放。</li>
+</ol>
+<p>下面几种损失地形分别会暴露这两个弱点：</p>
+<p><img src="/images/courses/deep-learning-foundations/sgd-difficulties.png" srcset="/img/loading.gif" lazyload alt="SGD 在平坦区、鞍点、局部最小值和峡谷中的表现"><br><em>(a) 一维损失曲线上的三条轨迹：蓝色 SGD 从左端出发，在平坦区挪不动；紫色 SGD 从鞍点右侧出发，掉进局部最小值后停住；橙色动量法从左端出发，靠惯性冲过平坦区、鞍点和局部小坑，到达全局最小值。(b) 二维鞍点：从右侧出发的 SGD 越靠近鞍点步子越密，要很久才沿 $w_2$ 方向离开。(c) 峡谷：学习率只能迁就陡峭的 $w_2$ 方向，于是 $w_2$ 来回振荡，$w_1$ 方向却前进得很慢。</em></p>
+<table>
+<thead>
+<tr>
+<th>困难</th>
+<th>发生了什么</th>
+<th>暴露的弱点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>平坦区</td>
+<td>损失几乎不变的大片区域，梯度接近 0，每步 $\eta g^{t}$ 也接近 0，参数几乎不动（图 a 蓝点）</td>
+<td>只看当前梯度</td>
+</tr>
+<tr>
+<td>鞍点</td>
+<td>梯度为 0 但不是最小值：沿一个方向是谷底，沿另一个方向是山顶（图 b）。附近梯度很小，SGD 要很久才能离开。高维网络中鞍点远比局部最小值常见</td>
+<td>只看当前梯度</td>
+</tr>
+<tr>
+<td>局部最小值</td>
+<td>四周都比它高，梯度为 0；SGD 停在这里，看不到远处更低的谷底（图 a 紫点）</td>
+<td>只看当前梯度</td>
+</tr>
+<tr>
+<td>峡谷</td>
+<td>一个方向很陡、另一个方向很缓（图 c）。η 对陡方向太大，来回振荡；对缓方向太小，前进很慢。η 只能迁就陡方向，整体就很慢</td>
+<td>共用一个 η</td>
+</tr>
+</tbody></table>
+<p>前三种困难都是“梯度为 0 或接近 0，参数就停了”，第四种是“同一个 η 无法同时适合所有方向”。接下来的四个优化器是<strong>一条逐步改进的路线</strong>，每一步都针对上一步遗留的问题：</p>
+<table>
+<thead>
+<tr>
+<th>节</th>
+<th>方法</th>
+<th>改进了什么</th>
+<th>遗留问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4.4</td>
+<td>动量法</td>
+<td><strong>方向</strong>：参考历史梯度，带着惯性冲过平坦区、鞍点和小坑；峡谷中的来回振荡相互抵消</td>
+<td>步长仍由同一个 η 决定</td>
+</tr>
+<tr>
+<td>4.5</td>
+<td>Adagrad</td>
+<td><strong>步长</strong>：每个参数按自己的历史梯度大小缩放学习率</td>
+<td>平均了全部历史，学习率越来越小，跟不上地形变化</td>
+</tr>
+<tr>
+<td>4.6</td>
+<td>RMSProp</td>
+<td>只看最近的梯度大小，步长能随地形动态调整</td>
+<td>没有动量</td>
+</tr>
+<tr>
+<td>4.7</td>
+<td>Adam</td>
+<td>动量法（方向）+ RMSProp（步长）</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<p>先解决第一个弱点。现实世界中，从山坡滚下的小球不会在平地上立刻停住，惯性会带它冲过小坑和平台。把这个现象引入梯度下降，就得到动量法。</p>
+<h3 id="4-4-动量法-SGD-with-Momentum"><a href="#4-4-动量法-SGD-with-Momentum" class="headerlink" title="4.4 动量法 SGD with Momentum"></a>4.4 动量法 SGD with Momentum</h3><p>普通 SGD 每一步的移动量就是 $-\eta g^{t}$，只看当前梯度，上一步怎么走的完全不管。动量法额外维护一个<strong>移动量（也叫速度）m</strong>，它和参数 θ 形状相同，记录“参数最近一直在往哪个方向、以多快的速度移动”。每一步的移动量 &#x3D; <strong>保留一部分上一步的移动量 + 当前梯度给出的新方向</strong>：</p>
 
 <div class="course-math">
 \[
@@ -743,6 +810,35 @@ m^{t+1}=\lambda m^{t}-\eta g^{t},\qquad
 </div>
 
 
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>θᵗ</td>
+<td>第 t 步时的参数</td>
+</tr>
+<tr>
+<td>gᵗ</td>
+<td>第 t 步在 θᵗ 处用当前 batch 算出的梯度（4.2 节）</td>
+</tr>
+<tr>
+<td>mᵗ</td>
+<td>第 t 步的移动量，即上一步参数实际改变了多少：$m^{t}&#x3D;\theta^{t}-\theta^{t-1}$；初始为 0</td>
+</tr>
+<tr>
+<td>λ</td>
+<td>动量系数，0 到 1 之间，常取 0.9，表示上一步的移动量保留多少；λ &#x3D; 0 时退化为普通 SGD</td>
+</tr>
+<tr>
+<td>η</td>
+<td>学习率</td>
+</tr>
+</tbody></table>
+<p>$-\eta g^{t}$ 是负梯度方向（下坡方向），和普通 SGD 一样；$\lambda m^{t}$ 就是“惯性”。在小球的比喻里，m 是小球的速度，梯度是坡度给的推力，λ 则像摩擦：每一步速度只剩原来的 λ 倍。</p>
 <p>展开递推可以看出，移动量是此前所有梯度的指数加权和：</p>
 
 <div class="course-math">
@@ -754,14 +850,15 @@ m^{t}=-\eta\sum_{i=0}^{t-1}\lambda^{\,t-1-i}g^{i}.
 </div>
 
 
-<p>这就是<strong>指数加权移动平均（EMA）</strong>的思想：越近的梯度权重越大，越早的梯度按 λ 的幂次衰减。效果有两点：</p>
+<p>这就是<strong>指数加权移动平均（EMA）</strong>的思想：越近的梯度权重越大，越早的梯度按 λ 的幂次衰减。对照 4.3 节的几种困难，效果有三点：</p>
 <ul>
 <li>在梯度方向一致的平缓方向上，动量不断累积，前进更快；</li>
 <li>在来回振荡的方向上，正负梯度相互抵消，振荡减弱；</li>
 <li>即使到达 ∂L&#x2F;∂w &#x3D; 0 的点，上一步的动量仍可能带参数越过局部小坑。</li>
 </ul>
-<p>另一种常见写法是 $m_t&#x3D;\beta_1m_{t-1}+(1-\beta_1)g_t$，$\theta_t&#x3D;\theta_{t-1}-\eta m_t$，二者只差一个缩放系数。</p>
-<h3 id="4-5-不同参数需要不同的学习率：Adagrad"><a href="#4-5-不同参数需要不同的学习率：Adagrad" class="headerlink" title="4.5 不同参数需要不同的学习率：Adagrad"></a>4.5 不同参数需要不同的学习率：Adagrad</h3><p>对单个参数 θᵢ，普通更新是 $\theta_i^{t+1}\leftarrow\theta_i^{t}-\eta g_i^{t}$。如果某个方向一直很陡（梯度大），应当用小学习率；一直平缓，则应当用大学习率。Adagrad 把学习率改为与参数相关：</p>
+<p>另一种常见写法是 $m_t&#x3D;\beta_1m_{t-1}+(1-\beta_1)g_t$，$\theta_t&#x3D;\theta_{t-1}-\eta m_t$。这里的 m 是梯度的滑动平均（指向上坡，所以更新时用减号），而不是移动量本身；二者只差一个缩放系数和符号。4.7 节 Adam 中的 mₜ 采用的就是这种写法。</p>
+<h3 id="4-5-不同参数需要不同的学习率：Adagrad"><a href="#4-5-不同参数需要不同的学习率：Adagrad" class="headerlink" title="4.5 不同参数需要不同的学习率：Adagrad"></a>4.5 不同参数需要不同的学习率：Adagrad</h3><p>动量法改进了更新的<strong>方向</strong>，但每个参数的步长仍然由同一个 η 决定，4.3 节峡谷中“η 只能迁就陡方向”的问题没有解决。这一节转向第二个弱点：<strong>让每个参数有自己的学习率</strong>。</p>
+<p>对单个参数 θᵢ，普通更新是 $\theta_i^{t+1}\leftarrow\theta_i^{t}-\eta g_i^{t}$。如果某个方向一直很陡（梯度大），应当用小学习率；一直平缓，则应当用大学习率。Adagrad 把学习率改为与参数相关：</p>
 
 <div class="course-math">
 \[
@@ -774,7 +871,7 @@ m^{t}=-\eta\sum_{i=0}^{t-1}\lambda^{\,t-1-i}g^{i}.
 
 <p>σᵢᵗ 是该参数历史梯度的均方根。梯度一直较大的参数 σ 大、步长小；梯度一直较小的参数 σ 小、步长大。</p>
 <p>问题在于 σ 平均了<strong>全部</strong>历史梯度。误差曲面可能很复杂：同一个参数在某段区域很陡、在另一段又很平。Adagrad 对过去和现在一视同仁，无法及时响应这种变化，而且在实际训练中常常导致学习率过早变得很小。</p>
-<h3 id="4-6-RMSProp：只看最近的梯度大小"><a href="#4-6-RMSProp：只看最近的梯度大小" class="headerlink" title="4.6 RMSProp：只看最近的梯度大小"></a>4.6 RMSProp：只看最近的梯度大小</h3><p>RMSProp 再次用上 EMA，让近期梯度的影响更大，旧梯度逐渐被遗忘：</p>
+<h3 id="4-6-RMSProp：只看最近的梯度大小"><a href="#4-6-RMSProp：只看最近的梯度大小" class="headerlink" title="4.6 RMSProp：只看最近的梯度大小"></a>4.6 RMSProp：只看最近的梯度大小</h3><p>Adagrad 的问题出在“平均全部历史”上。解决办法在动量法里已经见过：用 EMA 代替简单平均。RMSProp 对<strong>梯度的平方</strong>做 EMA，让近期梯度的影响更大，旧梯度逐渐被遗忘：</p>
 
 <div class="course-math">
 \[
@@ -785,8 +882,15 @@ m^{t}=-\eta\sum_{i=0}^{t-1}\lambda^{\,t-1-i}g^{i}.
 </div>
 
 
-<p>小球从平地进入陡坡时，σ 迅速增大、步长变小；从陡坡回到平地时，σ 很快减小、步长恢复。这样学习率就能随误差曲面<strong>动态调整</strong>。</p>
-<h3 id="4-7-Adam-动量-RMSProp"><a href="#4-7-Adam-动量-RMSProp" class="headerlink" title="4.7 Adam &#x3D; 动量 + RMSProp"></a>4.7 Adam &#x3D; 动量 + RMSProp</h3><p>Adam 同时维护梯度的一阶矩（方向）和二阶矩（大小）：</p>
+<p>小球从平地进入陡坡时，σ 迅速增大、步长变小；从陡坡回到平地时，σ 很快减小、步长恢复。这样学习率就能随误差曲面<strong>动态调整</strong>。更新公式与 Adagrad 相同，仍是 $\theta_i^{t+1}\leftarrow\theta_i^{t}-\frac{\eta}{\sigma_i^{t}}g_i^{t}$，只是 σ 的算法换了。</p>
+<p>到这里，两个弱点各有了解法：动量法管<strong>方向</strong>，RMSProp 管每个参数的<strong>步长</strong>，但它们还是分开的两个方法。</p>
+<h3 id="4-7-Adam-动量-RMSProp"><a href="#4-7-Adam-动量-RMSProp" class="headerlink" title="4.7 Adam &#x3D; 动量 + RMSProp"></a>4.7 Adam &#x3D; 动量 + RMSProp</h3><p>Adam 把二者合在一起，同时维护梯度的一阶矩（方向，来自动量法）和二阶矩（大小，来自 RMSProp）。下面沿用 Adam 论文的记号：时间步写在下标，学习率记为 α（即前面的 η）。</p>
+<ul>
+<li>mₜ 就是 4.4 节末尾的另一种动量写法，即梯度的 EMA；</li>
+<li>vₜ 是梯度平方的 EMA，相当于 RMSProp 中的 σ²；</li>
+<li>更新时用 mₜ 代替 g，用 $\sqrt{v_t}$ 代替 σ。</li>
+</ul>
+<p>完整计算如下：</p>
 
 <div class="course-math">
 \[
