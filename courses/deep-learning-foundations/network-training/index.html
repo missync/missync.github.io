@@ -307,7 +307,7 @@
 \[
 h^{(l)}=f\!\left(W^{(l)}h^{(l-1)}+b^{(l)}\right),
 \qquad
-W_{t+1}=W_t-\eta\,\nabla_W\mathcal L .
+W^{t+1}=W^{t}-\eta\,\nabla_W L .
 \]
 </div>
 
@@ -520,16 +520,16 @@ W_{ij}\sim\mathcal U\!\left(-\sqrt{\frac{6}{n_{\mathrm{in}}}},\ \sqrt{\frac{6}{n
 
 
 <p>注意 μ 和 σ 依赖 batch 内所有 zⁱ。<strong>某一个样本变化，会通过 μ、σ 影响同批其他样本的输出</strong>；反向传播时梯度也要经过 μ 和 σ。也就是说，此时应把整个 batch 看成一个大网络，这就是“批”归一化名称的由来。</p>
-<p><strong>再加可学习的缩放与平移。</strong> 强行让每层输出均值为 0、方差为 1，可能限制网络的表达能力（例如 sigmoid 被限制在近似线性的区间）。BN 在标准化之后再加一组可学习参数 γ、β：</p>
+<p><strong>再加可学习的缩放与平移。</strong> 强行让每层输出均值为 0、方差为 1，可能限制网络的表达能力（例如 sigmoid 被限制在近似线性的区间）。BN 在标准化之后再加一组可学习参数 γ、β。完整计算沿用上面的记号（batch 内 B 个样本 z¹, …, zᴮ）：</p>
 
 <div class="course-math">
 \[
-\mu_{\mathcal B}\leftarrow\frac1m\sum_{i=1}^{m}x_i,\qquad
-\sigma_{\mathcal B}^2\leftarrow\frac1m\sum_{i=1}^{m}(x_i-\mu_{\mathcal B})^2,
+\mu_{\mathcal B}=\frac1B\sum_{i=1}^{B}z^i,\qquad
+\sigma_{\mathcal B}^2=\frac1B\sum_{i=1}^{B}\left(z^i-\mu_{\mathcal B}\right)^2,
 \]
 \[
-\hat x_i\leftarrow\frac{x_i-\mu_{\mathcal B}}{\sqrt{\sigma_{\mathcal B}^2+\epsilon}},\qquad
-y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
+\tilde z^i=\frac{z^i-\mu_{\mathcal B}}{\sqrt{\sigma_{\mathcal B}^2+\epsilon}},\qquad
+y^i=\gamma\tilde z^i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(z^i).
 \]
 </div>
 
@@ -554,15 +554,16 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 </tr>
 <tr>
 <td>3</td>
-<td>标准化得到 x̂</td>
+<td>标准化得到 z̃</td>
 <td>ε 防止除以 0</td>
 </tr>
 <tr>
 <td>4</td>
-<td>缩放平移 y &#x3D; γx̂ + β</td>
+<td>缩放平移 y &#x3D; γz̃ + β</td>
 <td>γ、β 随网络一起训练</td>
 </tr>
 </tbody></table>
+<p>课件（及 BN 原论文）把这组公式写成 $x_i$、batch 大小 m 的形式，与这里的 zⁱ、B 只是记号不同。</p>
 <p>γ、β 初始常设为 1 和 0。若网络学到 $\gamma&#x3D;\sqrt{\sigma^2+\epsilon}$、$\beta&#x3D;\mu$，BN 就退化为恒等映射，所以加入 BN <strong>不会减小网络能表示的函数集合</strong>，只是换了一种更易优化的参数化方式。</p>
 <h3 id="3-3-推理时的-BN"><a href="#3-3-推理时的-BN" class="headerlink" title="3.3 推理时的 BN"></a>3.3 推理时的 BN</h3><p>训练时 BN 用当前 batch 的 μ、σ 做标准化。到了测试&#x2F;推理阶段，能不能直接用测试 batch 的统计量？不能：</p>
 <ul>
@@ -573,16 +574,16 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 
 <div class="course-math">
 \[
-\bar\mu\leftarrow p\,\bar\mu+(1-p)\,\mu_{\mathcal B_t},
+\bar\mu\leftarrow p\,\bar\mu+(1-p)\,\mu_{\mathcal B},
 \qquad
-\bar\sigma^2\leftarrow p\,\bar\sigma^2+(1-p)\,\sigma_{\mathcal B_t}^2,
+\bar\sigma^2\leftarrow p\,\bar\sigma^2+(1-p)\,\sigma_{\mathcal B}^2,
 \qquad
-\tilde z=\frac{z-\bar\mu}{\sqrt{\bar\sigma^2+\varepsilon}} .
+\tilde z=\frac{z-\bar\mu}{\sqrt{\bar\sigma^2+\epsilon}},\qquad y=\gamma\tilde z+\beta .
 \]
 </div>
 
 
-<p>p 一般接近 1。需要注意 PyTorch 的 <code>momentum=0.1</code> 指的是新 batch 统计量所占的权重，相当于这里的 1−p。</p>
+<p>其中 $\mu_{\mathcal B}$、$\sigma_{\mathcal B}^2$ 是训练中每个 batch 算出的统计量，每个训练 step 更新一次滑动平均。p 一般接近 1，作用和 4.4 节动量系数 λ 一样，都是 EMA 中旧值保留的比例。需要注意 PyTorch 的 <code>momentum=0.1</code> 指的是新 batch 统计量所占的权重，相当于这里的 1−p。</p>
 <p><strong>训练和推理时 BN 的行为不同，这是非常常见的 bug 来源</strong>：推理前忘记调用 <code>model.eval()</code>、batch 太小导致统计量噪声过大、微调时 BN 层冻结与否处理不当，都会让测试效果异常。</p>
 <h3 id="3-4-BN-为什么有效"><a href="#3-4-BN-为什么有效" class="headerlink" title="3.4 BN 为什么有效"></a>3.4 BN 为什么有效</h3><p>BN 最初以减小内部协变量偏移为动机（见 3.1），但后续研究（Santurkar et al., 2018, *How Does Batch Normalization Help Optimization?*）发现，它更主要的作用是<strong>让误差曲面更平滑</strong>：梯度在参数空间中变化更平缓，沿梯度方向走一步的效果更可预测。这与 3.1 中“各维尺度一致时等高线接近圆形”是同一个道理，只是作用在网络的每一层。</p>
 <p>由此带来的实际效果：</p>
@@ -636,7 +637,7 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 <td>每个通道在 N、H、W 上统计</td>
 </tr>
 </tbody></table>
-<p>输出都写作 y &#x3D; γ(x − μ)&#x2F;σ + β，只是广播的维度不同。</p>
+<p>输出都写作 y &#x3D; γ(z − μ)&#x2F;σ + β，只是广播的维度不同。</p>
 <p><strong>归一化家族。</strong> 把卷积特征看作 N×C×H×W 的张量，不同归一化方法的区别只在于<strong>沿哪些维度计算均值和方差</strong>：</p>
 <p><img src="/images/courses/deep-learning-foundations/normalization-family.png" srcset="/img/loading.gif" lazyload alt="Batch Norm、Layer Norm、Instance Norm、Group Norm 的统计范围对比"><br><em>横轴是 batch 中的样本，纵轴是通道，每个格子代表一张 H×W 特征图；同色的格子一起计算一组统计量。</em></p>
 <table>
@@ -857,7 +858,7 @@ m^{t}=-\eta\sum_{i=0}^{t-1}\lambda^{\,t-1-i}g^{i}.
 <li>在来回振荡的方向上，正负梯度相互抵消，振荡减弱；</li>
 <li>即使到达 ∂L&#x2F;∂w &#x3D; 0 的点，上一步的动量仍可能带参数越过局部小坑。</li>
 </ul>
-<p>另一种常见写法是 $m_t&#x3D;\beta_1m_{t-1}+(1-\beta_1)g_t$，$\theta_t&#x3D;\theta_{t-1}-\eta m_t$。这里的 m 是梯度的滑动平均（指向上坡，所以更新时用减号），而不是移动量本身；二者只差一个缩放系数和符号。4.7 节 Adam 中的 mₜ 采用的就是这种写法。</p>
+<p>另一种常见写法是 $m^{t+1}&#x3D;\beta_1m^{t}+(1-\beta_1)g^{t}$，$\theta^{t+1}&#x3D;\theta^{t}-\eta m^{t+1}$。这里的 m 是梯度的滑动平均（指向上坡，所以更新时用减号），而不是移动量本身。动量系数在这种写法里记为 β₁，作用与 λ 相同；两种写法只差一个缩放系数和符号。4.7 节 Adam 中的 m 采用的就是这种写法。</p>
 <h3 id="4-5-不同参数需要不同的学习率：Adagrad"><a href="#4-5-不同参数需要不同的学习率：Adagrad" class="headerlink" title="4.5 不同参数需要不同的学习率：Adagrad"></a>4.5 不同参数需要不同的学习率：Adagrad</h3><p>动量法改进了更新的<strong>方向</strong>，但每个参数的步长仍然由同一个 η 决定，4.3 节峡谷中“η 只能迁就陡方向”的问题没有解决。这一节转向第二个弱点：<strong>让每个参数有自己的学习率</strong>。</p>
 <p>对单个参数 θᵢ，普通更新是 $\theta_i^{t+1}\leftarrow\theta_i^{t}-\eta g_i^{t}$。如果某个方向一直很陡（梯度大），应当用小学习率；一直平缓，则应当用大学习率。Adagrad 把学习率改为与参数相关：</p>
 
@@ -877,34 +878,32 @@ m^{t}=-\eta\sum_{i=0}^{t-1}\lambda^{\,t-1-i}g^{i}.
 <div class="course-math">
 \[
 \sigma_i^{0}=\left|g_i^{0}\right|,\qquad
-\sigma_i^{t}=\sqrt{\alpha\left(\sigma_i^{t-1}\right)^2+(1-\alpha)\left(g_i^{t}\right)^2},
-\qquad 0\lt\alpha\lt1 .
+\sigma_i^{t}=\sqrt{\beta_2\left(\sigma_i^{t-1}\right)^2+(1-\beta_2)\left(g_i^{t}\right)^2},
+\qquad 0\lt\beta_2\lt1 .
 \]
 </div>
 
 
+<p>β₂ 是 EMA 中旧值保留的比例（课件记为 α），与 4.4 节动量系数的作用相同，只不过这里平均的是梯度的平方。这里记为 β₂，是因为它正是 4.7 节 Adam 里的 β₂。</p>
 <p>小球从平地进入陡坡时，σ 迅速增大、步长变小；从陡坡回到平地时，σ 很快减小、步长恢复。这样学习率就能随误差曲面<strong>动态调整</strong>。更新公式与 Adagrad 相同，仍是 $\theta_i^{t+1}\leftarrow\theta_i^{t}-\frac{\eta}{\sigma_i^{t}}g_i^{t}$，只是 σ 的算法换了。</p>
 <p>到这里，两个弱点各有了解法：动量法管<strong>方向</strong>，RMSProp 管每个参数的<strong>步长</strong>，但它们还是分开的两个方法。</p>
-<h3 id="4-7-Adam-动量-RMSProp"><a href="#4-7-Adam-动量-RMSProp" class="headerlink" title="4.7 Adam &#x3D; 动量 + RMSProp"></a>4.7 Adam &#x3D; 动量 + RMSProp</h3><p>Adam 把二者合在一起，同时维护梯度的一阶矩（方向，来自动量法）和二阶矩（大小，来自 RMSProp）。下面沿用 Adam 论文的记号：时间步写在下标，学习率记为 α（即前面的 η）。</p>
+<h3 id="4-7-Adam-动量-RMSProp"><a href="#4-7-Adam-动量-RMSProp" class="headerlink" title="4.7 Adam &#x3D; 动量 + RMSProp"></a>4.7 Adam &#x3D; 动量 + RMSProp</h3><p>Adam 把二者合在一起，同时维护梯度的一阶矩（方向，来自动量法）和二阶矩（大小，来自 RMSProp）。为了和前面各节一致，这里仍用上标 t 表示第 t 步、η 表示学习率（Adam 论文和课件用下标 t、学习率记为 α，含义相同）：</p>
 <ul>
-<li>mₜ 就是 4.4 节末尾的另一种动量写法，即梯度的 EMA；</li>
-<li>vₜ 是梯度平方的 EMA，相当于 RMSProp 中的 σ²；</li>
-<li>更新时用 mₜ 代替 g，用 $\sqrt{v_t}$ 代替 σ。</li>
+<li>m 就是 4.4 节末尾的另一种动量写法，即梯度的 EMA，系数 β₁；</li>
+<li>v 是梯度平方的 EMA，就是 4.6 节 RMSProp 中的 σ²，系数 β₂；</li>
+<li>更新时用 m 代替 g，用 $\sqrt{v}$ 代替 σ。</li>
 </ul>
-<p>完整计算如下：</p>
+<p>gᵗ 仍是 4.2 节定义的、在 θᵗ 处用当前 batch 算出的梯度。完整计算如下（$\beta_1^{t+1}$、$\beta_2^{t+1}$ 是 β 的 t+1 次幂）：</p>
 
 <div class="course-math">
 \[
-g_t=\nabla_\theta f_t(\theta_{t-1}),
+m^{t+1}=\beta_1m^{t}+(1-\beta_1)g^{t},\qquad
+v^{t+1}=\beta_2v^{t}+(1-\beta_2)\left(g^{t}\right)^2,
 \]
 \[
-m_t=\beta_1m_{t-1}+(1-\beta_1)g_t,\qquad
-v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
-\]
-\[
-\hat m_t=\frac{m_t}{1-\beta_1^{\,t}},\qquad
-\hat v_t=\frac{v_t}{1-\beta_2^{\,t}},\qquad
-\theta_t=\theta_{t-1}-\alpha\,\frac{\hat m_t}{\sqrt{\hat v_t}+\epsilon}.
+\hat m^{t+1}=\frac{m^{t+1}}{1-\beta_1^{\,t+1}},\qquad
+\hat v^{t+1}=\frac{v^{t+1}}{1-\beta_2^{\,t+1}},\qquad
+\theta^{t+1}=\theta^{t}-\eta\,\frac{\hat m^{t+1}}{\sqrt{\hat v^{t+1}}+\epsilon}.
 \]
 </div>
 
@@ -918,34 +917,34 @@ v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
 </tr>
 </thead>
 <tbody><tr>
-<td>gₜ</td>
+<td>g</td>
 <td>当前梯度是多少</td>
 <td>反向传播</td>
 </tr>
 <tr>
-<td>mₜ</td>
+<td>m</td>
 <td>最近的梯度平均朝哪个方向</td>
-<td>动量</td>
+<td>动量（4.4）</td>
 </tr>
 <tr>
-<td>vₜ</td>
+<td>v</td>
 <td>最近的梯度通常有多大</td>
-<td>RMSProp</td>
+<td>RMSProp（4.6）</td>
 </tr>
 <tr>
-<td>m̂ₜ、v̂ₜ</td>
+<td>m̂、v̂</td>
 <td>修正初始化为 0 带来的偏差</td>
 <td>偏差修正</td>
 </tr>
 <tr>
-<td>θₜ 更新</td>
+<td>θ 更新</td>
 <td>用方向除以典型尺度决定步长</td>
 <td>二者结合</td>
 </tr>
 </tbody></table>
-<p>常用默认值：α &#x3D; 0.001，β₁ &#x3D; 0.9，β₂ &#x3D; 0.999，ε &#x3D; 10⁻⁸，m₀ &#x3D; v₀ &#x3D; 0。</p>
-<p><strong>为什么要偏差修正？</strong> m₀ &#x3D; 0，第一步 m₁ &#x3D; 0.1g₁，只有真实梯度的十分之一；v₁ &#x3D; 0.001g₁² 更是严重偏小。除以 $1-\beta_1^{t}$ 和 $1-\beta_2^{t}$ 后，第一步恰好得到 m̂₁ &#x3D; g₁、v̂₁ &#x3D; g₁²。随着 t 增大，修正因子趋于 1，自动失效。</p>
-<p><strong>一个数值例子</strong>（α &#x3D; 0.01，第一步）：</p>
+<p>常用默认值：η &#x3D; 0.001，β₁ &#x3D; 0.9，β₂ &#x3D; 0.999，ε &#x3D; 10⁻⁸，m⁰ &#x3D; v⁰ &#x3D; 0。</p>
+<p><strong>为什么要偏差修正？</strong> m⁰ &#x3D; 0，所以第一步 m¹ &#x3D; 0.1g⁰，只有真实梯度的十分之一；v¹ &#x3D; 0.001(g⁰)² 更是严重偏小。除以 $1-\beta_1^{1}$ 和 $1-\beta_2^{1}$ 后，第一步恰好得到 m̂¹ &#x3D; g⁰、v̂¹ &#x3D; (g⁰)²。随着 t 增大，修正因子趋于 1，自动失效。</p>
+<p><strong>一个数值例子</strong>（η &#x3D; 0.01，第一步，从 θ⁰ 更新到 θ¹）：</p>
 <table>
 <thead>
 <tr>
@@ -955,43 +954,43 @@ v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
 </tr>
 </thead>
 <tbody><tr>
-<td>当前梯度 g₁</td>
+<td>当前梯度 g⁰</td>
 <td>10</td>
 <td>1</td>
 </tr>
 <tr>
-<td>m₁ &#x3D; 0.1g₁</td>
+<td>m¹ &#x3D; 0.1g⁰</td>
 <td>1</td>
 <td>0.1</td>
 </tr>
 <tr>
-<td>v₁ &#x3D; 0.001g₁²</td>
+<td>v¹ &#x3D; 0.001(g⁰)²</td>
 <td>0.1</td>
 <td>0.001</td>
 </tr>
 <tr>
-<td>修正后 m̂₁</td>
+<td>修正后 m̂¹</td>
 <td>10</td>
 <td>1</td>
 </tr>
 <tr>
-<td>修正后 v̂₁</td>
+<td>修正后 v̂¹</td>
 <td>100</td>
 <td>1</td>
 </tr>
 <tr>
-<td>$\hat m_1&#x2F;\sqrt{\hat v_1}$</td>
+<td>$\hat m^{1}&#x2F;\sqrt{\hat v^{1}}$</td>
 <td>1</td>
 <td>1</td>
 </tr>
 <tr>
-<td>参数变化 Δθ₁</td>
+<td>参数变化 θ¹ − θ⁰</td>
 <td>−0.01</td>
 <td>−0.01</td>
 </tr>
 </tbody></table>
-<p>梯度相差 10 倍，第一步的步长却完全一样。<strong>Adam 的步长大致由 α 决定，而与梯度的绝对尺度无关</strong>，这让它对不同层、不同参数的尺度差异不敏感，也让它成为最常用的默认优化器。</p>
-<p><img src="/images/courses/deep-learning-foundations/optimizer-trajectories.png" srcset="/img/loading.gif" lazyload alt="五种优化器在病态二次函数上的轨迹与损失曲线"><br><em>SGD 在陡峭的 θ₂ 方向来回振荡；动量法冲得更快但会过冲；Adagrad、RMSProp 按维度调整步长，路径更直；Adam 的步长接近固定值 α，靠近最优点时会小幅振荡，这也是它常与学习率衰减搭配的原因。</em></p>
+<p>梯度相差 10 倍，第一步的步长却完全一样。<strong>Adam 的步长大致由 η 决定，而与梯度的绝对尺度无关</strong>，这让它对不同层、不同参数的尺度差异不敏感，也让它成为最常用的默认优化器。</p>
+<p><img src="/images/courses/deep-learning-foundations/optimizer-trajectories.png" srcset="/img/loading.gif" lazyload alt="五种优化器在病态二次函数上的轨迹与损失曲线"><br><em>SGD 在陡峭的 θ₂ 方向来回振荡；动量法冲得更快但会过冲；Adagrad、RMSProp 按维度调整步长，路径更直；Adam 的步长接近固定值 η，靠近最优点时会小幅振荡，这也是它常与学习率衰减搭配的原因。</em></p>
 <h3 id="4-8-从-GD-到-Adam-的脉络"><a href="#4-8-从-GD-到-Adam-的脉络" class="headerlink" title="4.8 从 GD 到 Adam 的脉络"></a>4.8 从 GD 到 Adam 的脉络</h3><table>
 <thead>
 <tr>
@@ -1002,12 +1001,12 @@ v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
 </thead>
 <tbody><tr>
 <td>梯度下降 → SGD（小批量）→ SGD + 动量</td>
-<td>$\theta_i^{t+1}\leftarrow\theta_i^{t}-\eta g_i^{t}$（动量时用 $m_i^{t}$ 代替 $g_i^{t}$）</td>
+<td>$\theta_i^{t+1}\leftarrow\theta_i^{t}-\eta g_i^{t}$（动量法改为 $\theta_i^{t+1}&#x3D;\theta_i^{t}+m_i^{t+1}$）</td>
 <td>固定</td>
 </tr>
 <tr>
 <td>Adagrad → RMSProp → Adam</td>
-<td>$\theta_i^{t+1}\leftarrow\theta_i^{t}-\frac{\eta}{\sigma_i^{t}}g_i^{t}$</td>
+<td>$\theta_i^{t+1}\leftarrow\theta_i^{t}-\frac{\eta}{\sigma_i^{t}}g_i^{t}$（Adam 中 g 换成 m̂，σ 换成 $\sqrt{\hat v}$）</td>
 <td>按参数自适应</td>
 </tr>
 <tr>
@@ -1055,14 +1054,14 @@ v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
 <h3 id="5-2-常见的衰减方式"><a href="#5-2-常见的衰减方式" class="headerlink" title="5.2 常见的衰减方式"></a>5.2 常见的衰减方式</h3>
 <div class="course-math">
 \[
-\text{Cosine:}\ \ \alpha_t=\frac12\alpha_0\left(1+\cos\frac{t\pi}{T}\right),\qquad
-\text{Linear:}\ \ \alpha_t=\alpha_0\left(1-\frac tT\right),\qquad
-\text{Inverse sqrt:}\ \ \alpha_t=\frac{\alpha_0}{\sqrt t}.
+\text{Cosine:}\ \ \eta^{t}=\frac12\eta^{0}\left(1+\cos\frac{t\pi}{T}\right),\qquad
+\text{Linear:}\ \ \eta^{t}=\eta^{0}\left(1-\frac tT\right),\qquad
+\text{Inverse sqrt:}\ \ \eta^{t}=\frac{\eta^{0}}{\sqrt t}.
 \]
 </div>
 
 
-<p>α₀ 是初始学习率，αₜ 是第 t 个 epoch 的学习率，T 是总 epoch 数。</p>
+<p>η⁰ 是初始学习率，ηᵗ 是第 t 个 epoch（或第 t 步）的学习率，T 是总 epoch 数（或总步数）。这就是 4.8 节表格最后一行中随时间变化的 ηᵗ（课件记为 αₜ）。</p>
 <table>
 <thead>
 <tr>
@@ -1105,14 +1104,14 @@ v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
 
 <div class="course-math">
 \[
-\mathrm{lrate}=d_{\mathrm{model}}^{-0.5}\cdot
-\min\!\left(\mathrm{step}^{-0.5},\ \mathrm{step}\cdot\mathrm{warmup\_steps}^{-1.5}\right),
-\qquad \mathrm{warmup\_steps}=4000 .
+\eta^{t}=d_{\mathrm{model}}^{-0.5}\cdot
+\min\!\left(t^{-0.5},\ t\cdot T_{\mathrm{w}}^{-1.5}\right),
+\qquad T_{\mathrm{w}}=4000 .
 \]
 </div>
 
 
-<p>前 4000 步学习率线性增大，之后按步数的平方根倒数减小。</p>
+<p>t 是训练步数，$T_{\mathrm{w}}$ 是预热步数（论文中写作 lrate、step_num 和 warmup_steps）。前 4000 步学习率线性增大，之后按步数的平方根倒数减小。</p>
 <p><strong>为什么需要 warmup？</strong> 训练初期参数是随机的，梯度大且方向不稳定；Adam 的二阶矩估计也只基于很少几步，偏差较大。先用小步长让参数和统计量进入较稳定的区域，再放开步长，可以避免早期发散。</p>
 <p><img src="/images/courses/deep-learning-foundations/lr-schedules.png" srcset="/img/loading.gif" lazyload alt="阶梯、余弦、线性、平方根倒数与 warmup 学习率曲线"><br><em>左：阶梯衰减；中：三种连续衰减（初始学习率 0.1，共 100 个 epoch）；右：$d_{\mathrm{model}}&#x3D;512$、<code>warmup_steps</code>&#x3D;4000 时原始 Transformer 的学习率曲线。</em></p>
 <h2 id="6-小结与易错点"><a href="#6-小结与易错点" class="headerlink" title="6. 小结与易错点"></a>6. 小结与易错点</h2><table>
