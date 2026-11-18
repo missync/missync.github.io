@@ -727,13 +727,14 @@ g^{t}=\nabla_\theta L_{\text{batch}}(\theta^{t}),\qquad \theta^{t+1}\leftarrow\t
 
 <p>记号约定（后面各优化器都沿用）：上标 t 表示第 t 次更新；θᵗ 是此时的全部参数；<strong>gᵗ 是在 θᵗ 处、用当前这个 batch 算出的梯度向量</strong>，与 θ 形状相同，每个分量 $g_i^{t}$ 对应一个参数 θᵢ；η 是学习率。</p>
 <p><strong>所有 batch 都看过一遍称为一个 epoch</strong>，每个 epoch 之后通常重新打乱数据。日常说的 “SGD” 往往就是指小批量梯度下降。</p>
-<h3 id="4-3-SGD-的困难"><a href="#4-3-SGD-的困难" class="headerlink" title="4.3 SGD 的困难"></a>4.3 SGD 的困难</h3><p>SGD 每一步只做一件事：从当前位置沿负梯度方向走 $\eta g^{t}$。这条规则有两个隐含的弱点：</p>
+<h3 id="4-3-梯度下降的困难"><a href="#4-3-梯度下降的困难" class="headerlink" title="4.3 梯度下降的困难"></a>4.3 梯度下降的困难</h3><p>课件这一页的标题是 “SGD: Problem”，但正如 4.2 节末尾所说，这里的 “SGD” 泛指 $\theta^{t+1}\leftarrow\theta^{t}-\eta g^{t}$ 这条更新规则。下面的困难来自规则本身，<strong>BGD、SGD、Mini-batch GD 都会遇到</strong>，三者的差别只在于 g 用多少样本估计。小 batch 带来的梯度噪声偶尔能把参数从鞍点或浅坑里“抖”出来（见 4.2 节表格），但这是碰运气，不能系统地解决问题；没有噪声的 BGD 反而最容易被困住。</p>
+<p>这条规则每一步只做一件事：从当前位置沿负梯度方向走 $\eta g^{t}$。它有两个隐含的弱点：</p>
 <ol>
 <li><strong>只看当前这一点的梯度</strong>：梯度小，步子就小；梯度为 0，参数就完全停下，不管远处是否还有更低的地方；</li>
 <li><strong>所有参数共用同一个学习率 η</strong>：不管某个方向是陡还是缓，步长都按同一个比例缩放。</li>
 </ol>
 <p>下面几种损失地形分别会暴露这两个弱点：</p>
-<p><img src="/images/courses/deep-learning-foundations/sgd-difficulties.png" srcset="/img/loading.gif" lazyload alt="SGD 在平坦区、鞍点、局部最小值和峡谷中的表现"><br><em>(a) 一维损失曲线上的三条轨迹：蓝色 SGD 从左端出发，在平坦区挪不动；紫色 SGD 从鞍点右侧出发，掉进局部最小值后停住；橙色动量法从左端出发，靠惯性冲过平坦区、鞍点和局部小坑，到达全局最小值。(b) 二维鞍点：从右侧出发的 SGD 越靠近鞍点步子越密，要很久才沿 $w_2$ 方向离开。(c) 峡谷：学习率只能迁就陡峭的 $w_2$ 方向，于是 $w_2$ 来回振荡，$w_1$ 方向却前进得很慢。</em></p>
+<p><img src="/images/courses/deep-learning-foundations/sgd-difficulties.png" srcset="/img/loading.gif" lazyload alt="普通梯度下降在平坦区、鞍点、局部最小值和峡谷中的表现"><br><em>(a) 一维损失曲线上的三条轨迹：蓝色为普通梯度下降，从左端出发，在平坦区挪不动；紫色也是普通梯度下降，从鞍点右侧出发，掉进局部最小值后停住；橙色动量法从左端出发，靠惯性冲过平坦区、鞍点和局部小坑，到达全局最小值。(b) 二维鞍点：从右侧出发的梯度下降越靠近鞍点步子越密，要很久才沿 $w_2$ 方向离开。(c) 峡谷：学习率只能迁就陡峭的 $w_2$ 方向，于是 $w_2$ 来回振荡，$w_1$ 方向却前进得很慢。</em></p>
 <table>
 <thead>
 <tr>
@@ -749,12 +750,12 @@ g^{t}=\nabla_\theta L_{\text{batch}}(\theta^{t}),\qquad \theta^{t+1}\leftarrow\t
 </tr>
 <tr>
 <td>鞍点</td>
-<td>梯度为 0 但不是最小值：沿一个方向是谷底，沿另一个方向是山顶（图 b）。附近梯度很小，SGD 要很久才能离开。高维网络中鞍点远比局部最小值常见</td>
+<td>梯度为 0 但不是最小值：沿一个方向是谷底，沿另一个方向是山顶（图 b）。附近梯度很小，要很久才能离开。高维网络中鞍点远比局部最小值常见</td>
 <td>只看当前梯度</td>
 </tr>
 <tr>
 <td>局部最小值</td>
-<td>四周都比它高，梯度为 0；SGD 停在这里，看不到远处更低的谷底（图 a 紫点）</td>
+<td>四周都比它高，梯度为 0；参数停在这里，看不到远处更低的谷底（图 a 紫点）</td>
 <td>只看当前梯度</td>
 </tr>
 <tr>
@@ -799,7 +800,7 @@ g^{t}=\nabla_\theta L_{\text{batch}}(\theta^{t}),\qquad \theta^{t+1}\leftarrow\t
 </tr>
 </tbody></table>
 <p>先解决第一个弱点。现实世界中，从山坡滚下的小球不会在平地上立刻停住，惯性会带它冲过小坑和平台。把这个现象引入梯度下降，就得到动量法。</p>
-<h3 id="4-4-动量法-SGD-with-Momentum"><a href="#4-4-动量法-SGD-with-Momentum" class="headerlink" title="4.4 动量法 SGD with Momentum"></a>4.4 动量法 SGD with Momentum</h3><p>普通 SGD 每一步的移动量就是 $-\eta g^{t}$，只看当前梯度，上一步怎么走的完全不管。动量法额外维护一个<strong>移动量（也叫速度）m</strong>，它和参数 θ 形状相同，记录“参数最近一直在往哪个方向、以多快的速度移动”。每一步的移动量 &#x3D; <strong>保留一部分上一步的移动量 + 当前梯度给出的新方向</strong>：</p>
+<h3 id="4-4-动量法-SGD-with-Momentum"><a href="#4-4-动量法-SGD-with-Momentum" class="headerlink" title="4.4 动量法 SGD with Momentum"></a>4.4 动量法 SGD with Momentum</h3><p>普通梯度下降（无论 BGD、SGD 还是 Mini-batch）每一步的移动量就是 $-\eta g^{t}$，只看当前梯度，上一步怎么走的完全不管。动量法额外维护一个<strong>移动量（也叫速度）m</strong>，它和参数 θ 形状相同，记录“参数最近一直在往哪个方向、以多快的速度移动”。每一步的移动量 &#x3D; <strong>保留一部分上一步的移动量 + 当前梯度给出的新方向</strong>：</p>
 
 <div class="course-math">
 \[
@@ -831,14 +832,14 @@ m^{t+1}=\lambda m^{t}-\eta g^{t},\qquad
 </tr>
 <tr>
 <td>λ</td>
-<td>动量系数，0 到 1 之间，常取 0.9，表示上一步的移动量保留多少；λ &#x3D; 0 时退化为普通 SGD</td>
+<td>动量系数，0 到 1 之间，常取 0.9，表示上一步的移动量保留多少；λ &#x3D; 0 时退化为普通梯度下降</td>
 </tr>
 <tr>
 <td>η</td>
 <td>学习率</td>
 </tr>
 </tbody></table>
-<p>$-\eta g^{t}$ 是负梯度方向（下坡方向），和普通 SGD 一样；$\lambda m^{t}$ 就是“惯性”。在小球的比喻里，m 是小球的速度，梯度是坡度给的推力，λ 则像摩擦：每一步速度只剩原来的 λ 倍。</p>
+<p>$-\eta g^{t}$ 是负梯度方向（下坡方向），和普通梯度下降一样；$\lambda m^{t}$ 就是“惯性”。在小球的比喻里，m 是小球的速度，梯度是坡度给的推力，λ 则像摩擦：每一步速度只剩原来的 λ 倍。</p>
 <p>展开递推可以看出，移动量是此前所有梯度的指数加权和：</p>
 
 <div class="course-math">
