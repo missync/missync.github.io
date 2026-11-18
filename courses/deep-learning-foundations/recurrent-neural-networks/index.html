@@ -484,7 +484,7 @@ h_t=f_W\!\left(h_{t-1},\,x_t\right).
 </div>
 
 
-<p>其中 hₜ 是新状态（课件称为 cell state；注意它与后面 LSTM 中的细胞状态 cₜ 不是一回事，LSTM 里 hₜ 叫隐藏状态），$f_W$ 是由参数 W 决定的函数，hₜ₋₁ 是旧状态，xₜ 是 t 时刻的输入向量。最基本的 RNN（Vanilla RNN）取：</p>
+<p>其中 hₜ 是新状态，hₜ₋₁ 是旧状态，xₜ 是 t 时刻的输入向量，$f_W$ 是由参数 W 决定的函数。课件把这里的 hₜ 称为 cell state，但它对应的是 LSTM 中的隐藏状态 hₜ，而不是 LSTM 的细胞状态 cₜ。最基本的 RNN（Vanilla RNN）取：</p>
 
 <div class="course-math">
 \[
@@ -531,7 +531,7 @@ h_t=\tanh\!\left(W_{hh}h_{t-1}+W_{xh}x_t\right)
 </div>
 
 
-<p>最后一个时间步的损失对 W 的梯度，要从 T 一路传回第 1 步：</p>
+<p>由于 W 在每一步都被使用，$L_T$ 对 W 的梯度是各时间步贡献之和（3.4 节）。其中最远的一项来自第 1 步，要从 T 一路传回：</p>
 
 <div class="course-math">
 \[
@@ -542,7 +542,7 @@ h_t=\tanh\!\left(W_{hh}h_{t-1}+W_{xh}x_t\right)
 </div>
 
 
-<p>又出现了长串连乘。连乘项（大致由 $W_{hh}$ 的奇异值与 tanh′ 决定）<strong>普遍小于 1 时梯度消失，普遍大于 1 时梯度爆炸</strong>。这与深层前馈网络的问题完全相同，只是 RNN 的“深度”等于序列长度，而且每一步乘的是<strong>同一个矩阵</strong>，问题更加严重。梯度消失意味着远处时间步的信息几乎无法影响参数更新，RNN 实际上只能学到短程依赖。</p>
+<p>离 T 越远的时间步，这条连乘链越长。连乘项（大致由 $W_{hh}$ 的奇异值与 tanh′ 决定）<strong>普遍小于 1 时梯度消失，普遍大于 1 时梯度爆炸</strong>。这与深层前馈网络的问题完全相同，只是 RNN 的“深度”等于序列长度，而且每一步乘的是<strong>同一个矩阵</strong>，问题更加严重。梯度消失意味着远处时间步的信息几乎无法影响参数更新，RNN 实际上只能学到短程依赖。</p>
 <p><img src="/images/courses/deep-learning-foundations/rnn-gradient-flow.png" srcset="/img/loading.gif" lazyload alt="梯度连乘的玩具模型与随机 RNN 的雅可比连乘范数"><br><em>左：每步乘 0.5、1.0、1.5 时，8 步后的梯度尺度分别约为 0.004、1、25.6。右：64 维随机 RNN 的实测结果。$W_{hh}$ 谱半径为 0.9 时梯度指数衰减；谱半径为 3 时梯度迅速放大；谱半径为 1.5 时，tanh 进入饱和区，其导数抵消了一部分放大作用。虚线是 LSTM 细胞状态路径，遗忘门接近 1 时梯度几乎不衰减。</em></p>
 <h3 id="3-6-应对方法"><a href="#3-6-应对方法" class="headerlink" title="3.6 应对方法"></a>3.6 应对方法</h3><p><strong>梯度爆炸：梯度裁剪（Gradient Clipping）</strong>。若梯度范数超过阈值 c，就把它等比例缩小：</p>
 
@@ -556,7 +556,7 @@ h_t=\tanh\!\left(W_{hh}h_{t-1}+W_{xh}x_t\right)
 <p>方向不变，只限制步长，实现简单且非常有效。</p>
 <p><strong>梯度消失</strong>没有这么直接的修补办法，常见思路有三类：</p>
 <ol>
-<li><strong>激活函数</strong>：例如使用导数不易饱和的激活；</li>
+<li><strong>激活函数</strong>：例如用 ReLU 代替 tanh，正区间导数恒为 1，不会因饱和而缩小梯度；</li>
 <li><strong>权重初始化</strong>：例如把 $W_{hh}$ 初始化为单位阵或正交阵，使连乘因子接近 1；</li>
 <li><strong>网络结构</strong>：使用门控单元，从结构上为梯度提供一条不衰减的通路，这是最根本的方法。</li>
 </ol>
