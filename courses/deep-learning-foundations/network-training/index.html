@@ -324,7 +324,7 @@ h_1=f(w_1^{\mathsf T}x+b_1),\qquad h_2=f(w_2^{\mathsf T}x+b_2),
 
 <p>两单元的输出相同，反向传播得到的梯度也相同，更新后参数依旧相同。无论训练多久，它们都在学<strong>同一个特征</strong>，宽度为 H 的隐藏层实际只相当于一个单元。只要所有权重取同一个常数，这种对称性就会保留。</p>
 <p><strong>解决办法是随机初始化权重；偏置通常可以初始化为 0</strong>，因为权重已经足以打破对称。</p>
-<h3 id="2-3-梯度消失与梯度爆炸"><a href="#2-3-梯度消失与梯度爆炸" class="headerlink" title="2.3 梯度消失与梯度爆炸"></a>2.3 梯度消失与梯度爆炸</h3><p>对 z⁽ˡ⁾ &#x3D; W⁽ˡ⁾h⁽ˡ⁻¹⁾ + b⁽ˡ⁾、h⁽ˡ⁾ &#x3D; f(z⁽ˡ⁾)，相邻两层之间的局部导数为：</p>
+<h3 id="2-3-梯度消失与梯度爆炸"><a href="#2-3-梯度消失与梯度爆炸" class="headerlink" title="2.3 梯度消失与梯度爆炸"></a>2.3 梯度消失与梯度爆炸</h3><p>对 $z^{(l)}&#x3D;W^{(l)}h^{(l-1)}+b^{(l)}$、$h^{(l)}&#x3D;f(z^{(l)})$，相邻两层之间的局部导数为：</p>
 
 <div class="course-math">
 \[
@@ -378,7 +378,7 @@ z_j=\sum_{i=1}^{n_{\mathrm{in}}}W_{ji}x_i .
 </div>
 
 
-<p>想让 Var(z) &#x3D; Var(x)，就需要 Var(W) ≈ 1&#x2F;n_in。对反向传播做同样的分析，梯度方差保持不变要求 Var(W) ≈ 1&#x2F;n_out。</p>
+<p>想让 $\operatorname{Var}(z)&#x3D;\operatorname{Var}(x)$，就需要 $\operatorname{Var}(W)\approx 1&#x2F;n_{\mathrm{in}}$。对反向传播做同样的分析，梯度方差保持不变要求 $\operatorname{Var}(W)\approx 1&#x2F;n_{\mathrm{out}}$。</p>
 <ul>
 <li><strong>fan-in</strong>：每个单元接收的输入个数；</li>
 <li><strong>fan-out</strong>：每个单元连向的输出个数。</li>
@@ -391,12 +391,12 @@ z_j=\sum_{i=1}^{n_{\mathrm{in}}}W_{ji}x_i .
 \qquad
 W_{ij}\sim\mathcal N\!\left(0,\frac{2}{n_{\mathrm{in}}+n_{\mathrm{out}}}\right)
 \quad\text{或}\quad
-W_{ij}\sim\mathcal U\!\left(-\sqrt{\tfrac{6}{n_{\mathrm{in}}+n_{\mathrm{out}}}},\ \sqrt{\tfrac{6}{n_{\mathrm{in}}+n_{\mathrm{out}}}}\right).
+W_{ij}\sim\mathcal U\!\left(-\sqrt{\frac{6}{n_{\mathrm{in}}+n_{\mathrm{out}}}},\ \sqrt{\frac{6}{n_{\mathrm{in}}+n_{\mathrm{out}}}}\right).
 \]
 </div>
 
 
-<p>均匀分布的边界由 a²&#x2F;3 &#x3D; 2&#x2F;(n_in+n_out) 解出 a &#x3D; √(6&#x2F;(n_in+n_out))，两种形式的方差相同。</p>
+<p>均匀分布的边界由 $a^2&#x2F;3&#x3D;2&#x2F;(n_{\mathrm{in}}+n_{\mathrm{out}})$ 解出 $a&#x3D;\sqrt{6&#x2F;(n_{\mathrm{in}}+n_{\mathrm{out}})}$，两种形式的方差相同。</p>
 <h3 id="2-6-He（Kaiming）初始化"><a href="#2-6-He（Kaiming）初始化" class="headerlink" title="2.6 He（Kaiming）初始化"></a>2.6 He（Kaiming）初始化</h3><p>ReLU f(x)&#x3D;max(0,x) 会把一半输入直接置零，Xavier 的推导没有考虑这一点，所以 ReLU 网络用 Xavier 时信号会逐层减弱。He 初始化显式补偿了这部分损失。</p>
 <p>若预激活 z 关于 0 对称，ReLU 只保留正半轴，于是：</p>
 
@@ -415,12 +415,12 @@ W_{ij}\sim\mathcal U\!\left(-\sqrt{\tfrac{6}{n_{\mathrm{in}}+n_{\mathrm{out}}}},
 \qquad
 W_{ij}\sim\mathcal N\!\left(0,\frac{2}{n_{\mathrm{in}}}\right)
 \quad\text{或}\quad
-W_{ij}\sim\mathcal U\!\left(-\sqrt{\tfrac{6}{n_{\mathrm{in}}}},\ \sqrt{\tfrac{6}{n_{\mathrm{in}}}}\right).
+W_{ij}\sim\mathcal U\!\left(-\sqrt{\frac{6}{n_{\mathrm{in}}}},\ \sqrt{\frac{6}{n_{\mathrm{in}}}}\right).
 \]
 </div>
 
 
-<p>以 256→256 的全连接层为例：Xavier 的标准差为 √(2&#x2F;512) &#x3D; <strong>0.0625</strong>，He 的标准差为 √(2&#x2F;256) ≈ <strong>0.0884</strong>，后者更大，正是为了抵消 ReLU 的“砍半”。PyTorch 中两种写法：</p>
+<p>以 256→256 的全连接层为例：Xavier 的标准差为 $\sqrt{2&#x2F;512}$ &#x3D; <strong>0.0625</strong>，He 的标准差为 $\sqrt{2&#x2F;256}$ ≈ <strong>0.0884</strong>，后者更大，正是为了抵消 ReLU 的“砍半”。PyTorch 中两种写法：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn<br><br><span class="hljs-comment"># Xavier normal：适合 tanh 等近似线性的激活</span><br>layer = nn.Linear(<span class="hljs-number">256</span>, <span class="hljs-number">256</span>)<br>nn.init.xavier_normal_(layer.weight)<br><br><span class="hljs-comment"># He normal：适合 ReLU 层</span><br>layer = nn.Linear(<span class="hljs-number">256</span>, <span class="hljs-number">256</span>)<br>nn.init.kaiming_normal_(layer.weight, mode=<span class="hljs-string">&quot;fan_in&quot;</span>, nonlinearity=<span class="hljs-string">&quot;relu&quot;</span>)<br></code></pre></td></tr></table></figure>
 
 <h3 id="2-7-fan-in-与-fan-out-怎样数"><a href="#2-7-fan-in-与-fan-out-怎样数" class="headerlink" title="2.7 fan-in 与 fan-out 怎样数"></a>2.7 fan-in 与 fan-out 怎样数</h3><p>Xavier 和 He 使用相同的 fan-in &#x2F; fan-out 定义，区别只在于怎样把它们换算成方差。二者都<strong>只由权重张量的形状决定</strong>，不包括偏置、batch 大小和特征图的高宽。</p>
@@ -435,15 +435,15 @@ W_{ij}\sim\mathcal U\!\left(-\sqrt{\tfrac{6}{n_{\mathrm{in}}}},\ \sqrt{\tfrac{6}
 </thead>
 <tbody><tr>
 <td>全连接</td>
-<td>N_out × N_in</td>
-<td>N_in</td>
-<td>N_out</td>
+<td>$N_{\mathrm{out}}\times N_{\mathrm{in}}$</td>
+<td>$N_{\mathrm{in}}$</td>
+<td>$N_{\mathrm{out}}$</td>
 </tr>
 <tr>
 <td>二维卷积</td>
-<td>C_out × C_in × K_h × K_w</td>
-<td>C_in·K_h·K_w</td>
-<td>C_out·K_h·K_w</td>
+<td>$C_{\mathrm{out}}\times C_{\mathrm{in}}\times K_h\times K_w$</td>
+<td>$C_{\mathrm{in}}\cdot K_h\cdot K_w$</td>
+<td>$C_{\mathrm{out}}\cdot K_h\cdot K_w$</td>
 </tr>
 </tbody></table>
 <p>例：3×3 卷积，3 个输入通道、64 个输出通道，则 fan-in &#x3D; 3×3×3 &#x3D; <strong>27</strong>，fan-out &#x3D; 64×3×3 &#x3D; <strong>576</strong>。</p>
@@ -461,17 +461,17 @@ W_{ij}\sim\mathcal U\!\left(-\sqrt{\tfrac{6}{n_{\mathrm{in}}}},\ \sqrt{\tfrac{6}
 <td>2&#x2F;603 ≈ 0.0033</td>
 </tr>
 <tr>
-<td>He，ReLU，fan_in 模式</td>
+<td>He，ReLU，<code>fan_in</code> 模式</td>
 <td>2 &#x2F; fan-in</td>
 <td>2&#x2F;27 ≈ 0.074</td>
 </tr>
 <tr>
-<td>He，ReLU，fan_out 模式</td>
+<td>He，ReLU，<code>fan_out</code> 模式</td>
 <td>2 &#x2F; fan-out</td>
 <td>2&#x2F;576 ≈ 0.0035</td>
 </tr>
 </tbody></table>
-<p><strong>fan_in 模式保证前向信号尺度，fan_out 模式保证反向梯度尺度</strong>；ReLU 网络常用的 He 公式默认采用 fan_in。</p>
+<p><strong><code>fan_in</code> 模式保证前向信号尺度，<code>fan_out</code> 模式保证反向梯度尺度</strong>；ReLU 网络常用的 He 公式默认采用 <code>fan_in</code>。</p>
 <h3 id="2-8-初始化的总目标"><a href="#2-8-初始化的总目标" class="headerlink" title="2.8 初始化的总目标"></a>2.8 初始化的总目标</h3><p>无论具体公式如何，初始化都在追求：</p>
 
 <div class="course-math">
@@ -494,7 +494,7 @@ W_{ij}\sim\mathcal U\!\left(-\sqrt{\tfrac{6}{n_{\mathrm{in}}}},\ \sqrt{\tfrac{6}
 </ul>
 <p>于是损失面在不同方向的曲率差别悬殊，等高线呈细长椭圆。同一个学习率对陡峭方向太大、对平缓方向太小，梯度下降只能走锯齿路线。<strong>如果让各维输入处于相同范围，等高线接近圆形，梯度方向更直接地指向最优点。</strong></p>
 <p><img src="/images/courses/deep-learning-foundations/normalization-landscape.png" srcset="/img/loading.gif" lazyload alt="特征尺度不同与归一化后的损失面等高线及梯度下降轨迹"><br><em>左：两个方向曲率相差 25 倍，学习率只能迁就陡峭方向，轨迹来回振荡；右：归一化后曲率接近，可以用更大的学习率直线前进。</em></p>
-<h3 id="3-3-特征归一化"><a href="#3-3-特征归一化" class="headerlink" title="3.3 特征归一化"></a>3.3 特征归一化</h3><p>对 R 个样本 x¹, …, xᴿ，在每个维度 i 上分别计算均值 mᵢ 和标准差 σᵢ：</p>
+<h3 id="3-3-特征归一化"><a href="#3-3-特征归一化" class="headerlink" title="3.3 特征归一化"></a>3.3 特征归一化</h3><p>对 R 个样本 $x^1,\dots,x^R$，在每个维度 i 上分别计算均值 mᵢ 和标准差 σᵢ：</p>
 
 <div class="course-math">
 \[
@@ -543,12 +543,12 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 </thead>
 <tbody><tr>
 <td>1</td>
-<td>mini-batch 均值 μ_B</td>
+<td>mini-batch 均值 $\mu_{\mathcal B}$</td>
 <td>每个特征维度单独统计</td>
 </tr>
 <tr>
 <td>2</td>
-<td>mini-batch 方差 σ²_B</td>
+<td>mini-batch 方差 $\sigma_{\mathcal B}^2$</td>
 <td>同上</td>
 </tr>
 <tr>
@@ -562,7 +562,7 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 <td>γ、β 随网络一起训练</td>
 </tr>
 </tbody></table>
-<p>γ、β 初始常设为 1 和 0。若网络学到 γ &#x3D; √(σ²+ε)、β &#x3D; μ，BN 就退化为恒等映射，所以加入 BN <strong>不会减小网络能表示的函数集合</strong>，只是换了一种更易优化的参数化方式。</p>
+<p>γ、β 初始常设为 1 和 0。若网络学到 $\gamma&#x3D;\sqrt{\sigma^2+\epsilon}$、$\beta&#x3D;\mu$，BN 就退化为恒等映射，所以加入 BN <strong>不会减小网络能表示的函数集合</strong>，只是换了一种更易优化的参数化方式。</p>
 <h3 id="3-6-推理时不能用测试-batch-的统计量"><a href="#3-6-推理时不能用测试-batch-的统计量" class="headerlink" title="3.6 推理时不能用测试 batch 的统计量"></a>3.6 推理时不能用测试 batch 的统计量</h3><p>推理时可能一次只处理一个样本，此时 batch 均值与方差没有意义；即使 batch 较大，输出也不应依赖同批其他样本。做法是：<strong>训练时用指数滑动平均记录全局均值和方差，推理时直接使用。</strong></p>
 
 <div class="course-math">
@@ -670,11 +670,11 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 </tr>
 </tbody></table>
 <p>Layer Norm、Instance Norm 和 Group Norm 的统计量都只来自单个样本，<strong>训练和测试时的计算完全相同</strong>，也不受 batch 大小影响。此外还有 Batch Renormalization、Weight Normalization、Spectral Normalization 等变体。</p>
-<h2 id="4-优化器：从梯度下降到-Adam"><a href="#4-优化器：从梯度下降到-Adam" class="headerlink" title="4. 优化器：从梯度下降到 Adam"></a>4. 优化器：从梯度下降到 Adam</h2><h3 id="4-1-回顾：梯度下降"><a href="#4-1-回顾：梯度下降" class="headerlink" title="4.1 回顾：梯度下降"></a>4.1 回顾：梯度下降</h3><p>训练目标是 w* &#x3D; arg min_w L(w)。只有一个参数时：</p>
+<h2 id="4-优化器：从梯度下降到-Adam"><a href="#4-优化器：从梯度下降到-Adam" class="headerlink" title="4. 优化器：从梯度下降到 Adam"></a>4. 优化器：从梯度下降到 Adam</h2><h3 id="4-1-回顾：梯度下降"><a href="#4-1-回顾：梯度下降" class="headerlink" title="4.1 回顾：梯度下降"></a>4.1 回顾：梯度下降</h3><p>训练目标是 $w^{\ast}&#x3D;\arg\min_w L(w)$。只有一个参数时：</p>
 <ol>
 <li>随机选取初值 w⁰；</li>
-<li>计算导数 dL&#x2F;dw 在 w⁰ 处的值：为负说明向右损失减小，应增大 w；为正则应减小 w；</li>
-<li>更新 w¹ ← w⁰ − η·dL&#x2F;dw|_{w&#x3D;w⁰}，其中 η 称为<strong>学习率</strong>；</li>
+<li>计算导数 $\frac{dL}{dw}$ 在 $w^0$ 处的值：为负说明向右损失减小，应增大 w；为正则应减小 w；</li>
+<li>更新 $w^1\leftarrow w^0-\eta\left.\frac{dL}{dw}\right\vert_{w&#x3D;w^0}$，其中 η 称为<strong>学习率</strong>；</li>
 <li>重复多次迭代。</li>
 </ol>
 <p>有多个参数时，把所有偏导数排成梯度向量 ∇L，同时更新。梯度下降可能停在<strong>局部最小值</strong>而非全局最小值；不过在高维神经网络中，更常见的障碍其实是鞍点和大片平坦区域。</p>
@@ -747,8 +747,8 @@ m^{t}=-\eta\sum_{i=0}^{t-1}\lambda^{\,t-1-i}g^{i}.
 <li>在来回振荡的方向上，正负梯度相互抵消，振荡减弱；</li>
 <li>即使到达 ∂L&#x2F;∂w &#x3D; 0 的点，上一步的动量仍可能带参数越过局部小坑。</li>
 </ul>
-<p>另一种常见写法是 mₜ &#x3D; β₁mₜ₋₁ + (1−β₁)gₜ，θₜ &#x3D; θₜ₋₁ − ηmₜ，二者只差一个缩放系数。</p>
-<h3 id="4-5-不同参数需要不同的学习率：Adagrad"><a href="#4-5-不同参数需要不同的学习率：Adagrad" class="headerlink" title="4.5 不同参数需要不同的学习率：Adagrad"></a>4.5 不同参数需要不同的学习率：Adagrad</h3><p>对单个参数 θᵢ，普通更新是 θᵢᵗ⁺¹ ← θᵢᵗ − ηgᵢᵗ。如果某个方向一直很陡（梯度大），应当用小学习率；一直平缓，则应当用大学习率。Adagrad 把学习率改为与参数相关：</p>
+<p>另一种常见写法是 $m_t&#x3D;\beta_1m_{t-1}+(1-\beta_1)g_t$，$\theta_t&#x3D;\theta_{t-1}-\eta m_t$，二者只差一个缩放系数。</p>
+<h3 id="4-5-不同参数需要不同的学习率：Adagrad"><a href="#4-5-不同参数需要不同的学习率：Adagrad" class="headerlink" title="4.5 不同参数需要不同的学习率：Adagrad"></a>4.5 不同参数需要不同的学习率：Adagrad</h3><p>对单个参数 θᵢ，普通更新是 $\theta_i^{t+1}\leftarrow\theta_i^{t}-\eta g_i^{t}$。如果某个方向一直很陡（梯度大），应当用小学习率；一直平缓，则应当用大学习率。Adagrad 把学习率改为与参数相关：</p>
 
 <div class="course-math">
 \[
@@ -826,7 +826,7 @@ v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
 </tr>
 </tbody></table>
 <p>常用默认值：α &#x3D; 0.001，β₁ &#x3D; 0.9，β₂ &#x3D; 0.999，ε &#x3D; 10⁻⁸，m₀ &#x3D; v₀ &#x3D; 0。</p>
-<p><strong>为什么要偏差修正？</strong> m₀ &#x3D; 0，第一步 m₁ &#x3D; 0.1g₁，只有真实梯度的十分之一；v₁ &#x3D; 0.001g₁² 更是严重偏小。除以 1−β₁ᵗ 和 1−β₂ᵗ 后，第一步恰好得到 m̂₁ &#x3D; g₁、v̂₁ &#x3D; g₁²。随着 t 增大，修正因子趋于 1，自动失效。</p>
+<p><strong>为什么要偏差修正？</strong> m₀ &#x3D; 0，第一步 m₁ &#x3D; 0.1g₁，只有真实梯度的十分之一；v₁ &#x3D; 0.001g₁² 更是严重偏小。除以 $1-\beta_1^{t}$ 和 $1-\beta_2^{t}$ 后，第一步恰好得到 m̂₁ &#x3D; g₁、v̂₁ &#x3D; g₁²。随着 t 增大，修正因子趋于 1，自动失效。</p>
 <p><strong>一个数值例子</strong>（α &#x3D; 0.01，第一步）：</p>
 <table>
 <thead>
@@ -862,7 +862,7 @@ v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
 <td>1</td>
 </tr>
 <tr>
-<td>m̂₁ &#x2F; √v̂₁</td>
+<td>$\hat m_1&#x2F;\sqrt{\hat v_1}$</td>
 <td>1</td>
 <td>1</td>
 </tr>
@@ -884,17 +884,17 @@ v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
 </thead>
 <tbody><tr>
 <td>梯度下降 → SGD（小批量）→ SGD + 动量</td>
-<td>θᵢᵗ⁺¹ ← θᵢᵗ − η gᵢᵗ（动量时用 mᵢᵗ 代替 gᵢᵗ）</td>
+<td>$\theta_i^{t+1}\leftarrow\theta_i^{t}-\eta g_i^{t}$（动量时用 $m_i^{t}$ 代替 $g_i^{t}$）</td>
 <td>固定</td>
 </tr>
 <tr>
 <td>Adagrad → RMSProp → Adam</td>
-<td>θᵢᵗ⁺¹ ← θᵢᵗ − (η &#x2F; σᵢᵗ) gᵢᵗ</td>
+<td>$\theta_i^{t+1}\leftarrow\theta_i^{t}-\frac{\eta}{\sigma_i^{t}}g_i^{t}$</td>
 <td>按参数自适应</td>
 </tr>
 <tr>
 <td>学习率调度</td>
-<td>θᵢᵗ⁺¹ ← θᵢᵗ − (ηᵗ &#x2F; σᵢᵗ) gᵢᵗ</td>
+<td>$\theta_i^{t+1}\leftarrow\theta_i^{t}-\frac{\eta^{t}}{\sigma_i^{t}}g_i^{t}$</td>
 <td>随时间可调</td>
 </tr>
 </tbody></table>
@@ -975,7 +975,7 @@ v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
 </tr>
 <tr>
 <td>平方根倒数 Inverse sqrt</td>
-<td>按 1&#x2F;√t 衰减</td>
+<td>按 $1&#x2F;\sqrt{t}$ 衰减</td>
 <td>Transformer 类模型</td>
 </tr>
 </tbody></table>
@@ -996,7 +996,7 @@ v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
 
 <p>前 4000 步学习率线性增大，之后按步数的平方根倒数减小。</p>
 <p><strong>为什么需要 warmup？</strong> 训练初期参数是随机的，梯度大且方向不稳定；Adam 的二阶矩估计也只基于很少几步，偏差较大。先用小步长让参数和统计量进入较稳定的区域，再放开步长，可以避免早期发散。</p>
-<p><img src="/images/courses/deep-learning-foundations/lr-schedules.png" srcset="/img/loading.gif" lazyload alt="阶梯、余弦、线性、平方根倒数与 warmup 学习率曲线"><br><em>左：阶梯衰减；中：三种连续衰减（初始学习率 0.1，共 100 个 epoch）；右：d_model&#x3D;512、warmup_steps&#x3D;4000 时原始 Transformer 的学习率曲线。</em></p>
+<p><img src="/images/courses/deep-learning-foundations/lr-schedules.png" srcset="/img/loading.gif" lazyload alt="阶梯、余弦、线性、平方根倒数与 warmup 学习率曲线"><br><em>左：阶梯衰减；中：三种连续衰减（初始学习率 0.1，共 100 个 epoch）；右：$d_{\mathrm{model}}&#x3D;512$、<code>warmup_steps</code>&#x3D;4000 时原始 Transformer 的学习率曲线。</em></p>
 <h2 id="6-小结与易错点"><a href="#6-小结与易错点" class="headerlink" title="6. 小结与易错点"></a>6. 小结与易错点</h2><table>
 <thead>
 <tr>
@@ -1014,7 +1014,7 @@ v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2,
 </tr>
 <tr>
 <td>卷积层的 fan-in 是多少</td>
-<td>C_in·K_h·K_w，不包括特征图高宽与 batch</td>
+<td>$C_{\mathrm{in}}\cdot K_h\cdot K_w$，不包括特征图高宽与 batch</td>
 </tr>
 <tr>
 <td>BN 推理时用什么统计量</td>

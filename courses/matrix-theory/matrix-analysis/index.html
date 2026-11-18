@@ -306,21 +306,21 @@
 <p><strong>直观理解</strong>：在城市里从 A 走到 B，直线距离是 2-范数；只能沿街道横平竖直地走，距离是 1-范数（“曼哈顿距离”）；国际象棋里国王走一步可以斜走，所需步数是 ∞-范数（“切比雪夫距离”）。三种范数是三种量“远近”的标准。</p>
 </div>
 
-<p><img src="/images/courses/matrix-theory/ch4-unit-balls.png" srcset="/img/loading.gif" lazyload alt="不同范数的单位球"><br><em>单位球 {x : ‖x‖ &#x3D; 1} 的形状完全刻画了一个范数。p &#x3D; 1 是菱形，p &#x3D; 2 是圆，p &#x3D; ∞ 是正方形；加权范数 √(xᴴAx) 的单位球是椭圆。</em></p>
+<p><img src="/images/courses/matrix-theory/ch4-unit-balls.png" srcset="/img/loading.gif" lazyload alt="不同范数的单位球"><br><em>单位球 {x : ‖x‖ &#x3D; 1} 的形状完全刻画了一个范数。p &#x3D; 1 是菱形，p &#x3D; 2 是圆，p &#x3D; ∞ 是正方形；加权范数 $\sqrt{x^{\mathrm H}Ax}$ 的单位球是椭圆。</em></p>
 <p>其他常见范数：</p>
 <ul>
-<li><strong>加权范数</strong>：设 A 是 Hermite 正定矩阵，‖x‖_A &#x3D; √(xᴴAx)；</li>
+<li><strong>加权范数</strong>：设 A 是 Hermite 正定矩阵，$\Vert x\Vert_A&#x3D;\sqrt{x^{\mathrm H}Ax}$；</li>
 <li><strong>坐标诱导的范数</strong>：设 ε₁, …, εₙ 是 V 的基，x 的坐标为 α，则 ‖x‖ :&#x3D; ‖α‖ₚ 是 V 上的范数；</li>
-<li>若 ‖·‖ 是 ℂᵐ 上的范数、A ∈ ℂᵐˣⁿ 列满秩，则 ‖x‖_A :&#x3D; ‖Ax‖ 是 ℂⁿ 上的范数。</li>
+<li>若 ‖·‖ 是 ℂᵐ 上的范数、A ∈ ℂᵐˣⁿ 列满秩，则 $\Vert x\Vert_A:&#x3D;\Vert Ax\Vert$ 是 ℂⁿ 上的范数。</li>
 </ul>
 <div class="note note-danger">
 
-<p><strong>易错点</strong>：当 0 &lt; p &lt; 1 时，(Σ|xᵢ|ᵖ)^(1&#x2F;p) <strong>不是</strong>范数，它不满足三角不等式（单位球不是凸集）。例如 p &#x3D; ½，x &#x3D; (1, 0)ᵀ、y &#x3D; (0, 1)ᵀ，“范数”都是 1，而 x + y 的值为 (1 + 1)² &#x3D; 4 &gt; 2。</p>
+<p><strong>易错点</strong>：当 0 &lt; p &lt; 1 时，$\left(\sum\vert x_i\vert^p\right)^{1&#x2F;p}$ <strong>不是</strong>范数，它不满足三角不等式（单位球不是凸集）。例如 p &#x3D; ½，x &#x3D; (1, 0)ᵀ、y &#x3D; (0, 1)ᵀ，“范数”都是 1，而 x + y 的值为 (1 + 1)² &#x3D; 4 &gt; 2。</p>
 </div>
 
 <h3 id="1-2-范数的等价性"><a href="#1-2-范数的等价性" class="headerlink" title="1.2 范数的等价性"></a>1.2 范数的等价性</h3><div class="note note-primary">
 
-<p><strong>定义（范数等价）</strong>：若存在正常数 c₁、c₂，使对一切 x 都有 c₁‖x‖_α ≤ ‖x‖_β ≤ c₂‖x‖_α，则称 ‖·‖_α 与 ‖·‖_β 等价。</p>
+<p><strong>定义（范数等价）</strong>：若存在正常数 c₁、c₂，使对一切 x 都有 $c_1\Vert x\Vert_\alpha\le\Vert x\Vert_\beta\le c_2\Vert x\Vert_\alpha$，则称 $\Vert\cdot\Vert_\alpha$ 与 $\Vert\cdot\Vert_\beta$ 等价。</p>
 </div>
 
 <div class="note note-success">
@@ -369,18 +369,18 @@
 </div>
 
 <ul>
-<li>‖A‖ₘ₁ 和 Frobenius 范数 ‖A‖_F 都是矩阵范数；</li>
+<li>‖A‖ₘ₁ 和 Frobenius 范数 $\Vert A\Vert_F$ 都是矩阵范数；</li>
 <li>‖A‖ₘ∞ <strong>不是</strong>矩阵范数：A &#x3D; B &#x3D; [[1, 1], [1, 1]] 时 ‖AB‖ₘ∞ &#x3D; 2 &gt; 1·1；但 n·‖A‖ₘ∞ 是矩阵范数；</li>
-<li>F 范数是<strong>酉不变</strong>的：对酉矩阵 U、V，‖UAV‖_F &#x3D; ‖A‖_F。</li>
+<li>F 范数是<strong>酉不变</strong>的：对酉矩阵 U、V，$\Vert UAV\Vert_F&#x3D;\Vert A\Vert_F$。</li>
 </ul>
 <h3 id="2-2-相容性与算子范数"><a href="#2-2-相容性与算子范数" class="headerlink" title="2.2 相容性与算子范数"></a>2.2 相容性与算子范数</h3><div class="note note-primary">
 
-<p><strong>定义（相容）</strong>：若矩阵范数 ‖·‖_M 与向量范数 ‖·‖_v 满足 ‖Ax‖_v ≤ ‖A‖_M‖x‖_v，则称二者<strong>相容</strong>。例如 ‖Ax‖₂ ≤ ‖A‖_F‖x‖₂（由 Cauchy–Schwarz 得到）。</p>
+<p><strong>定义（相容）</strong>：若矩阵范数 $\Vert\cdot\Vert_M$ 与向量范数 $\Vert\cdot\Vert_v$ 满足 $\Vert Ax\Vert_v\le\Vert A\Vert_M\Vert x\Vert_v$，则称二者<strong>相容</strong>。例如 $\Vert Ax\Vert_2\le\Vert A\Vert_F\Vert x\Vert_2$（由 Cauchy–Schwarz 得到）。</p>
 </div>
 
 <div class="note note-success">
 
-<p><strong>定理（算子范数 &#x2F; 诱导范数）</strong>：设 ‖·‖_v 是 ℂⁿ 上的向量范数，定义</p>
+<p><strong>定理（算子范数 &#x2F; 诱导范数）</strong>：设 $\Vert\cdot\Vert_v$ 是 ℂⁿ 上的向量范数，定义</p>
 
 <div class="course-math">
 \[
@@ -389,12 +389,12 @@
 </div>
 
 
-<p>则 ‖A‖ 是与 ‖·‖_v 相容的矩阵范数，称为由 ‖·‖_v <strong>诱导的算子范数</strong>。它是使 ‖Ax‖_v ≤ c‖x‖_v 恒成立的<strong>最小</strong>常数 c，并且 ‖I‖ &#x3D; 1。</p>
+<p>则 ‖A‖ 是与 $\Vert\cdot\Vert_v$ 相容的矩阵范数，称为由 $\Vert\cdot\Vert_v$ <strong>诱导的算子范数</strong>。它是使 $\Vert Ax\Vert_v\le c\Vert x\Vert_v$ 恒成立的<strong>最小</strong>常数 c，并且 ‖I‖ &#x3D; 1。</p>
 </div>
 
 <div class="note note-success">
 
-<p><strong>定理（三种常用算子范数）</strong>：设 A &#x3D; (aᵢⱼ) ∈ ℂᵐˣⁿ，σ_max(A) 为 A 的最大奇异值，则</p>
+<p><strong>定理（三种常用算子范数）</strong>：设 A &#x3D; (aᵢⱼ) ∈ ℂᵐˣⁿ，$\sigma_{\max}$(A) 为 A 的最大奇异值，则</p>
 
 <div class="course-math">
 \[
@@ -413,19 +413,19 @@
 <p><img src="/images/courses/matrix-theory/ch4-operator-norms.png" srcset="/img/loading.gif" lazyload alt="三种算子范数的几何意义"><br><em>把对应范数的单位球用 A 映过去，再找能包住像的最小同形球，半径就是算子范数。2-范数中，单位圆被映成椭圆，最长半轴等于最大奇异值。</em></p>
 <div class="note note-warning">
 
-<p><strong>例题</strong>：A &#x3D; [[2, −1, 0], [0, 2, 3], [1, 2, 0]]，求 ‖A‖₁、‖A‖∞、‖A‖_F、‖A‖₂。</p>
+<p><strong>例题</strong>：A &#x3D; [[2, −1, 0], [0, 2, 3], [1, 2, 0]]，求 ‖A‖₁、‖A‖∞、$\Vert A\Vert_F$、‖A‖₂。</p>
 <ul>
 <li>列绝对值和为 3, 5, 3，‖A‖₁ &#x3D; <strong>5</strong>；</li>
 <li>行绝对值和为 3, 5, 3，‖A‖∞ &#x3D; <strong>5</strong>；</li>
-<li>‖A‖_F &#x3D; √(4 + 1 + 4 + 9 + 1 + 4) &#x3D; <strong>√23</strong>；</li>
+<li>$\Vert A\Vert_F&#x3D;\sqrt{4+1+4+9+1+4}$ &#x3D; <strong>√23</strong>；</li>
 <li>AᵀA 的最大特征值为 15，‖A‖₂ &#x3D; <strong>√15</strong> ≈ 3.873。</li>
 </ul>
-<p>‖A‖₁、‖A‖∞ 很容易算；‖A‖₂ 要求特征值，代价高。总有 ‖A‖₂ ≤ ‖A‖_F，也有 ‖A‖₂ ≤ √(‖A‖₁‖A‖∞)（本例 √15 ≤ 5），常用来快速估计谱范数。</p>
+<p>‖A‖₁、‖A‖∞ 很容易算；‖A‖₂ 要求特征值，代价高。总有 $\Vert A\Vert_2\le\Vert A\Vert_F$，也有 $\Vert A\Vert_2\le\sqrt{\Vert A\Vert_1\Vert A\Vert_\infty}$（本例 √15 ≤ 5），常用来快速估计谱范数。</p>
 </div>
 
 <div class="note note-danger">
 
-<p><strong>易错点</strong>：F 范数与 2-范数相容，但 F 范数<strong>不是</strong>任何向量范数诱导出来的算子范数（因为 ‖I‖_F &#x3D; √n ≠ 1）。“与同一个向量范数相容的矩阵范数可以有很多个”，算子范数只是其中最小的那个。</p>
+<p><strong>易错点</strong>：F 范数与 2-范数相容，但 F 范数<strong>不是</strong>任何向量范数诱导出来的算子范数（因为 $\Vert I\Vert_F&#x3D;\sqrt{n}\ne 1$）。“与同一个向量范数相容的矩阵范数可以有很多个”，算子范数只是其中最小的那个。</p>
 </div>
 
 <h3 id="2-3-Rayleigh-商与极大极小定理"><a href="#2-3-Rayleigh-商与极大极小定理" class="headerlink" title="2.3 Rayleigh 商与极大极小定理"></a>2.3 Rayleigh 商与极大极小定理</h3><p>在求谱范数的过程中自然出现了 Hermite 矩阵的 <strong>Rayleigh 商</strong>：</p>
@@ -610,7 +610,7 @@ G_i=\{z\in\mathbb C:\ |z-a_{ii}|\le R_i\},\qquad i=1,\ldots,n
 <p><img src="/images/courses/matrix-theory/ch4-powers-neumann.png" srcset="/img/loading.gif" lazyload alt="矩阵幂的收敛与 Neumann 级数"><br><em>左：两个矩阵的谱半径都是 0.9，正规矩阵的 ‖Aᵏ‖ 单调衰减；非正规矩阵先增长到约 8 倍，之后才衰减，但最终都趋于零。是否收敛只看 ρ(A)，衰减前的暂态则与矩阵是否正规有关。右：Neumann 级数部分和的误差以 ρ(A)ᵏ 的速度下降。</em></p>
 <h3 id="4-2-矩阵级数与幂级数"><a href="#4-2-矩阵级数与幂级数" class="headerlink" title="4.2 矩阵级数与幂级数"></a>4.2 矩阵级数与幂级数</h3><div class="note note-primary">
 
-<p><strong>定义</strong>：若部分和 S_N &#x3D; Σₖ₌₀ᴺ A⁽ᵏ⁾ 收敛，则称矩阵级数 Σ A⁽ᵏ⁾ 收敛；若 Σ ‖A⁽ᵏ⁾‖ 收敛（等价地，每个元素的级数都绝对收敛），则称其<strong>绝对收敛</strong>。绝对收敛的级数一定收敛，且可以任意重排。</p>
+<p><strong>定义</strong>：若部分和 $S_N&#x3D;\sum_{k&#x3D;0}^{N}A^{(k)}$ 收敛，则称矩阵级数 Σ A⁽ᵏ⁾ 收敛；若 Σ ‖A⁽ᵏ⁾‖ 收敛（等价地，每个元素的级数都绝对收敛），则称其<strong>绝对收敛</strong>。绝对收敛的级数一定收敛，且可以任意重排。</p>
 </div>
 
 <div class="note note-success">
@@ -689,7 +689,7 @@ e^{A}=\sum_{k=0}^{\infty}\frac{A^{k}}{k!},\qquad
 <li>若 AB &#x3D; BA，则 eᴬeᴮ &#x3D; eᴮeᴬ &#x3D; eᴬ⁺ᴮ；</li>
 <li>eᴬ 总是可逆的，且 (eᴬ)⁻¹ &#x3D; e⁻ᴬ（无论 A 是否可逆）；</li>
 <li>sin²A + cos²A &#x3D; I，eⁱᴬ &#x3D; cos A + i sin A；</li>
-<li>det eᴬ &#x3D; e^(tr A)；</li>
+<li>$\det e^{A}&#x3D;e^{\operatorname{tr}A}$；</li>
 <li>d&#x2F;dt eᵗᴬ &#x3D; Aeᵗᴬ &#x3D; eᵗᴬA。</li>
 </ol>
 </div>
@@ -845,13 +845,13 @@ x(t)=e^{(t-t_0)A}x_0+\int_{t_0}^{t}e^{(t-s)A}b(s)\,ds .
 </div>
 
 
-<p>齐次情形（b &#x3D; 0）的解就是 x(t) &#x3D; e^((t−t₀)A)x₀。</p>
+<p>齐次情形（b &#x3D; 0）的解就是 $x(t)&#x3D;e^{(t-t_0)A}x_0$。</p>
 </div>
 
 <p><img src="/images/courses/matrix-theory/ch4-matrix-exponential.png" srcset="/img/loading.gif" lazyload alt="矩阵指数描述的三种典型运动"><br><em>特征值为 ±i 时 eᵗᴬ 是旋转，轨迹为圆；特征值实部为负时轨迹螺旋收缩到原点；Jordan 块（重特征值、只有一个特征方向）时，轨迹沿唯一的特征方向弯曲着进入原点。浅色箭头是向量场 Ax。</em></p>
 <div class="note note-info">
 
-<p><strong>直观理解</strong>：x′ &#x3D; Ax 说的是“在位置 x 处，速度是 Ax”。矩阵指数把这个“速度场”沿时间积分，得到整条轨迹。特征值决定了运动的类型：实部的正负决定增长还是衰减，虚部决定旋转的快慢，Jordan 块带来 t·e^(λt) 这样的“多项式 × 指数”项。<strong>整门课的工具在这里汇合</strong>：特征值（第二章）、对角化与 Jordan 形（第三章）、矩阵函数（本章）。</p>
+<p><strong>直观理解</strong>：x′ &#x3D; Ax 说的是“在位置 x 处，速度是 Ax”。矩阵指数把这个“速度场”沿时间积分，得到整条轨迹。特征值决定了运动的类型：实部的正负决定增长还是衰减，虚部决定旋转的快慢，Jordan 块带来 $t e^{\lambda t}$ 这样的“多项式 × 指数”项。<strong>整门课的工具在这里汇合</strong>：特征值（第二章）、对角化与 Jordan 形（第三章）、矩阵函数（本章）。</p>
 </div>
 
 <h2 id="6-本章小结"><a href="#6-本章小结" class="headerlink" title="6. 本章小结"></a>6. 本章小结</h2><table>
@@ -875,12 +875,12 @@ x(t)=e^{(t-t_0)A}x_0+\int_{t_0}^{t}e^{(t-s)A}b(s)\,ds .
 <tr>
 <td>算子范数</td>
 <td>最大放大倍数</td>
-<td>‖A‖₁ 列和，‖A‖∞ 行和，‖A‖₂ &#x3D; σ_max</td>
+<td>‖A‖₁ 列和，‖A‖∞ 行和，‖A‖₂ &#x3D; $\sigma_{\max}$</td>
 </tr>
 <tr>
 <td>Rayleigh 商</td>
 <td>特征值的加权平均</td>
-<td>λ_min ≤ R(x) ≤ λ_max；极大极小定理；Weyl 不等式</td>
+<td>$\lambda_{\min}\le R(x)\le\lambda_{\max}$；极大极小定理；Weyl 不等式</td>
 </tr>
 <tr>
 <td>谱半径</td>

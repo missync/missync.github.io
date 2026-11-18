@@ -272,7 +272,7 @@
                 <style>.course-math{overflow-x:auto;padding:0.25rem 0;max-width:100%;}</style>
 
 <h2 id="1-平台与调用路径"><a href="#1-平台与调用路径" class="headerlink" title="1. 平台与调用路径"></a>1. 平台与调用路径</h2><p>昇腾 NPU 是计算底座，Atlas 用模块、板卡、小站、服务器与集群覆盖端、边、云。例如 Atlas 200DK、200I A2、500 A2 和 800T A2；型号对应不同的开发、推理或训练场景。</p>
-<p>模型任务的基本路径是 <strong>应用 → 框架与适配 → CANN → Runtime &#x2F; 驱动 → NPU</strong>。PyTorch 通过 torch_npu 适配昇腾，MindSpore 提供另一条框架路径。</p>
+<p>模型任务的基本路径是 <strong>应用 → 框架与适配 → CANN → Runtime &#x2F; 驱动 → NPU</strong>。PyTorch 通过 <code>torch_npu</code> 适配昇腾，MindSpore 提供另一条框架路径。</p>
 <h3 id="1-1-CANN-内部承担什么"><a href="#1-1-CANN-内部承担什么" class="headerlink" title="1.1 CANN 内部承担什么"></a>1.1 CANN 内部承担什么</h3><ul>
 <li><strong>图与编译</strong>：处理计算图、优化与算子映射，生成适合设备执行的任务。</li>
 <li><strong>算子实现</strong>：由算子库或自定义算子提供计算，Ascend C 用于 AI Core 算子开发。</li>
@@ -327,7 +327,7 @@
 <p>云端侧重吞吐和多请求调度；端侧受内存、功耗与离线条件制约。部署后还需做版本管理、健康监测与质量检查，并用一致的输入 &#x2F; 输出长度统计服务指标。</p>
 <h2 id="5-课程实验如何串起全栈"><a href="#5-课程实验如何串起全栈" class="headerlink" title="5. 课程实验如何串起全栈"></a>5. 课程实验如何串起全栈</h2><p>实践可分为四个模块：</p>
 <ol>
-<li><strong>基础流水线（实验 1–3）</strong>：PyTorch 训练推理 → CANNLab 环境检查 → PyTorch + torch_npu 开发运行。</li>
+<li><strong>基础流水线（实验 1–3）</strong>：PyTorch 训练推理 → CANNLab 环境检查 → PyTorch + <code>torch_npu</code> 开发运行。</li>
 <li><strong>算子开发（实验 4–5）</strong>：Ascend C 典型算子 → MatMul Tiling 与 Double Buffer 优化。</li>
 <li><strong>大模型训练（实验 6–7）</strong>：集群混合并行 → LoRA 参数高效微调。</li>
 <li><strong>推理部署（实验 8–10）</strong>：ONNX &#x2F; OM 转换部署 → MindIE &#x2F; AISBench 并发压测 → 端侧推理应用。</li>

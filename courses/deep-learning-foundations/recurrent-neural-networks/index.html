@@ -484,7 +484,7 @@ h_t=f_W\!\left(h_{t-1},\,x_t\right).
 </div>
 
 
-<p>其中 hₜ 是新状态（课件称为 cell state；注意它与后面 LSTM 中的细胞状态 cₜ 不是一回事，LSTM 里 hₜ 叫隐藏状态），f_W 是由参数 W 决定的函数，hₜ₋₁ 是旧状态，xₜ 是 t 时刻的输入向量。最基本的 RNN（Vanilla RNN）取：</p>
+<p>其中 hₜ 是新状态（课件称为 cell state；注意它与后面 LSTM 中的细胞状态 cₜ 不是一回事，LSTM 里 hₜ 叫隐藏状态），$f_W$ 是由参数 W 决定的函数，hₜ₋₁ 是旧状态，xₜ 是 t 时刻的输入向量。最基本的 RNN（Vanilla RNN）取：</p>
 
 <div class="course-math">
 \[
@@ -495,8 +495,8 @@ h_t=\tanh\!\left(W_{hh}h_{t-1}+W_{xh}x_t+b_h\right),
 </div>
 
 
-<p>课件采用转置、不带偏置的写法：hₜ &#x3D; tanh(W_hhᵀhₜ₋₁ + W_xhᵀxₜ)，ŷₜ &#x3D; W_hyᵀhₜ。它与上式只是权重矩阵的摆放约定不同（把 W 换成 Wᵀ），偏置也可以并入权重，二者等价；考试时按课件写法即可。</p>
-<p><strong>所有时间步使用同一个函数、同一组参数</strong> W_xh、W_hh、W_hy。这和卷积在空间上共享权重是同一个思想，只不过 RNN 在<strong>时间</strong>上共享。因此 RNN 能处理任意长度的序列，参数量也不随序列长度增长。</p>
+<p>课件采用转置、不带偏置的写法：$h_t&#x3D;\tanh(W_{hh}^{\mathsf T}h_{t-1}+W_{xh}^{\mathsf T}x_t)$，$\hat y_t&#x3D;W_{hy}^{\mathsf T}h_t$。它与上式只是权重矩阵的摆放约定不同（把 $W$ 换成 $W^{\mathsf T}$），偏置也可以并入权重，二者等价；考试时按课件写法即可。</p>
+<p><strong>所有时间步使用同一个函数、同一组参数</strong> $W_{xh}$、$W_{hh}$、$W_{hy}$。这和卷积在空间上共享权重是同一个思想，只不过 RNN 在<strong>时间</strong>上共享。因此 RNN 能处理任意长度的序列，参数量也不随序列长度增长。</p>
 <h3 id="3-4-按时间展开的计算图"><a href="#3-4-按时间展开的计算图" class="headerlink" title="3.4 按时间展开的计算图"></a>3.4 按时间展开的计算图</h3><p>把自环沿时间展开，RNN 就变成一个很深的前馈网络，每层对应一个时间步，各层共享权重。以字符级语言模型为例：输入“想开直升”，每一步预测下一个字，目标分别是“开直升机”。</p>
 <p><img src="/images/courses/deep-learning-foundations/rnn-unrolled.png" srcset="/img/loading.gif" lazyload alt="RNN 的时间展开计算图与 BPTT"><br><em>每个时间步都有一个损失 Lₜ，总损失是它们的和；反向传播沿时间逆向流动，共享参数在每个时间步都会收到一份梯度。</em></p>
 <p>总损失与对共享参数的梯度为：</p>
@@ -521,7 +521,7 @@ h_t=\tanh\!\left(W_{hh}h_{t-1}+W_{xh}x_t\right)
 </div>
 
 
-<p>从 hₜ 反传到 hₜ₋₁，每一步都要乘一次 W_hh（准确说是乘它的转置）和 tanh 的导数：</p>
+<p>从 hₜ 反传到 hₜ₋₁，每一步都要乘一次 $W_{hh}$（准确说是乘它的转置）和 tanh 的导数：</p>
 
 <div class="course-math">
 \[
@@ -542,8 +542,8 @@ h_t=\tanh\!\left(W_{hh}h_{t-1}+W_{xh}x_t\right)
 </div>
 
 
-<p>又出现了长串连乘。连乘项（大致由 W_hh 的奇异值与 tanh′ 决定）<strong>普遍小于 1 时梯度消失，普遍大于 1 时梯度爆炸</strong>。这与深层前馈网络的问题完全相同，只是 RNN 的“深度”等于序列长度，而且每一步乘的是<strong>同一个矩阵</strong>，问题更加严重。梯度消失意味着远处时间步的信息几乎无法影响参数更新，RNN 实际上只能学到短程依赖。</p>
-<p><img src="/images/courses/deep-learning-foundations/rnn-gradient-flow.png" srcset="/img/loading.gif" lazyload alt="梯度连乘的玩具模型与随机 RNN 的雅可比连乘范数"><br><em>左：每步乘 0.5、1.0、1.5 时，8 步后的梯度尺度分别约为 0.004、1、25.6。右：64 维随机 RNN 的实测结果。W_hh 谱半径为 0.9 时梯度指数衰减；谱半径为 3 时梯度迅速放大；谱半径为 1.5 时，tanh 进入饱和区，其导数抵消了一部分放大作用。虚线是 LSTM 细胞状态路径，遗忘门接近 1 时梯度几乎不衰减。</em></p>
+<p>又出现了长串连乘。连乘项（大致由 $W_{hh}$ 的奇异值与 tanh′ 决定）<strong>普遍小于 1 时梯度消失，普遍大于 1 时梯度爆炸</strong>。这与深层前馈网络的问题完全相同，只是 RNN 的“深度”等于序列长度，而且每一步乘的是<strong>同一个矩阵</strong>，问题更加严重。梯度消失意味着远处时间步的信息几乎无法影响参数更新，RNN 实际上只能学到短程依赖。</p>
+<p><img src="/images/courses/deep-learning-foundations/rnn-gradient-flow.png" srcset="/img/loading.gif" lazyload alt="梯度连乘的玩具模型与随机 RNN 的雅可比连乘范数"><br><em>左：每步乘 0.5、1.0、1.5 时，8 步后的梯度尺度分别约为 0.004、1、25.6。右：64 维随机 RNN 的实测结果。$W_{hh}$ 谱半径为 0.9 时梯度指数衰减；谱半径为 3 时梯度迅速放大；谱半径为 1.5 时，tanh 进入饱和区，其导数抵消了一部分放大作用。虚线是 LSTM 细胞状态路径，遗忘门接近 1 时梯度几乎不衰减。</em></p>
 <h3 id="3-6-应对方法"><a href="#3-6-应对方法" class="headerlink" title="3.6 应对方法"></a>3.6 应对方法</h3><p><strong>梯度爆炸：梯度裁剪（Gradient Clipping）</strong>。若梯度范数超过阈值 c，就把它等比例缩小：</p>
 
 <div class="course-math">
@@ -557,7 +557,7 @@ h_t=\tanh\!\left(W_{hh}h_{t-1}+W_{xh}x_t\right)
 <p><strong>梯度消失</strong>没有这么直接的修补办法，常见思路有三类：</p>
 <ol>
 <li><strong>激活函数</strong>：例如使用导数不易饱和的激活；</li>
-<li><strong>权重初始化</strong>：例如把 W_hh 初始化为单位阵或正交阵，使连乘因子接近 1；</li>
+<li><strong>权重初始化</strong>：例如把 $W_{hh}$ 初始化为单位阵或正交阵，使连乘因子接近 1；</li>
 <li><strong>网络结构</strong>：使用门控单元，从结构上为梯度提供一条不衰减的通路，这是最根本的方法。</li>
 </ol>
 <h2 id="4-长短期记忆网络-LSTM"><a href="#4-长短期记忆网络-LSTM" class="headerlink" title="4. 长短期记忆网络 LSTM"></a>4. 长短期记忆网络 LSTM</h2><h3 id="4-1-门控单元的思想"><a href="#4-1-门控单元的思想" class="headerlink" title="4.1 门控单元的思想"></a>4.1 门控单元的思想</h3><p>用一个<strong>更复杂、带有“门”的循环单元</strong>来控制哪些信息能够通过。LSTM（Long Short-Term Memory）和 GRU 都属于门控单元；LSTM 依靠门控在许多时间步中追踪信息。</p>
@@ -623,7 +623,7 @@ c_t=f_t\odot c_{t-1}+i_t\odot\tilde c_t
 
 <p>与 Vanilla RNN 相比有两个关键区别：</p>
 <ul>
-<li>反传时<strong>不再反复乘同一个权重矩阵 W_hh</strong>，也不经过 tanh 的饱和导数，而只是逐元素乘遗忘门；</li>
+<li>反传时**不再反复乘同一个权重矩阵 $W_{hh}$**，也不经过 tanh 的饱和导数，而只是逐元素乘遗忘门；</li>
 <li>遗忘门由网络学习，每一步可以不同。需要长期记忆时，网络可以让 fₜ 接近 1，梯度就能几乎不衰减地传回很远的时间步。</li>
 </ul>
 <p>因此细胞状态形成了一条<strong>梯度“高速公路”</strong>，反向传播可以沿它不间断地流过多个时间步。这与 ResNet 中恒等捷径的作用非常相似：都是用<strong>加法</strong>连接新旧信息，给梯度留一条直接通路。实践中常把遗忘门偏置初始化为正数（如 1），让训练初期默认“记住”。</p>

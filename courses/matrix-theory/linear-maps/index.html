@@ -600,7 +600,7 @@ B=P^{-1}AP,
 
 <div class="note note-danger">
 
-<p><strong>易错点</strong>：实矩阵的特征值可能是复数。例如旋转矩阵 R_θ（θ ≠ kπ）在实平面上没有不转的方向，其特征值为 e^(±iθ)。讨论特征值时一般在复数域中进行。</p>
+<p><strong>易错点</strong>：实矩阵的特征值可能是复数。例如旋转矩阵 $R_\theta$（θ ≠ kπ）在实平面上没有不转的方向，其特征值为 $e^{\pm i\theta}$。讨论特征值时一般在复数域中进行。</p>
 </div>
 
 <h3 id="4-4-幂法：求模最大的特征值"><a href="#4-4-幂法：求模最大的特征值" class="headerlink" title="4.4 幂法：求模最大的特征值"></a>4.4 幂法：求模最大的特征值</h3><div class="note note-success">
@@ -650,7 +650,7 @@ y_{k}=Ax_{k-1},\qquad x_k=\frac{y_k}{\|y_k\|},
 <p><strong>定义（Givens 矩阵）</strong>：在单位阵中，把第 (i, i)、(j, j) 位置换成 c，(i, j) 位置换成 s，(j, i) 位置换成 −s（c² + s² &#x3D; 1），得到的 T(i, j) 表示在 xᵢ–xⱼ 坐标平面内的一个旋转，其余坐标不变。</p>
 </div>
 
-<p>若 xᵢ² + xⱼ² ≠ 0，取 c &#x3D; xᵢ&#x2F;r，s &#x3D; xⱼ&#x2F;r，r &#x3D; √(xᵢ² + xⱼ²)，则 T(i, j)x 的第 i 个分量变成 r，第 j 个分量变成 0。<strong>一次 Givens 旋转消去一个分量</strong>，适合稀疏矩阵和逐元素消元。</p>
+<p>若 xᵢ² + xⱼ² ≠ 0，取 c &#x3D; xᵢ&#x2F;r，s &#x3D; xⱼ&#x2F;r，$r&#x3D;\sqrt{x_i^2+x_j^2}$，则 T(i, j)x 的第 i 个分量变成 r，第 j 个分量变成 0。<strong>一次 Givens 旋转消去一个分量</strong>，适合稀疏矩阵和逐元素消元。</p>
 <div class="note note-warning">
 
 <p><strong>例题</strong>：把 x &#x3D; (0, 1, 1)ᵀ 用 Givens 旋转化为 ‖x‖e₁ &#x3D; (√2, 0, 0)ᵀ。</p>
