@@ -320,7 +320,7 @@ W_1\in\mathbb R^{H\times D},\quad W_2\in\mathbb R^{C\times H},
 
 
 <p>即<strong>下传梯度 &#x3D; 上游梯度 × 局部导数</strong>。这里先用标量说明；向量、矩阵情况要按维度进行乘法，不能直接把所有梯度都当成标量相乘。</p>
-<h3 id="2-2-手算例子：f-x-y-z"><a href="#2-2-手算例子：f-x-y-z" class="headerlink" title="2.2 手算例子：f&#x3D;(x+y)z"></a>2.2 手算例子：f&#x3D;(x+y)z</h3><p>课件取 x&#x3D;−2、y&#x3D;5、z&#x3D;−4。令 q&#x3D;x+y，前向先算 q&#x3D;3，再算 f&#x3D;qz&#x3D;−12。</p>
+<h3 id="2-2-手算例子：f-x-y-z"><a href="#2-2-手算例子：f-x-y-z" class="headerlink" title="2.2 手算例子：f&#x3D;(x+y)z"></a>2.2 手算例子：f&#x3D;(x+y)z</h3><p>取 x&#x3D;−2、y&#x3D;5、z&#x3D;−4。令 q&#x3D;x+y，前向先算 q&#x3D;3，再算 f&#x3D;qz&#x3D;−12。</p>
 <p>反向从 ∂f&#x2F;∂f&#x3D;1 出发：</p>
 
 <div class="course-math">
@@ -337,7 +337,7 @@ W_1\in\mathbb R^{H\times D},\quad W_2\in\mathbb R^{C\times H},
 </div>
 
 
-<p><img src="/images/courses/deep-learning-foundations/backpropagation.png" srcset="/img/loading.gif" lazyload alt="加法和乘法节点的反向传播示例"><br><em>课件第 67 页：绿色为前向数值，红色为反向梯度。反向传播计算的是输出变化对各输入的敏感程度。</em></p>
+<p><img src="/images/courses/deep-learning-foundations/backpropagation.png" srcset="/img/loading.gif" lazyload alt="加法和乘法节点的反向传播示例"><br><em>绿色为前向数值，红色为反向梯度。反向传播计算的是输出变化对各输入的敏感程度。</em></p>
 <h3 id="2-3-常见节点怎样传梯度"><a href="#2-3-常见节点怎样传梯度" class="headerlink" title="2.3 常见节点怎样传梯度"></a>2.3 常见节点怎样传梯度</h3><table>
 <thead>
 <tr>
@@ -404,7 +404,7 @@ W_1\in\mathbb R^{H\times D},\quad W_2\in\mathbb R^{C\times H},
 </tr>
 </tbody></table>
 <p><strong>对某个变量的梯度，形状应与该变量相同。</strong> 这是检查转置、广播和维度错误的直接办法。批量计算时，偏置在各样本间共享，因此要累加各样本对偏置的梯度；若损失取批内平均，还要包含相应的平均系数。</p>
-<h3 id="3-2-课件例子：f-x-W-‖Wx‖²"><a href="#3-2-课件例子：f-x-W-‖Wx‖²" class="headerlink" title="3.2 课件例子：f(x,W)&#x3D;‖Wx‖²"></a>3.2 课件例子：f(x,W)&#x3D;‖Wx‖²</h3><p>令 q&#x3D;Wx，f&#x3D;qᵀq，则 ∇q f&#x3D;2q。代入线性层的规则：</p>
+<h3 id="3-2-例子：f-x-W-‖Wx‖²"><a href="#3-2-例子：f-x-W-‖Wx‖²" class="headerlink" title="3.2 例子：f(x,W)&#x3D;‖Wx‖²"></a>3.2 例子：f(x,W)&#x3D;‖Wx‖²</h3><p>令 q&#x3D;Wx，f&#x3D;qᵀq，则 ∇q f&#x3D;2q。代入线性层的规则：</p>
 
 <div class="course-math">
 \[
@@ -414,7 +414,7 @@ W_1\in\mathbb R^{H\times D},\quad W_2\in\mathbb R^{C\times H},
 </div>
 
 
-<p>课件中 W&#x3D;[[0.1,0.5],[−0.3,0.8]]，x&#x3D;[0.2,0.4]ᵀ，因此 q&#x3D;[0.22,0.26]ᵀ，f&#x3D;0.116。权重梯度为 [[0.088,0.176],[0.104,0.208]]，输入梯度为 [−0.112,0.636]ᵀ。</p>
+<p>取 W&#x3D;[[0.1,0.5],[−0.3,0.8]]，x&#x3D;[0.2,0.4]ᵀ，因此 q&#x3D;[0.22,0.26]ᵀ，f&#x3D;0.116。权重梯度为 [[0.088,0.176],[0.104,0.208]]，输入梯度为 [−0.112,0.636]ᵀ。</p>
 <h3 id="3-3-把两层分类网络串起来"><a href="#3-3-把两层分类网络串起来" class="headerlink" title="3.3 把两层分类网络串起来"></a>3.3 把两层分类网络串起来</h3><p>对于第 1 节的单样本 Softmax 交叉熵，令 y 为 one-hot 标签，⊙ 为逐元素乘法，可以得到：</p>
 
 <div class="course-math">
@@ -433,7 +433,7 @@ W_1\in\mathbb R^{H\times D},\quad W_2\in\mathbb R^{C\times H},
 
 <p>这是把线性层、激活函数与损失的局部规则组合起来的结果。若目标中还有正则项，参数梯度还要加上正则项的贡献。</p>
 <h2 id="4-激活函数：表达能力与梯度传播"><a href="#4-激活函数：表达能力与梯度传播" class="headerlink" title="4. 激活函数：表达能力与梯度传播"></a>4. 激活函数：表达能力与梯度传播</h2><h3 id="4-1-为什么隐藏层需要非线性"><a href="#4-1-为什么隐藏层需要非线性" class="headerlink" title="4.1 为什么隐藏层需要非线性"></a>4.1 为什么隐藏层需要非线性</h3><p>多层仿射变换可以合并为一层，只有在线性层之间加入非线性，才能获得更丰富的函数表示。激活函数还通过自己的导数影响梯度怎样传到前面的层。</p>
-<p><img src="/images/courses/deep-learning-foundations/activation-functions.png" srcset="/img/loading.gif" lazyload alt="Sigmoid、tanh、ReLU、ELU、GELU 与 Swish 的曲线对照"><br><em>课件第 100 页：比较函数曲线时，也要关注饱和区和负半轴的梯度。</em></p>
+<p><img src="/images/courses/deep-learning-foundations/activation-functions.png" srcset="/img/loading.gif" lazyload alt="Sigmoid、tanh、ReLU、ELU、GELU 与 Swish 的曲线对照"><br><em>比较函数曲线时，也要关注饱和区和负半轴的梯度。</em></p>
 <h3 id="4-2-Sigmoid-与-tanh"><a href="#4-2-Sigmoid-与-tanh" class="headerlink" title="4.2 Sigmoid 与 tanh"></a>4.2 Sigmoid 与 tanh</h3>
 <div class="course-math">
 \[
@@ -508,7 +508,7 @@ W_1\in\mathbb R^{H\times D},\quad W_2\in\mathbb R^{C\times H},
 <td>不等同于只输出正数的 ReLU</td>
 </tr>
 </tbody></table>
-<p>课件还介绍了 <strong>SwiGLU</strong>：一条线性分支经过 SiLU，再与另一条线性分支逐元素相乘。</p>
+<p>另一个常见的激活结构是 <strong>SwiGLU</strong>：一条线性分支经过 SiLU，再与另一条线性分支逐元素相乘。</p>
 
 <div class="course-math">
 \[
@@ -546,7 +546,7 @@ W_1\in\mathbb R^{H\times D},\quad W_2\in\mathbb R^{C\times H},
 </tbody></table>
 <p><strong>训练误差高不一定只因为模型太小，也可能是学习率或优化过程出了问题。</strong> 诊断时应结合训练曲线和验证曲线。</p>
 <h3 id="5-2-Bias-与-Variance-分别看什么"><a href="#5-2-Bias-与-Variance-分别看什么" class="headerlink" title="5.2 Bias 与 Variance 分别看什么"></a>5.2 Bias 与 Variance 分别看什么</h3><p>偏差 Bias 衡量模型平均预测与真实规律的系统性差异；方差 Variance 衡量更换训练集后，预测结果的波动程度。这里的偏差不同于线性层中的偏置参数 b。</p>
-<p>为明确课件中的关系，在平方误差回归下，设 y&#x3D;f(x)+ε，噪声条件均值为 0、方差为 σ²，D 表示随机训练集，则固定 x 处有：</p>
+<p>为明确偏差、方差与误差的关系，在平方误差回归下，设 y&#x3D;f(x)+ε，噪声条件均值为 0、方差为 σ²，D 表示随机训练集，则固定 x 处有：</p>
 
 <div class="course-math">
 \[
@@ -558,7 +558,7 @@ W_1\in\mathbb R^{H\times D},\quad W_2\in\mathbb R^{C\times H},
 </div>
 
 
-<p>最后一项是该假设下的不可约噪声误差。模型太简单往往偏差高；过度追随训练样本的复杂模型往往方差高。课件中的经典曲线用于建立直觉，<strong>不能把所有深度网络的测试误差都预设为严格的 U 形曲线</strong>。</p>
+<p>最后一项是该假设下的不可约噪声误差。模型太简单往往偏差高；过度追随训练样本的复杂模型往往方差高。经典的 U 形曲线用于建立直觉，<strong>不能把所有深度网络的测试误差都预设为严格的 U 形曲线</strong>。</p>
 <h2 id="6-正则化与避免过拟合"><a href="#6-正则化与避免过拟合" class="headerlink" title="6. 正则化与避免过拟合"></a>6. 正则化与避免过拟合</h2><h3 id="6-1-把数据损失与参数约束合在一起"><a href="#6-1-把数据损失与参数约束合在一起" class="headerlink" title="6.1 把数据损失与参数约束合在一起"></a>6.1 把数据损失与参数约束合在一起</h3>
 <div class="course-math">
 \[
@@ -587,7 +587,7 @@ L(W)=\frac1N\sum_{i=1}^{N}\ell_i(W)+\lambda R(W).
 <td>惩罚大权重，使权重整体收缩</td>
 </tr>
 </tbody></table>
-<p>课件给出两个权重向量 [1,0,0,0] 与 [0.25,0.25,0.25,0.25]，它们与输入 [1,1,1,1] 的点积都为 1，但权重平方和分别是 1 和 1&#x2F;4，L2 更偏好后者。这说明正则项会在相同数据拟合结果之间继续施加偏好。</p>
+<p>考虑两个权重向量 [1,0,0,0] 与 [0.25,0.25,0.25,0.25]，它们与输入 [1,1,1,1] 的点积都为 1，但权重平方和分别是 1 和 1&#x2F;4，L2 更偏好后者。这说明正则项会在相同数据拟合结果之间继续施加偏好。</p>
 <h3 id="6-2-L2-为什么对应权重衰减"><a href="#6-2-L2-为什么对应权重衰减" class="headerlink" title="6.2 L2 为什么对应权重衰减"></a>6.2 L2 为什么对应权重衰减</h3><p>采用普通 SGD、L2 正则项 λ‖W‖²&#x2F;2 时，更新式为：</p>
 
 <div class="course-math">
@@ -600,8 +600,8 @@ W_{t+1}
 
 
 <p>除了沿数据梯度更新，原权重还乘上一个收缩系数，这就是这里的 Weight Decay。<strong>这个等价关系基于普通 SGD 的更新式，不能不加区分地推广到所有优化器。</strong> 正则化强度过大也会造成欠拟合。</p>
-<h3 id="6-3-Dropout：训练时随机屏蔽激活"><a href="#6-3-Dropout：训练时随机屏蔽激活" class="headerlink" title="6.3 Dropout：训练时随机屏蔽激活"></a>6.3 Dropout：训练时随机屏蔽激活</h3><p>课件用 p 表示丢弃概率。每次训练时为激活采样随机掩码，使网络减少对某个节点的过度依赖。它通常屏蔽激活，不是永久删除神经元或把参数清零。</p>
-<p><img src="/images/courses/deep-learning-foundations/dropout.png" srcset="/img/loading.gif" lazyload alt="Dropout 前后网络连接的示意"><br><em>课件第 149 页：每一步随机使用部分节点，常见于全连接层。</em></p>
+<h3 id="6-3-Dropout：训练时随机屏蔽激活"><a href="#6-3-Dropout：训练时随机屏蔽激活" class="headerlink" title="6.3 Dropout：训练时随机屏蔽激活"></a>6.3 Dropout：训练时随机屏蔽激活</h3><p>这里用 p 表示丢弃概率。每次训练时为激活采样随机掩码，使网络减少对某个节点的过度依赖。它通常屏蔽激活，不是永久删除神经元或把参数清零。</p>
+<p><img src="/images/courses/deep-learning-foundations/dropout.png" srcset="/img/loading.gif" lazyload alt="Dropout 前后网络连接的示意"><br><em>每一步随机使用部分节点，常见于全连接层。</em></p>
 <p>采用常见的 inverted dropout，设保留概率 q&#x3D;1−p：</p>
 
 <div class="course-math">
@@ -649,7 +649,7 @@ m_j\sim\operatorname{Bernoulli}(q),\qquad
 </tr>
 </tbody></table>
 <hr>
-<p><em>课程依据：于茜《<code>lecture3_NN_20261015</code>》，2026-10-15。反向传播数值、激活函数与正则化主题据课件整理；完整两层网络梯度、偏差—方差展开式与 Dropout 期望为帮助理解补充的推导。</em></p>
+<p><em>课程依据：于茜《<code>lecture3_NN_20261015</code>》，2026-10-15。完整两层网络梯度、偏差—方差展开式与 Dropout 期望为帮助理解补充的推导。</em></p>
 <p><a href="/courses/deep-learning-foundations/">课程目录</a> · <a href="/courses/deep-learning-foundations/image-classification/">上一章：图像分类</a> · <a href="/courses/deep-learning-foundations/convolutional-neural-networks/">下一章：卷积神经网络</a></p>
 
                 

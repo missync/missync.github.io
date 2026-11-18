@@ -484,7 +484,7 @@ h_t=f_W\!\left(h_{t-1},\,x_t\right).
 </div>
 
 
-<p>其中 hₜ 是新状态，hₜ₋₁ 是旧状态，xₜ 是 t 时刻的输入向量，$f_W$ 是由参数 W 决定的函数。课件把这里的 hₜ 称为 cell state，但它对应的是 LSTM 中的隐藏状态 hₜ，而不是 LSTM 的细胞状态 cₜ。最基本的 RNN（Vanilla RNN）取：</p>
+<p>其中 hₜ 是新状态，hₜ₋₁ 是旧状态，xₜ 是 t 时刻的输入向量，$f_W$ 是由参数 W 决定的函数。这里的 hₜ 有时也被称为 cell state，但它对应的是 LSTM 中的隐藏状态 hₜ，而不是 LSTM 的细胞状态 cₜ。最基本的 RNN（Vanilla RNN）取：</p>
 
 <div class="course-math">
 \[
@@ -495,7 +495,7 @@ h_t=\tanh\!\left(W_{hh}h_{t-1}+W_{xh}x_t+b_h\right),
 </div>
 
 
-<p>课件采用转置、不带偏置的写法：$h_t&#x3D;\tanh(W_{hh}^{\mathsf T}h_{t-1}+W_{xh}^{\mathsf T}x_t)$，$\hat y_t&#x3D;W_{hy}^{\mathsf T}h_t$。它与上式只是权重矩阵的摆放约定不同（把 $W$ 换成 $W^{\mathsf T}$），偏置也可以并入权重，二者等价；考试时按课件写法即可。</p>
+<p>另一种常见写法采用转置、不带偏置的形式：$h_t&#x3D;\tanh(W_{hh}^{\mathsf T}h_{t-1}+W_{xh}^{\mathsf T}x_t)$，$\hat y_t&#x3D;W_{hy}^{\mathsf T}h_t$。它与上式只是权重矩阵的摆放约定不同（把 $W$ 换成 $W^{\mathsf T}$），偏置也可以并入权重，二者等价。</p>
 <p><strong>所有时间步使用同一个函数、同一组参数</strong> $W_{xh}$、$W_{hh}$、$W_{hy}$。这和卷积在空间上共享权重是同一个思想，只不过 RNN 在<strong>时间</strong>上共享。因此 RNN 能处理任意长度的序列，参数量也不随序列长度增长。</p>
 <h3 id="3-4-按时间展开的计算图"><a href="#3-4-按时间展开的计算图" class="headerlink" title="3.4 按时间展开的计算图"></a>3.4 按时间展开的计算图</h3><p>把自环沿时间展开，RNN 就变成一个很深的前馈网络，每层对应一个时间步，各层共享权重。以字符级语言模型为例：输入“想开直升”，每一步预测下一个字，目标分别是“开直升机”。</p>
 <p><img src="/images/courses/deep-learning-foundations/rnn-unrolled.png" srcset="/img/loading.gif" lazyload alt="RNN 的时间展开计算图与 BPTT"><br><em>每个时间步都有一个损失 Lₜ，总损失是它们的和；反向传播沿时间逆向流动，共享参数在每个时间步都会收到一份梯度。</em></p>

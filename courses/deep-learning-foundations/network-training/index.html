@@ -563,7 +563,7 @@ y^i=\gamma\tilde z^i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(z^i).
 <td>γ、β 随网络一起训练</td>
 </tr>
 </tbody></table>
-<p>课件（及 BN 原论文）把这组公式写成 $x_i$、batch 大小 m 的形式，与这里的 zⁱ、B 只是记号不同。</p>
+<p>BN 原论文把这组公式写成 $x_i$、batch 大小 m 的形式，与这里的 zⁱ、B 只是记号不同。</p>
 <p>γ、β 初始常设为 1 和 0。若网络学到 $\gamma&#x3D;\sqrt{\sigma^2+\epsilon}$、$\beta&#x3D;\mu$，BN 就退化为恒等映射，所以加入 BN <strong>不会减小网络能表示的函数集合</strong>，只是换了一种更易优化的参数化方式。</p>
 <h3 id="3-3-推理时的-BN"><a href="#3-3-推理时的-BN" class="headerlink" title="3.3 推理时的 BN"></a>3.3 推理时的 BN</h3><p>训练时 BN 用当前 batch 的 μ、σ 做标准化。到了测试&#x2F;推理阶段，能不能直接用测试 batch 的统计量？不能：</p>
 <ul>
@@ -728,7 +728,7 @@ g^{t}=\nabla_\theta L_{\text{batch}}(\theta^{t}),\qquad \theta^{t+1}\leftarrow\t
 
 <p>记号约定（后面各优化器都沿用）：上标 t 表示第 t 次更新；θᵗ 是此时的全部参数；<strong>gᵗ 是在 θᵗ 处、用当前这个 batch 算出的梯度向量</strong>，与 θ 形状相同，每个分量 $g_i^{t}$ 对应一个参数 θᵢ；η 是学习率。</p>
 <p><strong>所有 batch 都看过一遍称为一个 epoch</strong>，每个 epoch 之后通常重新打乱数据。日常说的 “SGD” 往往就是指小批量梯度下降。</p>
-<h3 id="4-3-梯度下降的困难"><a href="#4-3-梯度下降的困难" class="headerlink" title="4.3 梯度下降的困难"></a>4.3 梯度下降的困难</h3><p>课件这一页的标题是 “SGD: Problem”，但正如 4.2 节末尾所说，这里的 “SGD” 泛指 $\theta^{t+1}\leftarrow\theta^{t}-\eta g^{t}$ 这条更新规则。下面的困难来自规则本身，<strong>BGD、SGD、Mini-batch GD 都会遇到</strong>，三者的差别只在于 g 用多少样本估计。小 batch 带来的梯度噪声偶尔能把参数从鞍点或浅坑里“抖”出来（见 4.2 节表格），但这是碰运气，不能系统地解决问题；没有噪声的 BGD 反而最容易被困住。</p>
+<h3 id="4-3-梯度下降的困难"><a href="#4-3-梯度下降的困难" class="headerlink" title="4.3 梯度下降的困难"></a>4.3 梯度下降的困难</h3><p>常说的 “SGD 的困难”，其中 “SGD” 正如 4.2 节末尾所说，泛指 $\theta^{t+1}\leftarrow\theta^{t}-\eta g^{t}$ 这条更新规则。下面的困难来自规则本身，<strong>BGD、SGD、Mini-batch GD 都会遇到</strong>，三者的差别只在于 g 用多少样本估计。小 batch 带来的梯度噪声偶尔能把参数从鞍点或浅坑里“抖”出来（见 4.2 节表格），但这是碰运气，不能系统地解决问题；没有噪声的 BGD 反而最容易被困住。</p>
 <p>这条规则每一步只做一件事：从当前位置沿负梯度方向走 $\eta g^{t}$。它有两个隐含的弱点：</p>
 <ol>
 <li><strong>只看当前这一点的梯度</strong>：梯度小，步子就小；梯度为 0，参数就完全停下，不管远处是否还有更低的地方；</li>
@@ -884,10 +884,10 @@ m^{t}=-\eta\sum_{i=0}^{t-1}\lambda^{\,t-1-i}g^{i}.
 </div>
 
 
-<p>β₂ 是 EMA 中旧值保留的比例（课件记为 α），与 4.4 节动量系数的作用相同，只不过这里平均的是梯度的平方。这里记为 β₂，是因为它正是 4.7 节 Adam 里的 β₂。</p>
+<p>β₂ 是 EMA 中旧值保留的比例（也常记为 α），与 4.4 节动量系数的作用相同，只不过这里平均的是梯度的平方。这里记为 β₂，是因为它正是 4.7 节 Adam 里的 β₂。</p>
 <p>小球从平地进入陡坡时，σ 迅速增大、步长变小；从陡坡回到平地时，σ 很快减小、步长恢复。这样学习率就能随误差曲面<strong>动态调整</strong>。更新公式与 Adagrad 相同，仍是 $\theta_i^{t+1}\leftarrow\theta_i^{t}-\frac{\eta}{\sigma_i^{t}}g_i^{t}$，只是 σ 的算法换了。</p>
 <p>到这里，两个弱点各有了解法：动量法管<strong>方向</strong>，RMSProp 管每个参数的<strong>步长</strong>，但它们还是分开的两个方法。</p>
-<h3 id="4-7-Adam-动量-RMSProp"><a href="#4-7-Adam-动量-RMSProp" class="headerlink" title="4.7 Adam &#x3D; 动量 + RMSProp"></a>4.7 Adam &#x3D; 动量 + RMSProp</h3><p>Adam 把二者合在一起，同时维护梯度的一阶矩（方向，来自动量法）和二阶矩（大小，来自 RMSProp）。为了和前面各节一致，这里仍用上标 t 表示第 t 步、η 表示学习率（Adam 论文和课件用下标 t、学习率记为 α，含义相同）：</p>
+<h3 id="4-7-Adam-动量-RMSProp"><a href="#4-7-Adam-动量-RMSProp" class="headerlink" title="4.7 Adam &#x3D; 动量 + RMSProp"></a>4.7 Adam &#x3D; 动量 + RMSProp</h3><p>Adam 把二者合在一起，同时维护梯度的一阶矩（方向，来自动量法）和二阶矩（大小，来自 RMSProp）。为了和前面各节一致，这里仍用上标 t 表示第 t 步、η 表示学习率（Adam 原论文用下标 t、学习率记为 α，含义相同）：</p>
 <ul>
 <li>m 就是 4.4 节末尾的另一种动量写法，即梯度的 EMA，系数 β₁；</li>
 <li>v 是梯度平方的 EMA，就是 4.6 节 RMSProp 中的 σ²，系数 β₂；</li>
@@ -1061,7 +1061,7 @@ v^{t+1}=\beta_2v^{t}+(1-\beta_2)\left(g^{t}\right)^2,
 </div>
 
 
-<p>η⁰ 是初始学习率，ηᵗ 是第 t 个 epoch（或第 t 步）的学习率，T 是总 epoch 数（或总步数）。这就是 4.8 节表格最后一行中随时间变化的 ηᵗ（课件记为 αₜ）。</p>
+<p>η⁰ 是初始学习率，ηᵗ 是第 t 个 epoch（或第 t 步）的学习率，T 是总 epoch 数（或总步数）。这就是 4.8 节表格最后一行中随时间变化的 ηᵗ（也常记为 αₜ）。</p>
 <table>
 <thead>
 <tr>
