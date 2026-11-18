@@ -563,7 +563,12 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 </tr>
 </tbody></table>
 <p>γ、β 初始常设为 1 和 0。若网络学到 $\gamma&#x3D;\sqrt{\sigma^2+\epsilon}$、$\beta&#x3D;\mu$，BN 就退化为恒等映射，所以加入 BN <strong>不会减小网络能表示的函数集合</strong>，只是换了一种更易优化的参数化方式。</p>
-<h3 id="3-3-训练与推理，以及-BN-的效果"><a href="#3-3-训练与推理，以及-BN-的效果" class="headerlink" title="3.3 训练与推理，以及 BN 的效果"></a>3.3 训练与推理，以及 BN 的效果</h3><p><strong>推理时不能用测试 batch 的统计量。</strong> 推理时可能一次只处理一个样本，此时 batch 均值与方差没有意义；即使 batch 较大，输出也不应依赖同批其他样本。做法是：<strong>训练时用指数滑动平均记录全局均值和方差，推理时直接使用。</strong></p>
+<h3 id="3-3-推理时的-BN"><a href="#3-3-推理时的-BN" class="headerlink" title="3.3 推理时的 BN"></a>3.3 推理时的 BN</h3><p>训练时 BN 用当前 batch 的 μ、σ 做标准化。到了测试&#x2F;推理阶段，能不能直接用测试 batch 的统计量？不能：</p>
+<ul>
+<li>推理时可能一次只处理一个样本，单个样本算不出有意义的均值和方差；</li>
+<li>即使 batch 较大，一个样本的输出也不应随同批其他样本而变。</li>
+</ul>
+<p>做法是<strong>训练时用指数滑动平均记录各 batch 的均值和方差，推理时直接使用这组“训练统计量”</strong>：</p>
 
 <div class="course-math">
 \[
@@ -576,26 +581,24 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 </div>
 
 
-<p>p 一般接近 1。需要注意 PyTorch 的 <code>momentum=0.1</code> 指的是新 batch 统计量所占的权重，相当于这里的 1−p。推理前务必调用 <code>model.eval()</code> 切换到滑动平均统计量。</p>
-<p><strong>BN 带来了什么。</strong></p>
+<p>p 一般接近 1。需要注意 PyTorch 的 <code>momentum=0.1</code> 指的是新 batch 统计量所占的权重，相当于这里的 1−p。</p>
+<p><strong>训练和推理时 BN 的行为不同，这是非常常见的 bug 来源</strong>：推理前忘记调用 <code>model.eval()</code>、batch 太小导致统计量噪声过大、微调时 BN 层冻结与否处理不当，都会让测试效果异常。</p>
+<h3 id="3-4-BN-为什么有效"><a href="#3-4-BN-为什么有效" class="headerlink" title="3.4 BN 为什么有效"></a>3.4 BN 为什么有效</h3><p>BN 最初以减小内部协变量偏移为动机（见 3.1），但后续研究（Santurkar et al., 2018, *How Does Batch Normalization Help Optimization?*）发现，它更主要的作用是<strong>让误差曲面更平滑</strong>：梯度在参数空间中变化更平缓，沿梯度方向走一步的效果更可预测。这与 3.1 中“各维尺度一致时等高线接近圆形”是同一个道理，只是作用在网络的每一层。</p>
+<p>由此带来的实际效果：</p>
 <table>
 <thead>
 <tr>
 <th>效果</th>
-<th>说明</th>
+<th>原因</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>深层网络明显更容易训练</td>
-<td>后续研究认为，BN 的主要作用是让损失面更平滑，而不只是减小内部协变量偏移</td>
+<td>允许更大学习率，收敛更快</td>
+<td>误差曲面平滑，参数尺度变化不会直接放大到输出</td>
 </tr>
 <tr>
 <td>改善梯度流</td>
 <td>各层输入尺度稳定，饱和区与梯度消失都更少出现</td>
-</tr>
-<tr>
-<td>允许更大学习率，收敛更快</td>
-<td>参数尺度变化不会直接放大到输出</td>
 </tr>
 <tr>
 <td>对初始化更鲁棒</td>
@@ -606,8 +609,7 @@ y_i\leftarrow\gamma\hat x_i+\beta\equiv\mathrm{BN}_{\gamma,\beta}(x_i).
 <td>batch 统计量带来的随机扰动类似加噪</td>
 </tr>
 </tbody></table>
-<p><strong>训练和测试时 BN 的行为不同，这是非常常见的 bug 来源</strong>：忘记切换 <code>eval()</code>、batch 太小导致统计量噪声过大、微调时冻结与否处理不当，都会让测试效果异常。</p>
-<h3 id="3-4-卷积网络中的-BN-与归一化家族"><a href="#3-4-卷积网络中的-BN-与归一化家族" class="headerlink" title="3.4 卷积网络中的 BN 与归一化家族"></a>3.4 卷积网络中的 BN 与归一化家族</h3><p><strong>按通道统计。</strong> 对卷积特征图，同一通道在不同空间位置共享卷积核，因此 BN 也按<strong>通道</strong>统计，把 batch 维与空间维一起求平均：</p>
+<h3 id="3-5-卷积网络中的-BN-与归一化家族"><a href="#3-5-卷积网络中的-BN-与归一化家族" class="headerlink" title="3.5 卷积网络中的 BN 与归一化家族"></a>3.5 卷积网络中的 BN 与归一化家族</h3><p><strong>按通道统计。</strong> 对卷积特征图，同一通道在不同空间位置共享卷积核，因此 BN 也按<strong>通道</strong>统计，把 batch 维与空间维一起求平均：</p>
 <table>
 <thead>
 <tr>
